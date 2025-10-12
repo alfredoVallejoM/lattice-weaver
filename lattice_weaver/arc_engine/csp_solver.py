@@ -49,6 +49,8 @@ class CSPSolver:
     def __init__(self, use_tms: bool = False, parallel: bool = False, parallel_mode: str = 'thread'):
         self.arc_engine = ArcEngine(use_tms=use_tms, parallel=parallel, parallel_mode=parallel_mode)
         self.problem: Optional[CSPProblem] = None
+        self.backtracks = 0
+        self.constraints_checked = 0
 
     def _setup_arc_engine(self, problem: CSPProblem):
         """
@@ -90,6 +92,8 @@ class CSPSolver:
             return CSPSolverResult([], 0) # No hay soluciones si el problema es inconsistente desde el principio
 
         self.nodes_explored = 0
+        self.backtracks = 0
+        self.constraints_checked = 0
         
         # Iniciar el backtracking con el ArcEngine principal
         self._backtrack(initial_assignment, solutions, return_all, max_solutions)
@@ -169,6 +173,7 @@ class CSPSolver:
                     return # Encontró una solución y no se piden todas
             else:
                 logger.debug(f"Después de enforce_arc_consistency para {unassigned_var}={value}. Inconsistente. Backtracking.")
+                self.backtracks += 1
             
             # Retroceder: restaurar el estado de los dominios del ArcEngine al estado guardado
             for var_name, domain_obj in saved_domains.items():
@@ -203,9 +208,11 @@ class CSPSolverResult:
     """
     Resultado de la ejecución del CSPSolver.
     """
-    def __init__(self, solutions: List[CSPSolution], nodes_explored: int):
+    def __init__(self, solutions: List[CSPSolution], nodes_explored: int, backtracks: int = 0, constraints_checked: int = 0):
         self.solutions = solutions
         self.nodes_explored = nodes_explored
+        self.backtracks = backtracks
+        self.constraints_checked = constraints_checked
 
     def __repr__(self):
         return f"CSPSolverResult(solutions={len(self.solutions)}, nodes_explored={self.nodes_explored})"

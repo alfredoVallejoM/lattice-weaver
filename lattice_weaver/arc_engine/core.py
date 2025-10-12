@@ -73,7 +73,7 @@ class ArcEngine:
         self.variables[name] = create_optimal_domain(domain)
         self.graph.add_node(name)
 
-    def add_constraint(self, var1: str, var2: str, relation: Callable[[Any, Any], bool], cid: Optional[str] = None):
+    def add_constraint(self, var1: str, var2: str, relation_name: str, metadata: Dict[str, Any] = None, cid: Optional[str] = None):
         """
         Adds a binary constraint between two variables.
 
@@ -87,12 +87,8 @@ class ArcEngine:
         if cid in self.constraints:
             raise ValueError(f"Constraint ID '{cid}' already exists.")
         
-        relation_name = relation.__name__ if hasattr(relation, '__name__') and relation.__name__ != '<lambda>' else cid + "_relation"
-        from .constraints import register_relation
-        try:
-            register_relation(relation_name, relation)
-        except ValueError: # Ya registrada, no hay problema
-            pass
+        # La función de relación ya debe estar registrada y su nombre pasado como relation_name
+        # No es necesario registrarla aquí de nuevo, solo usar el nombre proporcionado.
         
         # Extraer índices i y j de los nombres de las variables si son del tipo Q{idx}
         var1_idx = int(var1[1:]) if var1.startswith("Q") and var1[1:].isdigit() else None

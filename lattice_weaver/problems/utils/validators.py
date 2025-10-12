@@ -319,3 +319,80 @@ def validate_magic_square_solution(solution: Dict[str, int], n: int) -> bool:
     
     return True
 
+
+
+
+def validate_magic_square_solution(matrix: List[List[int]], n: int) -> bool:
+    """
+    Valida una solución de cuadrado mágico.
+    
+    Un cuadrado mágico n×n válido debe cumplir:
+    - Todas las filas suman M = n(n²+1)/2
+    - Todas las columnas suman M
+    - Ambas diagonales suman M
+    - Todos los números de 1 a n² aparecen exactamente una vez
+    
+    Args:
+        matrix: Matriz n×n con la solución
+        n: Tamaño del cuadrado
+    
+    Returns:
+        bool: True si es un cuadrado mágico válido
+    """
+    # Calcular suma mágica
+    magic_sum = n * (n * n + 1) // 2
+    
+    # Verificar que la matriz sea n×n
+    if len(matrix) != n:
+        logger.debug(f"Número de filas incorrecto: {len(matrix)} != {n}")
+        return False
+    
+    for row in matrix:
+        if len(row) != n:
+            logger.debug(f"Número de columnas incorrecto: {len(row)} != {n}")
+            return False
+    
+    # Verificar sumas de filas
+    for i, row in enumerate(matrix):
+        row_sum = sum(row)
+        if row_sum != magic_sum:
+            logger.debug(f"Suma de fila {i} incorrecta: {row_sum} != {magic_sum}")
+            return False
+    
+    # Verificar sumas de columnas
+    for j in range(n):
+        col_sum = sum(matrix[i][j] for i in range(n))
+        if col_sum != magic_sum:
+            logger.debug(f"Suma de columna {j} incorrecta: {col_sum} != {magic_sum}")
+            return False
+    
+    # Verificar suma de diagonal principal
+    diag_main_sum = sum(matrix[i][i] for i in range(n))
+    if diag_main_sum != magic_sum:
+        logger.debug(f"Suma de diagonal principal incorrecta: {diag_main_sum} != {magic_sum}")
+        return False
+    
+    # Verificar suma de diagonal secundaria
+    diag_anti_sum = sum(matrix[i][n-1-i] for i in range(n))
+    if diag_anti_sum != magic_sum:
+        logger.debug(f"Suma de diagonal secundaria incorrecta: {diag_anti_sum} != {magic_sum}")
+        return False
+    
+    # Verificar que todos los números de 1 a n² aparezcan exactamente una vez
+    all_values = []
+    for row in matrix:
+        all_values.extend(row)
+    
+    expected_values = set(range(1, n * n + 1))
+    actual_values = set(all_values)
+    
+    if actual_values != expected_values:
+        logger.debug(f"Valores incorrectos: esperado {expected_values}, obtenido {actual_values}")
+        return False
+    
+    if len(all_values) != len(set(all_values)):
+        logger.debug("Hay valores duplicados")
+        return False
+    
+    return True
+

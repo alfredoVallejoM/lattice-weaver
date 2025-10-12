@@ -19,6 +19,9 @@ from .sudoku import SudokuProblem
 from .map_coloring import MapColoringProblem
 from .scheduling import JobShopSchedulingProblem
 from .latin_square import LatinSquareProblem
+from .magic_square import MagicSquareProblem
+from .knapsack import KnapsackProblem
+from .logic_puzzle import LogicPuzzleProblem
 
 __all__ = [
     'NQueensProblem',
@@ -27,5 +30,8 @@ __all__ = [
     'MapColoringProblem',
     'JobShopSchedulingProblem',
     'LatinSquareProblem',
+    'MagicSquareProblem',
+    'KnapsackProblem',
+    'LogicPuzzleProblem',
 ]
 

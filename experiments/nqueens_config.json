@@ -1,0 +1,12 @@
+{
+    "problem_family": "nqueens",
+    "problem_params": {
+        "n": 8
+    },
+    "solvers": [
+        "default",
+        "tms_enabled"
+    ],
+    "repetitions": 2,
+    "description": "Benchmark para el problema de 8-Reinas"
+}

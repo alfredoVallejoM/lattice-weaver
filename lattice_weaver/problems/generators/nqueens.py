@@ -110,7 +110,9 @@ class NQueensProblem(ProblemFamily):
                 var_j = f'Q{j}'
                 
                 # Restricción: no misma columna Y no misma diagonal
-                def nqueens_constraint(col_i, col_j, row_i=i, row_j=j):
+                def nqueens_constraint(col_i, col_j, metadata: Dict[str, Any]) -> bool:
+                    row_i = metadata["var1_idx"]
+                    row_j = metadata["var2_idx"]
                     """
                     Restricción N-Queens: dos reinas no pueden estar en la misma
                     columna ni en la misma diagonal.
@@ -134,10 +136,11 @@ class NQueensProblem(ProblemFamily):
                     
                     return True
                 
-                # Dar nombre único a la función para que sea serializable
-                nqueens_constraint.__name__ = f'nqueens_{i}_{j}'
-                
-                engine.add_constraint(var_i, var_j, nqueens_constraint)
+                # Registrar la función de restricción con un nombre único
+                relation_name = f'nqueens_constraint_{i}_{j}'
+                from lattice_weaver.arc_engine.constraints import register_relation
+                register_relation(relation_name, nqueens_constraint)
+                engine.add_constraint(var_i, var_j, relation_name, metadata={'var1_idx': i, 'var2_idx': j})
                 constraint_count += 1
                 logger.debug(f"Añadida restricción entre {var_i} y {var_j}")
         

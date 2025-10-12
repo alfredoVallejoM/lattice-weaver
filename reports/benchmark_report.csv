@@ -1,0 +1,3 @@
+solver_name,time_taken,solutions_found,nodes_explored,backtracks,constraints_checked,initial_domain_size,final_domain_size,problem_family,problem_params,solver_params,solution_valid
+default,0.014630313002271578,1,11,0,0,64,64,nqueens,{'n': 8},{},True
+tms_enabled,0.018476591998478398,1,11,0,0,64,64,nqueens,{'n': 8},{'use_tms': True},True
