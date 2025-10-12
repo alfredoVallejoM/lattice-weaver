@@ -79,3 +79,6 @@ docs/api/_autosummary/
 # OS
 Thumbs.db
 
+
+# GitHub credentials (never commit)
+.github_credentials
