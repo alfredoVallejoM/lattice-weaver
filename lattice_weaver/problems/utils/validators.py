@@ -211,46 +211,40 @@ def validate_sudoku_solution(solution: Dict[str, int], size: int = 9) -> bool:
     return True
 
 
-def validate_latin_square_solution(solution: Dict[str, int], n: int) -> bool:
+def validate_latin_square_solution(matrix: List[List[int]], n: int) -> bool:
     """
     Valida una solución del problema Latin Square.
     
     Args:
-        solution: Diccionario {f'L_{i}_{j}': valor} para celdas
+        matrix: Matriz n×n con valores
         n: Tamaño del cuadrado latino
         
     Returns:
         bool: True si la solución es válida
     """
-    # Verificar que todas las celdas estén llenas
-    if len(solution) != n * n:
-        logger.debug(f"Número incorrecto de celdas: {len(solution)} != {n*n}")
+    # Verificar tamaño
+    if len(matrix) != n:
+        logger.debug(f"Número incorrecto de filas: {len(matrix)} != {n}")
         return False
     
+    for row in matrix:
+        if len(row) != n:
+            logger.debug(f"Número incorrecto de columnas en fila")
+            return False
+    
     # Verificar filas
-    for row in range(n):
-        values = []
-        for col in range(n):
-            var_name = f'L_{row}_{col}'
-            if var_name not in solution:
-                logger.debug(f"Falta celda: {var_name}")
-                return False
-            values.append(solution[var_name])
-        
-        if not validate_all_different(values):
-            logger.debug(f"Fila {row} tiene valores repetidos")
+    for row_idx, row in enumerate(matrix):
+        if not validate_all_different(row):
+            logger.debug(f"Fila {row_idx} tiene valores repetidos")
             return False
         
-        if not all(0 <= v < n for v in values):
-            logger.debug(f"Fila {row} tiene valores fuera de rango")
+        if not all(1 <= v <= n for v in row):
+            logger.debug(f"Fila {row_idx} tiene valores fuera de rango [1, {n}]")
             return False
     
     # Verificar columnas
     for col in range(n):
-        values = []
-        for row in range(n):
-            var_name = f'L_{row}_{col}'
-            values.append(solution[var_name])
+        values = [matrix[row][col] for row in range(n)]
         
         if not validate_all_different(values):
             logger.debug(f"Columna {col} tiene valores repetidos")
