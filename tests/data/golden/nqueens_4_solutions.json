@@ -1,0 +1,16 @@
+{
+  "problem": "N-Reinas n=4",
+  "version": "1.0",
+  "n": 4,
+  "solutions": [
+    {"Q0": 1, "Q1": 3, "Q2": 0, "Q3": 2},
+    {"Q0": 2, "Q1": 0, "Q2": 3, "Q3": 1}
+  ],
+  "metadata": {
+    "generated_by": "LatticeWeaver v4.1",
+    "date": "2025-10-12",
+    "algorithm": "ArcEngine",
+    "total_solutions": 2
+  }
+}
+

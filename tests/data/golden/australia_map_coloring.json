@@ -1,0 +1,24 @@
+{
+  "problem": "Map Coloring - Australia",
+  "version": "1.0",
+  "regions": ["WA", "NT", "SA", "Q", "NSW", "V", "T"],
+  "borders": [
+    ["WA", "NT"],
+    ["WA", "SA"],
+    ["NT", "SA"],
+    ["NT", "Q"],
+    ["SA", "Q"],
+    ["SA", "NSW"],
+    ["SA", "V"],
+    ["Q", "NSW"],
+    ["NSW", "V"]
+  ],
+  "colors": 3,
+  "chromatic_number": 3,
+  "metadata": {
+    "generated_by": "LatticeWeaver v4.1",
+    "date": "2025-10-12",
+    "note": "El mapa de Australia requiere mínimo 3 colores"
+  }
+}
+

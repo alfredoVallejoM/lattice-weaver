@@ -1,0 +1,12 @@
+{
+  "problem": "N-Reinas n=8",
+  "version": "1.0",
+  "n": 8,
+  "total_solutions": 92,
+  "metadata": {
+    "generated_by": "Mathematical fact",
+    "date": "2025-10-12",
+    "note": "El problema de 8-reinas tiene exactamente 92 soluciones distintas"
+  }
+}
+

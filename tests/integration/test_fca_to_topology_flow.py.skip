@@ -1,0 +1,97 @@
+"""
+Tests de integración: Flujo FCA → Topología → Homotopía.
+
+Valida el análisis topológico completo desde retículos de conceptos.
+"""
+import pytest
+from lattice_weaver.lattice_core import ParallelFCAEngine
+from lattice_weaver.topology import TopologyAnalyzer
+from lattice_weaver.homotopy import HomotopyAnalyzer
+
+@pytest.mark.integration
+class TestFCAToTopologyFlow:
+    """Tests del flujo FCA → Topología → Homotopía."""
+    
+    def test_fca_to_lattice_to_topology(self, sample_fca_context, fca_engine):
+        """
+        Test: Contexto formal → Retículo → Análisis topológico.
+        
+        Flujo:
+        1. Construir retículo desde contexto formal
+        2. Analizar topología del retículo
+        3. Calcular números de Betti
+        4. Verificar propiedades topológicas
+        
+        Este test valida la cadena completa de análisis desde
+        datos relacionales hasta características topológicas.
+        """
+        objects, attributes, relation = sample_fca_context
+        
+        # 1. Construir retículo con FCA paralelo
+        concepts = fca_engine.compute_concepts_parallel(objects, attributes, relation)
+        assert len(concepts) > 0, "Debe generar al menos un concepto"
+        
+        # Verificar que hay concepto top y bottom
+        extents = [c.extent for c in concepts]
+        intents = [c.intent for c in concepts]
+        
+        # Concepto top: extent = todos los objetos, intent = vacío
+        has_top = any(len(ext) == len(objects) and len(int_) == 0 
+                     for ext, int_ in zip(extents, intents))
+        
+        # Concepto bottom: extent = vacío, intent = todos los atributos
+        has_bottom = any(len(ext) == 0 and len(int_) == len(attributes)
+                        for ext, int_ in zip(extents, intents))
+        
+        assert has_top or has_bottom, "Debe tener concepto top o bottom"
+        
+        # 2. Analizar topología
+        analyzer = TopologyAnalyzer()
+        topology = analyzer.analyze_lattice(concepts)
+        
+        assert topology is not None, "Debe generar análisis topológico"
+        assert hasattr(topology, 'compute_betti_numbers'), \
+            "Topology debe tener método compute_betti_numbers"
+        
+        # 3. Calcular números de Betti
+        betti_numbers = topology.compute_betti_numbers()
+        
+        assert isinstance(betti_numbers, dict), "Betti numbers debe ser un dict"
+        assert 0 in betti_numbers, "Debe calcular β₀ (componentes conexas)"
+        assert betti_numbers[0] >= 1, "Debe haber al menos una componente conexa"
+        
+        # 4. Verificar propiedades topológicas
+        euler_char = topology.compute_euler_characteristic()
+        assert euler_char is not None, "Debe calcular característica de Euler"
+        assert isinstance(euler_char, (int, float)), \
+            "Característica de Euler debe ser numérica"
+    
+    def test_topology_to_homotopy_groups(self, sample_lattice):
+        """
+        Test: Topología → Grupos de homotopía.
+        
+        Calcula grupos de homotopía desde el retículo y verifica
+        que el análisis homotópico produce resultados válidos.
+        """
+        # Analizar topología desde retículo pre-computado
+        topology_analyzer = TopologyAnalyzer()
+        topology = topology_analyzer.analyze_lattice(sample_lattice)
+        
+        assert topology is not None, "Debe generar análisis topológico"
+        
+        # Analizar homotopía
+        homotopy_analyzer = HomotopyAnalyzer()
+        homotopy = homotopy_analyzer.analyze(topology)
+        
+        assert homotopy is not None, "Debe generar análisis homotópico"
+        
+        # Verificar que se calculó el grupo fundamental
+        assert hasattr(homotopy, 'fundamental_group') or \
+               hasattr(homotopy, 'pi_1'), \
+            "Debe calcular grupo fundamental (π₁)"
+        
+        # Verificar que hay información sobre componentes conexas
+        if hasattr(homotopy, 'num_components'):
+            assert homotopy.num_components >= 1, \
+                "Debe haber al menos una componente conexa"
+

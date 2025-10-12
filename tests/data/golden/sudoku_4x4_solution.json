@@ -1,0 +1,22 @@
+{
+  "problem": "Sudoku 4x4",
+  "version": "1.0",
+  "puzzle": [
+    [1, 0, 0, 4],
+    [0, 0, 1, 0],
+    [0, 1, 0, 0],
+    [4, 0, 0, 1]
+  ],
+  "solution": [
+    [1, 2, 3, 4],
+    [3, 4, 1, 2],
+    [2, 1, 4, 3],
+    [4, 3, 2, 1]
+  ],
+  "metadata": {
+    "generated_by": "LatticeWeaver v4.1",
+    "date": "2025-10-12",
+    "unique": true
+  }
+}
+

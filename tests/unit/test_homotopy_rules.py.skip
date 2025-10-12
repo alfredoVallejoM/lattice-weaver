@@ -1,0 +1,285 @@
+#!/usr/bin/env python3
+# test_homotopy_rules.py
+
+"""
+Script de Prueba para Reglas de Homotopía Precomputadas
+
+Este script valida la implementación de la Fase 1: Reglas de Homotopía Precomputadas.
+
+Autor: LatticeWeaver Team
+Fecha: 11 de Octubre de 2025
+"""
+
+import sys
+import logging
+from pathlib import Path
+
+# Añadir el directorio lattice_weaver al path
+sys.path.insert(0, str(Path(__file__).parent))
+
+from lattice_weaver import ArcEngineExtended, HomotopyRules
+
+# Configurar logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+logger = logging.getLogger(__name__)
+
+
+def test_basic_csp():
+    """
+    Prueba básica: CSP con 4 variables y restricciones de desigualdad.
+    
+    Variables: X1, X2, X3, X4
+    Dominios: {1, 2, 3}
+    Restricciones: X1 != X2, X2 != X3, X3 != X4, X1 != X4
+    """
+    logger.info("=" * 60)
+    logger.info("TEST 1: CSP Básico con Reglas de Homotopía")
+    logger.info("=" * 60)
+    
+    # Crear engine con reglas de homotopía habilitadas
+    engine = ArcEngineExtended(use_homotopy_rules=True)
+    
+    # Añadir variables
+    for i in range(1, 5):
+        engine.add_variable(f"X{i}", [1, 2, 3])
+    
+    # Añadir restricciones de desigualdad
+    def not_equal(a, b):
+        return a != b
+    
+    engine.add_constraint("X1", "X2", not_equal, "c1")
+    engine.add_constraint("X2", "X3", not_equal, "c2")
+    engine.add_constraint("X3", "X4", not_equal, "c3")
+    engine.add_constraint("X1", "X4", not_equal, "c4")
+    
+    logger.info(f"Engine creado: {engine}")
+    
+    # Ejecutar consistencia de arcos (esto precomputará las reglas)
+    logger.info("\nEjecutando consistencia de arcos...")
+    result = engine.enforce_arc_consistency()
+    
+    logger.info(f"\nResultado: {'Consistente' if result else 'Inconsistente'}")
+    
+    # Mostrar estadísticas de homotopía
+    if engine.use_homotopy_rules:
+        stats = engine.get_homotopy_statistics()
+        logger.info("\nEstadísticas de Homotopía:")
+        for key, value in stats.items():
+            logger.info(f"  {key}: {value}")
+        
+        # Mostrar grupos independientes
+        groups = engine.get_independent_groups()
+        logger.info(f"\nGrupos independientes encontrados: {len(groups)}")
+        for i, group in enumerate(groups, 1):
+            logger.info(f"  Grupo {i}: {group}")
+    
+    # Mostrar dominios finales
+    logger.info("\nDominios finales:")
+    for var_name, domain in engine.variables.items():
+        values = list(domain.get_values())
+        logger.info(f"  {var_name}: {values}")
+    
+    return result
+
+
+def test_independent_constraints():
+    """
+    Prueba con restricciones independientes.
+    
+    Variables: A, B, C, D
+    Restricciones: A != B (independiente de C != D)
+    """
+    logger.info("\n" + "=" * 60)
+    logger.info("TEST 2: Restricciones Independientes")
+    logger.info("=" * 60)
+    
+    engine = ArcEngineExtended(use_homotopy_rules=True)
+    
+    # Añadir variables
+    for var in ["A", "B", "C", "D"]:
+        engine.add_variable(var, [1, 2, 3, 4])
+    
+    # Restricciones independientes
+    def not_equal(a, b):
+        return a != b
+    
+    engine.add_constraint("A", "B", not_equal, "c_ab")
+    engine.add_constraint("C", "D", not_equal, "c_cd")
+    
+    logger.info(f"Engine creado: {engine}")
+    
+    # Ejecutar consistencia
+    result = engine.enforce_arc_consistency()
+    
+    logger.info(f"\nResultado: {'Consistente' if result else 'Inconsistente'}")
+    
+    # Verificar que se detectaron como independientes
+    if engine.use_homotopy_rules:
+        stats = engine.get_homotopy_statistics()
+        logger.info("\nEstadísticas de Homotopía:")
+        for key, value in stats.items():
+            logger.info(f"  {key}: {value}")
+        
+        # Verificar pares conmutativos
+        rules = engine.homotopy_rules
+        is_comm = rules.is_commutative("c_ab", "c_cd")
+        logger.info(f"\n¿c_ab y c_cd conmutan? {is_comm}")
+        
+        # Mostrar grupos
+        groups = engine.get_independent_groups()
+        logger.info(f"\nGrupos independientes: {len(groups)}")
+        for i, group in enumerate(groups, 1):
+            logger.info(f"  Grupo {i}: {group}")
+    
+    return result
+
+
+def test_complex_graph():
+    """
+    Prueba con grafo de restricciones más complejo.
+    
+    Simula un problema de coloración de grafos.
+    """
+    logger.info("\n" + "=" * 60)
+    logger.info("TEST 3: Grafo de Restricciones Complejo")
+    logger.info("=" * 60)
+    
+    engine = ArcEngineExtended(use_homotopy_rules=True)
+    
+    # Variables (nodos del grafo)
+    nodes = ["N1", "N2", "N3", "N4", "N5"]
+    colors = ["Red", "Green", "Blue"]
+    
+    for node in nodes:
+        engine.add_variable(node, colors)
+    
+    # Restricciones (aristas del grafo)
+    edges = [
+        ("N1", "N2"),
+        ("N1", "N3"),
+        ("N2", "N3"),
+        ("N2", "N4"),
+        ("N3", "N4"),
+        ("N4", "N5")
+    ]
+    
+    def different_colors(c1, c2):
+        return c1 != c2
+    
+    for i, (n1, n2) in enumerate(edges):
+        engine.add_constraint(n1, n2, different_colors, f"edge_{i}")
+    
+    logger.info(f"Engine creado: {engine}")
+    logger.info(f"Problema de coloración: {len(nodes)} nodos, {len(edges)} aristas")
+    
+    # Ejecutar consistencia
+    result = engine.enforce_arc_consistency()
+    
+    logger.info(f"\nResultado: {'Consistente' if result else 'Inconsistente'}")
+    
+    # Estadísticas
+    if engine.use_homotopy_rules:
+        stats = engine.get_homotopy_statistics()
+        logger.info("\nEstadísticas de Homotopía:")
+        for key, value in stats.items():
+            logger.info(f"  {key}: {value}")
+        
+        # Orden de propagación
+        rules = engine.homotopy_rules
+        order = rules.get_optimal_propagation_order()
+        logger.info(f"\nOrden óptimo de propagación:")
+        logger.info(f"  {' -> '.join(order)}")
+    
+    # Dominios finales
+    logger.info("\nDominios finales:")
+    for var_name, domain in engine.variables.items():
+        values = list(domain.get_values())
+        logger.info(f"  {var_name}: {values}")
+    
+    return result
+
+
+def test_comparison_with_without_homotopy():
+    """
+    Comparación de rendimiento con y sin reglas de homotopía.
+    """
+    logger.info("\n" + "=" * 60)
+    logger.info("TEST 4: Comparación Con/Sin Reglas de Homotopía")
+    logger.info("=" * 60)
+    
+    import time
+    
+    # Crear problema de prueba
+    def create_test_problem(engine):
+        for i in range(1, 11):
+            engine.add_variable(f"V{i}", list(range(1, 6)))
+        
+        def not_equal(a, b):
+            return a != b
+        
+        # Crear restricciones en cadena
+        for i in range(1, 10):
+            engine.add_constraint(f"V{i}", f"V{i+1}", not_equal, f"c{i}")
+    
+    # Test SIN reglas de homotopía
+    logger.info("\nSIN reglas de homotopía:")
+    engine_without = ArcEngineExtended(use_homotopy_rules=False)
+    create_test_problem(engine_without)
+    
+    start = time.time()
+    result_without = engine_without.enforce_arc_consistency()
+    time_without = time.time() - start
+    
+    logger.info(f"  Tiempo: {time_without:.6f} segundos")
+    logger.info(f"  Resultado: {'Consistente' if result_without else 'Inconsistente'}")
+    
+    # Test CON reglas de homotopía
+    logger.info("\nCON reglas de homotopía:")
+    engine_with = ArcEngineExtended(use_homotopy_rules=True)
+    create_test_problem(engine_with)
+    
+    start = time.time()
+    result_with = engine_with.enforce_arc_consistency()
+    time_with = time.time() - start
+    
+    logger.info(f"  Tiempo: {time_with:.6f} segundos")
+    logger.info(f"  Resultado: {'Consistente' if result_with else 'Inconsistente'}")
+    
+    # Comparación
+    if time_without > 0:
+        speedup = time_without / time_with if time_with > 0 else float('inf')
+        logger.info(f"\nSpeedup: {speedup:.2f}x")
+    
+    return result_with
+
+
+def main():
+    """Ejecuta todos los tests."""
+    logger.info("Iniciando suite de pruebas para Reglas de Homotopía Precomputadas")
+    logger.info("LatticeWeaver v4 - Fase 1\n")
+    
+    try:
+        # Ejecutar tests
+        test_basic_csp()
+        test_independent_constraints()
+        test_complex_graph()
+        test_comparison_with_without_homotopy()
+        
+        logger.info("\n" + "=" * 60)
+        logger.info("TODOS LOS TESTS COMPLETADOS EXITOSAMENTE")
+        logger.info("=" * 60)
+        
+    except Exception as e:
+        logger.error(f"\nError durante las pruebas: {e}", exc_info=True)
+        return 1
+    
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+

@@ -1,0 +1,156 @@
+"""
+Tests de integración: Pipeline de optimizaciones.
+
+Valida que todas las optimizaciones funcionan juntas correctamente.
+"""
+import pytest
+import time
+from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.arc_engine.advanced_optimizations import (
+    create_optimization_system,
+    SmartMemoizer,
+    ConstraintCompiler
+)
+
+@pytest.mark.integration
+class TestOptimizationPipeline:
+    """Tests del pipeline completo de optimizaciones."""
+    
+    def test_optimization_system_integration(self, nqueens_problem):
+        """
+        Test: Sistema de optimización integrado.
+        
+        Verifica que el sistema de optimización funciona end-to-end
+        y que las optimizaciones se aplican correctamente.
+        """
+        # Crear sistema de optimización
+        opt_system = create_optimization_system()
+        
+        assert opt_system is not None, "Sistema de optimización debe crearse"
+        assert hasattr(opt_system, 'memoizer'), "Debe tener memoizer"
+        assert hasattr(opt_system, 'compiler'), "Debe tener compiler"
+        
+        # Crear motor con optimizaciones
+        engine = ArcEngine(optimization_system=opt_system)
+        
+        # Resolver problema
+        solutions = engine.solve(nqueens_problem)
+        
+        assert len(solutions) > 0, "Debe encontrar soluciones"
+        assert len(solutions) == 2, "N-Reinas n=4 tiene 2 soluciones"
+        
+        # Verificar que las optimizaciones se usaron
+        stats = opt_system.get_global_statistics()
+        
+        assert 'memoizer' in stats, "Estadísticas deben incluir memoizer"
+        assert 'compiler' in stats, "Estadísticas deben incluir compiler"
+        
+        # Verificar que hubo actividad (hits o misses)
+        memoizer_active = (stats['memoizer']['hits'] > 0 or 
+                          stats['memoizer']['misses'] > 0)
+        assert memoizer_active, "Memoizer debe haberse usado"
+        
+        # Verificar que se compilaron restricciones
+        assert stats['compiler']['compilations'] > 0, \
+            "Compiler debe haber compilado restricciones"
+    
+    def test_memoization_with_compilation(self):
+        """
+        Test: Memoización + Compilación trabajando juntas.
+        
+        Verifica que la memoización funciona correctamente con
+        restricciones compiladas, mejorando el rendimiento.
+        """
+        memoizer = SmartMemoizer(initial_size=128)
+        compiler = ConstraintCompiler()
+        
+        # Definir restricción simple
+        constraint = lambda a, b: a != b
+        
+        # Compilar restricción
+        compiled = compiler.compile(constraint)
+        assert compiled is not None, "Compilación debe ser exitosa"
+        
+        # Función que ejecuta restricción compilada con memoización
+        call_count = [0]  # Usar lista para mutabilidad en closure
+        
+        def execute_constraint(a, b):
+            call_count[0] += 1
+            # Intentar obtener de caché
+            key = (a, b)
+            cached = memoizer.get(key)
+            if cached is not None:
+                return cached
+            
+            # Ejecutar y cachear
+            result = compiler.execute(compiled, a, b)
+            memoizer.put(key, result)
+            return result
+        
+        # Primera ejecución (miss)
+        result1 = execute_constraint(1, 2)
+        assert result1 == True, "1 != 2 debe ser True"
+        assert call_count[0] == 1, "Primera llamada debe ejecutar"
+        
+        # Segunda ejecución con mismos argumentos (hit)
+        result2 = execute_constraint(1, 2)
+        assert result2 == True, "Resultado debe ser el mismo"
+        assert call_count[0] == 2, "Segunda llamada debe buscar en caché"
+        
+        # Tercera ejecución con argumentos diferentes (miss)
+        result3 = execute_constraint(1, 1)
+        assert result3 == False, "1 != 1 debe ser False"
+        
+        # Verificar estadísticas del memoizer
+        stats = memoizer.get_statistics()
+        assert stats['hits'] >= 1, "Debe haber al menos un hit"
+        assert stats['misses'] >= 1, "Debe haber al menos un miss"
+    
+    @pytest.mark.slow
+    def test_performance_improvement_measurable(self, nqueens_problem):
+        """
+        Test: Mejora de rendimiento medible.
+        
+        Compara rendimiento con y sin optimizaciones para verificar
+        que las optimizaciones tienen un impacto positivo.
+        
+        Nota: En problemas pequeños la mejora puede no ser significativa.
+        Este test es más relevante en benchmarks con problemas grandes.
+        """
+        # Resolver sin optimizaciones (baseline)
+        engine_baseline = ArcEngine()
+        
+        start = time.perf_counter()
+        solutions_baseline = engine_baseline.solve(nqueens_problem)
+        time_baseline = time.perf_counter() - start
+        
+        assert len(solutions_baseline) > 0, "Baseline debe encontrar soluciones"
+        
+        # Resolver con optimizaciones
+        opt_system = create_optimization_system()
+        engine_optimized = ArcEngine(optimization_system=opt_system)
+        
+        start = time.perf_counter()
+        solutions_optimized = engine_optimized.solve(nqueens_problem)
+        time_optimized = time.perf_counter() - start
+        
+        assert len(solutions_optimized) > 0, "Optimized debe encontrar soluciones"
+        
+        # Verificar que las soluciones son las mismas
+        assert len(solutions_baseline) == len(solutions_optimized), \
+            "Ambos deben encontrar el mismo número de soluciones"
+        
+        # Reportar tiempos (no fallar si no hay speedup en problema pequeño)
+        speedup = time_baseline / time_optimized if time_optimized > 0 else 1.0
+        
+        print(f"\n  Baseline: {time_baseline*1000:.2f}ms")
+        print(f"  Optimized: {time_optimized*1000:.2f}ms")
+        print(f"  Speedup: {speedup:.2f}x")
+        
+        # Verificar que al menos se ejecutó (no falló)
+        assert time_optimized > 0, "Versión optimizada debe ejecutarse"
+        
+        # En problemas grandes, esperaríamos speedup > 1.0
+        # Para N-Reinas n=4, puede no haber mejora significativa
+        # Este test es principalmente para verificar que funciona
+
