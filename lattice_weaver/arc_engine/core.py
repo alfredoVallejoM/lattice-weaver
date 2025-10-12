@@ -87,7 +87,24 @@ class ArcEngine:
         if cid in self.constraints:
             raise ValueError(f"Constraint ID '{cid}' already exists.")
         
-        self.constraints[cid] = Constraint(var1, var2, relation)
+        relation_name = relation.__name__ if hasattr(relation, '__name__') and relation.__name__ != '<lambda>' else cid + "_relation"
+        from .constraints import register_relation
+        try:
+            register_relation(relation_name, relation)
+        except ValueError: # Ya registrada, no hay problema
+            pass
+        
+        # Extraer índices i y j de los nombres de las variables si son del tipo Q{idx}
+        var1_idx = int(var1[1:]) if var1.startswith("Q") and var1[1:].isdigit() else None
+        var2_idx = int(var2[1:]) if var2.startswith("Q") and var2[1:].isdigit() else None
+        
+        metadata = {}
+        if var1_idx is not None and var2_idx is not None:
+            metadata["var1_idx"] = var1_idx
+            metadata["var2_idx"] = var2_idx
+
+        self.constraints[cid] = Constraint(var1, var2, relation_name, metadata=metadata)
+
         self.graph.add_edge(var1, var2, cid=cid)
 
     def enforce_arc_consistency(self) -> bool:
@@ -124,7 +141,13 @@ class ArcEngine:
             logger.debug(f"Dominios antes de revisar: {xi}:{list(self.variables[xi].get_values())}, {xj}:{list(self.variables[xj].get_values())}")
 
             # The core of the AC-3.1 algorithm
-            revised, removed_values = revise_with_last_support(self, xi, xj, constraint_id)
+            constraint = self.constraints[constraint_id]
+            from .constraints import get_relation
+            relation_func = get_relation(constraint.relation_name)
+
+            revised, removed_values = revise_with_last_support(self, xi, xj, constraint_id, relation_func=relation_func, metadata=constraint.metadata)
+
+
 
             if revised:
                 logger.debug(f"Dominio de {xi} revisado. Valores eliminados: {removed_values}. Nuevo dominio: {list(self.variables[xi].get_values())}")
@@ -243,11 +266,11 @@ class ArcEngine:
             has_support = False
             for neighbor_val in self.variables[neighbor].get_values():
                 if constraint.var1 == variable:
-                    if constraint.relation(value, neighbor_val):
+                    if constraint.get_relation()(value, neighbor_val, constraint.metadata):
                         has_support = True
                         break
                 else:
-                    if constraint.relation(neighbor_val, value):
+                    if constraint.get_relation()(neighbor_val, value, constraint.metadata):
                         has_support = True
                         break
             

@@ -20,13 +20,10 @@ logger = logging.getLogger(__name__)
 
 def _worker_init():
     """Función de inicialización para cada worker del pool."""
-    from .constraints import register_relation, nqueens_not_equal, nqueens_not_diagonal, RELATION_REGISTRY
-    
-    # Asegurar que las relaciones se registren en cada proceso hijo
-    if "nqueens_not_equal" not in RELATION_REGISTRY:
-        register_relation("nqueens_not_equal", nqueens_not_equal)
-    if "nqueens_not_diagonal" not in RELATION_REGISTRY:
-        register_relation("nqueens_not_diagonal", nqueens_not_diagonal)
+    # Importar constraints para asegurar que el registro global se inicialice en el worker
+    import lattice_weaver.arc_engine.constraints
+    # Las relaciones nqueens_not_equal y nqueens_not_diagonal se registran automáticamente
+    # cuando lattice_weaver.arc_engine.constraints es importado.
 
 def _process_independent_group_worker(args: Tuple) -> Tuple[bool, Dict[str, Set[Any]]]:
     """
@@ -43,7 +40,7 @@ def _process_independent_group_worker(args: Tuple) -> Tuple[bool, Dict[str, Set[
     """
     from .ac31 import revise_with_last_support
     from .domains import SetDomain
-    from .constraints import get_relation
+    from lattice_weaver.arc_engine.constraints import get_relation
 
     group_constraints_data, variables_state, last_support_state = args
     
@@ -68,6 +65,7 @@ def _process_independent_group_worker(args: Tuple) -> Tuple[bool, Dict[str, Set[
         var1 = constraint_data["var1"]
         var2 = constraint_data["var2"]
         relation_name = constraint_data["relation_name"]
+        metadata = constraint_data["metadata"]
         
         # Obtener la función de relación registrada
         relation_func = get_relation(relation_name)
@@ -76,7 +74,8 @@ def _process_independent_group_worker(args: Tuple) -> Tuple[bool, Dict[str, Set[
         for xi, xj in [(var1, var2), (var2, var1)]:
             # Solo revisar si ambas variables existen en el motor local
             if xi in local_engine.variables and xj in local_engine.variables:
-                revised, removed = revise_with_last_support(local_engine, xi, xj, cid, relation_func=relation_func)
+                revised, removed = revise_with_last_support(local_engine, xi, xj, cid, relation_func=relation_func, metadata=metadata)
+
                 
                 if revised:
                     # Verificar inconsistencia
@@ -185,7 +184,7 @@ class TopologicalParallelAC3:
             False si se encuentra inconsistencia, True si es consistente
         """
         from .ac31 import revise_with_last_support
-        from .constraints import get_relation
+        from lattice_weaver.arc_engine.constraints import get_relation
         
         queue = deque()
         for cid, c in self.arc_engine.constraints.items():
@@ -199,8 +198,9 @@ class TopologicalParallelAC3:
             relation_func = get_relation(constraint.relation_name)
 
             revised, removed_values = revise_with_last_support(
-                self.arc_engine, xi, xj, constraint_id, relation_func=relation_func
+                self.arc_engine, xi, xj, constraint_id, relation_func=relation_func, metadata=constraint.metadata
             )
+
             
             if revised:
                 if not self.arc_engine.variables[xi]:
@@ -245,7 +245,8 @@ class TopologicalParallelAC3:
                         "id": cid,
                         "var1": constraint.var1,
                         "var2": constraint.var2,
-                        "relation_name": constraint.relation_name
+                        "relation_name": constraint.relation_name,
+                        "metadata": constraint.metadata
                     })
             
             if group_constraints_data:
