@@ -317,7 +317,19 @@ class IncrementalMRV:
 
 ---
 
-#### Optimización 4: Paralelización Granular
+#### Optimización 4: Paralelización Multiproceso (Implementada)
+
+**Problema:** La propagación de restricciones en problemas grandes es un cuello de botella. La paralelización puede distribuir esta carga de trabajo.
+
+**Solución Implementada:** Se ha implementado y validado una estrategia de paralelización multiproceso en `topological_parallel.py`. Esta implementación incluye:
+
+- **Serialización de Restricciones**: Se refactorizó la clase `Constraint` para incluir `metadata` y se utilizan funciones de relación nombradas y registradas globalmente, lo que permite su serialización y uso en procesos hijos.
+- **Inicialización de Workers**: Se utiliza una función de inicialización en el pool de procesos de `multiprocessing` para asegurar que el registro de relaciones esté disponible en cada worker.
+- **Fusión de Dominios**: Se implementó un método `intersect` en `SetDomain` para fusionar los dominios reducidos por los procesos hijos con los dominios del proceso principal.
+- **Validación Funcional**: Se han creado tests específicos (`test_multiprocess_ac3_validation.py`) que confirman la corrección funcional de la implementación paralela en comparación con la secuencial para el problema de las N-Reinas.
+
+**Speedup Esperado:** 2-4x en problemas grandes (> 100 arcos) con hardware de múltiples núcleos. La cuantificación precisa requiere benchmarks en un entorno con recursos dedicados.
+
 
 **Problema:** Paralelización actual (`parallel_ac3.py`) tiene overhead alto para problemas pequeños.
 

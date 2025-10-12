@@ -33,18 +33,18 @@ def test_csp_solution_to_formal_proof(csp_solver, formal_verifier, nqueens_4_pro
     # Por ahora, validamos que la solución es consistente
     
     # Verificar que todas las variables están asignadas
-    assert len(solution) == len(nqueens_4_problem.variables)
+    assert len(solution.assignment) == len(nqueens_4_problem.variables)
     
     # Verificar que todas las restricciones se satisfacen
     for v1, v2, predicate in nqueens_4_problem.constraints:
-        val1 = solution[v1]
-        val2 = solution[v2]
+        val1 = solution.assignment[v1]
+        val2 = solution.assignment[v2]
         assert predicate(val1, val2), f"Restricción {v1}={val1}, {v2}={val2} no satisfecha"
     
     # 3. Verificación formal (simplificada)
     # En un sistema completo, esto invocaría al type checker
     # Por ahora, verificamos la consistencia estructural
-    assert all(0 <= v < 4 for v in solution.values()), "Valores fuera de dominio"
+    assert all(0 <= v < 4 for v in solution.assignment.values()), "Valores fuera de dominio"
     
     print(f"✅ Solución CSP verificada formalmente: {solution}")
 
@@ -124,8 +124,10 @@ def test_csp_optimization_with_formal_guarantees(csp_solver, nqueens_4_problem):
     for solution in stats_optimized.solutions:
         # Verificar restricciones
         for v1, v2, predicate in nqueens_4_problem.constraints:
-            val1 = solution[v1]
-            val2 = solution[v2]
+
+
+            val1 = solution.assignment[v1]
+            val2 = solution.assignment[v2]
             assert predicate(val1, val2), \
                 f"Solución optimizada viola restricción {v1}={val1}, {v2}={val2}"
     

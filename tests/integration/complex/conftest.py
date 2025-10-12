@@ -21,7 +21,7 @@ def csp_solver():
 def formal_verifier():
     """Verificador formal con type checker."""
     type_checker = TypeChecker()
-    return CubicalEngine(type_checker)
+    return CubicalEngine()
 
 
 @pytest.fixture
@@ -55,7 +55,9 @@ def nqueens_4_problem():
             constraints.append((
                 f'Q{i}',
                 f'Q{j}',
-                lambda ri, rj, i=i, j=j: abs(ri - rj) != abs(i - j)
+                # La lambda debe capturar i y j para usarlos en la comparación de diagonales
+                # y solo aceptar ri, rj como argumentos de los valores de dominio.
+                lambda ri, rj, current_i=i, current_j=j: abs(ri - rj) != abs(current_i - current_j)
             ))
     
     return CSPProblem(

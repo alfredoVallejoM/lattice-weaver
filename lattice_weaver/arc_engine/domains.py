@@ -52,6 +52,11 @@ class SetDomain(Domain):
     def get_values(self) -> Iterable[Any]:
         return self._values
 
+    def intersect(self, other_values: Iterable[Any]):
+        """Intersect the current domain with another set of values."""
+        self._values.intersection_update(other_values)
+
+
 class BitsetDomain(Domain):
     """Domain represented as a bitset. Optimal for dense integer domains."""
     def __init__(self, min_val: int, max_val: int, initial_values: Optional[Set[int]] = None):
