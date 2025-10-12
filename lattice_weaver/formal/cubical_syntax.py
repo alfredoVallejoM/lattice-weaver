@@ -556,3 +556,44 @@ def identity_type(type_: Type, left: Term, right: Term) -> PathType:
     """
     return PathType(type_, left, right)
 
+
+# ============================================================================
+# TIPOS Y TÉRMINOS AUXILIARES
+# ============================================================================
+
+@dataclass(frozen=True)
+class UnitType(Type):
+    """
+    Tipo unitario (tipo trivial con un solo habitante).
+    
+    Representa proposiciones siempre verdaderas o ausencia de restricciones.
+    En lógica, corresponde a ⊤ (verdadero).
+    """
+    
+    def free_vars(self) -> Set[str]:
+        return set()
+    
+    def substitute(self, var: str, term: Term) -> 'Type':
+        return self
+    
+    def __str__(self) -> str:
+        return "⊤"
+
+
+@dataclass(frozen=True)
+class Unit(Term):
+    """
+    Término unitario (único habitante del tipo unitario).
+    
+    Representa pruebas triviales o valores por defecto.
+    """
+    
+    def free_vars(self) -> Set[str]:
+        return set()
+    
+    def substitute(self, var: str, term: Term) -> Term:
+        return self
+    
+    def __str__(self) -> str:
+        return "()"
+
