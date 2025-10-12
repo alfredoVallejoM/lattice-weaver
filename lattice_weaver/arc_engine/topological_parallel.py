@@ -11,12 +11,22 @@ Fecha: 11 de Octubre de 2025
 """
 
 from multiprocessing import Pool, Manager, cpu_count
-from typing import Dict, List, Set, Tuple, Any
+from typing import Dict, List, Set, Tuple, Any, Optional
 import logging
 from copy import deepcopy
+from collections import deque
 
 logger = logging.getLogger(__name__)
 
+def _worker_init():
+    """Función de inicialización para cada worker del pool."""
+    from .constraints import register_relation, nqueens_not_equal, nqueens_not_diagonal, RELATION_REGISTRY
+    
+    # Asegurar que las relaciones se registren en cada proceso hijo
+    if "nqueens_not_equal" not in RELATION_REGISTRY:
+        register_relation("nqueens_not_equal", nqueens_not_equal)
+    if "nqueens_not_diagonal" not in RELATION_REGISTRY:
+        register_relation("nqueens_not_diagonal", nqueens_not_diagonal)
 
 def _process_independent_group_worker(args: Tuple) -> Tuple[bool, Dict[str, Set[Any]]]:
     """
@@ -26,60 +36,55 @@ def _process_independent_group_worker(args: Tuple) -> Tuple[bool, Dict[str, Set[
     de restricciones que son independientes entre sí.
     
     Args:
-        args: Tupla con (group_constraints, variables_state, last_support_state)
+        args: Tupla con (group_constraints_data, variables_state, last_support_state)
     
     Returns:
         Tupla (consistente, dominios_modificados)
     """
     from .ac31 import revise_with_last_support
+    from .domains import SetDomain
+    from .constraints import get_relation
+
+    group_constraints_data, variables_state, last_support_state = args
     
-    group_constraints, variables_state, last_support_state = args
-    
-    # Reconstruir el estado local
-    class LocalEngine:
+    # Reconstruir el estado local del ArcEngine (solo lo necesario para revise_with_last_support)
+    class LocalArcEngine:
         def __init__(self, vars_state, ls_state):
             self.variables = {}
             self.last_support = ls_state
+            self.constraints = {}
             
             # Reconstruir dominios desde sets
             for var_name, values_set in vars_state.items():
-                from .domains import SetDomain
                 self.variables[var_name] = SetDomain(values_set)
-    
-    local_engine = LocalEngine(variables_state, last_support_state)
+
+    local_engine = LocalArcEngine(variables_state, last_support_state)
     
     # Procesar restricciones del grupo
     modified_domains = {}
     
-    for constraint_data in group_constraints:
-        cid = constraint_data['id']
-        var1 = constraint_data['var1']
-        var2 = constraint_data['var2']
-        relation = constraint_data['relation']
+    for constraint_data in group_constraints_data:
+        cid = constraint_data["id"]
+        var1 = constraint_data["var1"]
+        var2 = constraint_data["var2"]
+        relation_name = constraint_data["relation_name"]
         
-        # Crear un constraint temporal
-        class TempConstraint:
-            def __init__(self, v1, v2, rel):
-                self.var1 = v1
-                self.var2 = v2
-                self.relation = rel
-        
-        # Añadir constraint al engine local
-        if not hasattr(local_engine, 'constraints'):
-            local_engine.constraints = {}
-        local_engine.constraints[cid] = TempConstraint(var1, var2, relation)
-        
+        # Obtener la función de relación registrada
+        relation_func = get_relation(relation_name)
+
         # Revisar ambos arcos
         for xi, xj in [(var1, var2), (var2, var1)]:
-            revised, removed = revise_with_last_support(local_engine, xi, xj, cid)
-            
-            if revised:
-                # Verificar inconsistencia
-                if not local_engine.variables[xi]:
-                    return False, {}
+            # Solo revisar si ambas variables existen en el motor local
+            if xi in local_engine.variables and xj in local_engine.variables:
+                revised, removed = revise_with_last_support(local_engine, xi, xj, cid, relation_func=relation_func)
                 
-                # Registrar dominio modificado
-                modified_domains[xi] = set(local_engine.variables[xi].get_values())
+                if revised:
+                    # Verificar inconsistencia
+                    if not local_engine.variables[xi]:
+                        return False, {}
+                    
+                    # Registrar dominio modificado
+                    modified_domains[xi] = set(local_engine.variables[xi].get_values())
     
     # Retornar dominios modificados
     return True, modified_domains
@@ -114,29 +119,63 @@ class TopologicalParallelAC3:
         logger.info(f"TopologicalParallelAC3 inicializado con {self.num_workers} workers")
     
     def _precompute_homotopy_rules(self):
-        """Precomputa las reglas de homotopía si no existen."""
+        """
+        Precomputa las reglas de homotopía si no existen.
+        """
         if self.homotopy_rules is None:
             from ..homotopy.rules import HomotopyRules
             self.homotopy_rules = HomotopyRules()
-            self.homotopy_rules.precompute_from_constraints(self.arc_engine.constraints)
+            # Pasar solo los IDs de las restricciones, no los objetos completos
+            self.homotopy_rules.precompute_from_engine(self.arc_engine)
+
             logger.info(f"Reglas de homotopía precomputadas: "
                        f"{len(self.homotopy_rules.commutative_pairs)} pares conmutativos")
     
     def enforce_arc_consistency_topological(self) -> bool:
         """
-        Ejecuta AC-3 con optimización topológica.
-        
-        Nota: Debido a limitaciones de serialización en multiprocessing (funciones
-        lambda no son serializables), esta implementación ejecuta AC-3 secuencial
-        estándar. La verdadera paralelización requeriría restricciones serializables.
+        Ejecuta AC-3 con optimización topológica y paralelización.
         
         Returns:
             False si se encuentra una inconsistencia, True si es consistente
         """
-        # Ejecutar AC-3 secuencial estándar
-        # (sin overhead de precomputación de reglas de homotopía)
-        logger.info("Ejecutando AC-3 secuencial estándar (modo topológico)")
-        return self._execute_optimized_sequential()
+        logger.info("Iniciando enforce_arc_consistency_topological...")
+        self._precompute_homotopy_rules()
+        
+        independent_groups = self.homotopy_rules.get_independent_groups()
+        if not independent_groups:
+            logger.warning("No se encontraron grupos independientes. Ejecutando AC-3 secuencial.")
+            return self._execute_optimized_sequential()
+
+        # Preparar datos para los workers
+        groups_data = self._prepare_groups_data(independent_groups)
+        
+        # Ejecutar en paralelo
+        with Pool(processes=self.num_workers, initializer=_worker_init) as pool:
+            results = pool.map(_process_independent_group_worker, groups_data)
+        
+        # Fusionar resultados
+        inconsistent = False
+        for consistent, modified_domains in results:
+            if not consistent:
+                inconsistent = True
+                break
+            for var_name, new_domain_values in modified_domains.items():
+                # Intersección de dominios para fusionar los resultados de los workers
+                current_domain = self.arc_engine.variables[var_name]
+                current_domain.intersect(new_domain_values)
+                if not current_domain:
+                    inconsistent = True
+                    break
+            if inconsistent:
+                break
+
+        if inconsistent:
+            logger.debug("Inconsistencia detectada durante la fusión de resultados paralelos.")
+            return False
+
+        # Una pasada final secuencial para propagar cualquier cambio residual
+        # que pueda haber surgido de la fusión de dominios.
+        return self._final_propagation()
     
     def _execute_optimized_sequential(self) -> bool:
         """
@@ -146,17 +185,21 @@ class TopologicalParallelAC3:
             False si se encuentra inconsistencia, True si es consistente
         """
         from .ac31 import revise_with_last_support
+        from .constraints import get_relation
         
-        queue = []
+        queue = deque()
         for cid, c in self.arc_engine.constraints.items():
             queue.append((c.var1, c.var2, cid))
             queue.append((c.var2, c.var1, cid))
         
         while queue:
-            xi, xj, constraint_id = queue.pop(0)
+            xi, xj, constraint_id = queue.popleft()
             
+            constraint = self.arc_engine.constraints[constraint_id]
+            relation_func = get_relation(constraint.relation_name)
+
             revised, removed_values = revise_with_last_support(
-                self.arc_engine, xi, xj, constraint_id
+                self.arc_engine, xi, xj, constraint_id, relation_func=relation_func
             )
             
             if revised:
@@ -166,8 +209,9 @@ class TopologicalParallelAC3:
                 # Añadir arcos afectados
                 for neighbor in self.arc_engine.graph.neighbors(xi):
                     if neighbor != xj:
-                        c_id = self.arc_engine.graph.get_edge_data(neighbor, xi)['cid']
-                        queue.append((neighbor, xi, c_id))
+                        c_id = self.arc_engine.graph.get_edge_data(neighbor, xi)["cid"]
+                        if (neighbor, xi, c_id) not in queue:
+                            queue.append((neighbor, xi, c_id))
         
         return True
     
@@ -179,7 +223,7 @@ class TopologicalParallelAC3:
             independent_groups: Lista de grupos de constraint IDs independientes
         
         Returns:
-            Lista de tuplas (group_constraints, variables_state, last_support_state)
+            Lista de tuplas (group_constraints_data, variables_state, last_support_state)
         """
         groups_data = []
         
@@ -192,21 +236,21 @@ class TopologicalParallelAC3:
         last_support_state = dict(self.arc_engine.last_support)
         
         for group in independent_groups:
-            # Recolectar constraints del grupo
-            group_constraints = []
+            # Recolectar datos de constraints del grupo
+            group_constraints_data = []
             for cid in group:
                 if cid in self.arc_engine.constraints:
                     constraint = self.arc_engine.constraints[cid]
-                    group_constraints.append({
-                        'id': cid,
-                        'var1': constraint.var1,
-                        'var2': constraint.var2,
-                        'relation': constraint.relation
+                    group_constraints_data.append({
+                        "id": cid,
+                        "var1": constraint.var1,
+                        "var2": constraint.var2,
+                        "relation_name": constraint.relation_name
                     })
             
-            if group_constraints:
+            if group_constraints_data:
                 groups_data.append((
-                    group_constraints,
+                    group_constraints_data,
                     deepcopy(variables_state),
                     deepcopy(last_support_state)
                 ))
@@ -223,31 +267,7 @@ class TopologicalParallelAC3:
         logger.info("Ejecutando propagación final secuencial")
         
         # Ejecutar AC-3 secuencial estándar
-        queue = []
-        for cid, c in self.arc_engine.constraints.items():
-            queue.append((c.var1, c.var2, cid))
-            queue.append((c.var2, c.var1, cid))
-        
-        from .ac31 import revise_with_last_support
-        
-        while queue:
-            xi, xj, constraint_id = queue.pop(0)
-            
-            revised, removed_values = revise_with_last_support(
-                self.arc_engine, xi, xj, constraint_id
-            )
-            
-            if revised:
-                if not self.arc_engine.variables[xi]:
-                    return False
-                
-                # Añadir arcos afectados
-                for neighbor in self.arc_engine.graph.neighbors(xi):
-                    if neighbor != xj:
-                        c_id = self.arc_engine.graph.get_edge_data(neighbor, xi)['cid']
-                        queue.append((neighbor, xi, c_id))
-        
-        return True
+        return self._execute_optimized_sequential()
     
     def get_stats(self) -> dict:
         """
@@ -257,15 +277,15 @@ class TopologicalParallelAC3:
             Diccionario con estadísticas
         """
         stats = {
-            'num_workers': self.num_workers,
-            'total_constraints': len(self.arc_engine.constraints),
-            'total_variables': len(self.arc_engine.variables)
+            "num_workers": self.num_workers,
+            "total_constraints": len(self.arc_engine.constraints),
+            "total_variables": len(self.arc_engine.variables)
         }
         
         if self.homotopy_rules:
             independent_groups = self.homotopy_rules.get_independent_groups()
-            stats['independent_groups'] = len(independent_groups)
-            stats['avg_group_size'] = (
+            stats["independent_groups"] = len(independent_groups)
+            stats["avg_group_size"] = (
                 sum(len(g) for g in independent_groups) / len(independent_groups)
                 if independent_groups else 0
             )
