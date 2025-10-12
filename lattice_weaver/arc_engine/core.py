@@ -50,8 +50,11 @@ class ArcEngine:
         Utilizado por el TMS durante el backtracking.
         """
         if variable_name in self.variables:
-            self.variables[variable_name].add(value_to_restore)
-            logger.debug(f"[ArcEngine] Restaurado {value_to_restore} a {variable_name}")
+            if value_to_restore not in self.variables[variable_name].get_values():
+                self.variables[variable_name].add(value_to_restore)
+                logger.debug(f"[ArcEngine] Restaurado {value_to_restore} a {variable_name}. Nuevo dominio: {list(self.variables[variable_name].get_values())}")
+            else:
+                logger.debug(f"[ArcEngine] {value_to_restore} ya presente en {variable_name}. No se restauró.")
         else:
             logger.warning(f"[ArcEngine] Intento de restaurar valor a variable inexistente: {variable_name}")
 

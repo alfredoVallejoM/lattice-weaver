@@ -37,7 +37,7 @@ class CSPSolution:
             return NotImplemented
         return self.assignment == other.assignment
 
-    def __hash__(self):
+    def __hash__(self,):
         return hash(frozenset(self.assignment.items()))
 
 
@@ -94,7 +94,7 @@ class CSPSolver:
         # Iniciar el backtracking con el ArcEngine principal
         self._backtrack(initial_assignment, solutions, return_all, max_solutions)
         
-        # Limpiar el TMS después de la búsqueda
+        # Limpiar el TMS después de la búsqueda (si se usó)
         if self.arc_engine.tms:
             self.arc_engine.tms.clear()
 
@@ -126,6 +126,11 @@ class CSPSolver:
             return
         logger.debug(f"Seleccionando variable no asignada: {unassigned_var}")
 
+        # Guardar el estado actual de los dominios del ArcEngine antes de probar valores para unassigned_var
+        # Esto es crucial para restaurar el estado si un valor no lleva a una solución
+        saved_domains = {var_name: domain_obj.__class__(list(domain_obj.get_values())) 
+                         for var_name, domain_obj in self.arc_engine.variables.items()}
+
         # Obtener los valores del dominio de la variable seleccionada del ArcEngine actual
         domain_values = list(self.arc_engine.variables[unassigned_var].get_values())
         logger.debug(f"Dominio de {unassigned_var}: {domain_values}")
@@ -135,15 +140,13 @@ class CSPSolver:
             new_assignment = assignment.copy()
             new_assignment[unassigned_var] = value
 
-            # Registrar la decisión en el TMS
-            current_decision_level = -1
+            # Registrar la decisión en el TMS (si está habilitado)
             if self.arc_engine.tms:
                 self.arc_engine.tms.record_decision(unassigned_var, value)
-                current_decision_level = self.arc_engine.tms.get_current_decision_level()
 
-            # Reducir el dominio de la variable asignada a solo el valor elegido
-            original_domain_values = list(self.arc_engine.variables[unassigned_var].get_values())
-            for val_to_remove in original_domain_values:
+            # Reducir el dominio de la variable asignada a solo el valor elegido en el ArcEngine actual
+            original_domain_values_of_unassigned_var = list(self.arc_engine.variables[unassigned_var].get_values())
+            for val_to_remove in original_domain_values_of_unassigned_var:
                 if val_to_remove != value:
                     self.arc_engine.variables[unassigned_var].remove(val_to_remove)
                     # Registrar la eliminación en el TMS si está habilitado
@@ -152,7 +155,7 @@ class CSPSolver:
                             variable=unassigned_var,
                             value=val_to_remove,
                             constraint_id=f"ASSIGN_{unassigned_var}", # Usar un ID de restricción especial para asignaciones
-                            supporting_values={unassigned_var: [value]}
+                            supporting_values={unassigned_var: [value]} # Simplificado
                         )
 
             logger.debug(f"Antes de enforce_arc_consistency para {unassigned_var}={value}. Dominios: {[f'{v}:{list(d.get_values())}' for v, d in self.arc_engine.variables.items()]}")
@@ -167,11 +170,13 @@ class CSPSolver:
             else:
                 logger.debug(f"Después de enforce_arc_consistency para {unassigned_var}={value}. Inconsistente. Backtracking.")
             
-            # Retroceder: restaurar el estado de los dominios usando el TMS
-            if self.arc_engine.tms and current_decision_level != -1:
-                self.arc_engine.tms.backtrack_to_decision(current_decision_level)
-            # Si no hay TMS, se asume que el ArcEngine se reinicia o se maneja de otra forma (no es el caso aquí)
-            # Para la implementación actual, si no hay TMS, el comportamiento es incorrecto sin copias profundas.
+            # Retroceder: restaurar el estado de los dominios del ArcEngine al estado guardado
+            for var_name, domain_obj in saved_domains.items():
+                self.arc_engine.variables[var_name] = domain_obj.__class__(list(domain_obj.get_values()))
+            
+            # Limpiar las justificaciones de la decisión actual del TMS si está habilitado
+            if self.arc_engine.tms:
+                self.arc_engine.tms.backtrack_to_decision(self.arc_engine.tms.get_current_decision_level() - 1)
 
             if max_solutions is not None and len(solutions) >= max_solutions:
                 logger.debug(f"Max solutions reached ({len(solutions)}/{max_solutions}). Returning.")
