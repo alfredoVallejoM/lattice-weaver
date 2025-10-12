@@ -25,10 +25,17 @@ LatticeWeaver es un **framework universal para modelar y resolver fenómenos com
 ```
 lattice-weaver/
 ├── lattice_weaver/              # Código fuente principal
-│   ├── arc_engine/              # Motor de consistencia de arcos (CSP)
+│   ├── arc_weaver/              # Motor de consistencia de arcos (CSP)
+│   │   ├── tracing.py           # ✅ SearchSpaceTracer (Track A)
+│   │   └── adaptive_consistency.py
+│   ├── visualization/           # ✅ Visualización y API REST (Track A)
+│   │   ├── search_viz.py
+│   │   └── api.py
+│   ├── benchmarks/              # ✅ ExperimentRunner (Track A)
+│   │   ├── runner.py
+│   │   └── analysis.py
 │   ├── locales/                 # Sistema de locales y frames (FCA)
 │   ├── topology/                # Análisis topológico (TDA)
-│   ├── visualization/           # Visualización educativa
 │   ├── inference/               # Motor de inferencia
 │   ├── problems/                # Familias de problemas
 │   ├── web/                     # Aplicación web
@@ -36,6 +43,8 @@ lattice-weaver/
 │   └── phenomena/               # Mapeos de fenómenos multidisciplinares
 │
 ├── docs/                        # Documentación
+│   ├── TRACK_A_COMPLETE.md      # ✅ Documentación Track A
+│   ├── TRACING_GUIDE.md         # ✅ Guía del SearchSpaceTracer
 │   ├── phenomena/               # Investigación de fenómenos por disciplina
 │   │   ├── biology/
 │   │   ├── neuroscience/
@@ -50,6 +59,9 @@ lattice-weaver/
 │
 ├── tests/                       # Tests
 │   ├── unit/
+│   │   ├── test_tracing.py      # ✅ Tests SearchSpaceTracer (Track A)
+│   │   ├── test_tracer_overhead.py  # ✅ Tests de rendimiento
+│   │   └── test_visualization.py    # ✅ Tests Visualizer
 │   ├── integration/
 │   ├── benchmarks/
 │   └── stress/
@@ -224,7 +236,7 @@ LatticeWeaver se desarrolla mediante **9 agentes autónomos** trabajando en para
 
 | Track | Agente | Duración | Estado |
 |-------|--------|----------|--------|
-| A - Core Engine | agent-track-a | 8 sem | ACTIVE |
+| A - Core Engine | agent-track-a | 8 sem | ✅ COMPLETADO |
 | B - Locales y Frames | agent-track-b | 10 sem | ACTIVE |
 | C - Problem Families | agent-track-c | 6 sem | ACTIVE |
 | D - Inference Engine | agent-track-d | 8 sem | IDLE |
@@ -244,6 +256,7 @@ Ver [COORDINACION_TRACKS_V3_FINAL.md](COORDINACION_TRACKS_V3_FINAL.md) para deta
 
 **Componentes Completados:**
 - ✅ Motor de consistencia de arcos (AC-3, AC-3.1, paralelo)
+- ✅ **Track A - Core Engine** (SearchSpaceTracer, Visualizer, ExperimentRunner)
 - ✅ Sistema de locales y frames
 - ✅ Análisis topológico básico
 - ✅ Visualización educativa (en desarrollo)
