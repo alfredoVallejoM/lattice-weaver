@@ -1,13 +1,4 @@
-"""
-Truth Maintenance System (TMS)
-
-Rastrea dependencias entre decisiones y permite retroceso eficiente.
-
-Autor: LatticeWeaver Team
-Fecha: 11 de Octubre de 2025
-"""
-
-from typing import Set, Dict, List, Optional, Any, Tuple
+from typing import Set, Dict, List, Optional, Any, Tuple, Callable
 from dataclasses import dataclass, field
 import logging
 
@@ -26,23 +17,32 @@ class Justification:
         removed_value: Valor eliminado
         reason_constraint: Restricción que causó la eliminación
         supporting_values: Valores en otras variables que justifican esto
+        decision_level: Nivel de decisión en el que se realizó la eliminación
     """
     variable: str
     removed_value: Any
     reason_constraint: str
     supporting_values: Dict[str, Any] = field(default_factory=dict)
+    decision_level: int = -1 # Nivel de decisión en el que se realizó la eliminación
     
     def __hash__(self):
-        """Hash para usar en sets."""
-        return hash((self.variable, self.removed_value, self.reason_constraint))
+        """
+        Hash para usar en sets.
+        Incluye decision_level para diferenciar justificaciones en diferentes ramas.
+        """
+        return hash((self.variable, self.removed_value, self.reason_constraint, self.decision_level))
     
     def __eq__(self, other):
-        """Igualdad para comparación."""
+        """
+        Igualdad para comparación.
+        Incluye decision_level para diferenciar justificaciones en diferentes ramas.
+        """
         if not isinstance(other, Justification):
             return False
         return (self.variable == other.variable and 
                 self.removed_value == other.removed_value and
-                self.reason_constraint == other.reason_constraint)
+                self.reason_constraint == other.reason_constraint and
+                self.decision_level == other.decision_level)
 
 
 @dataclass
@@ -53,11 +53,11 @@ class Decision:
     Attributes:
         variable: Variable asignada
         value: Valor asignado
-        justifications: Justificaciones que dependen de esta decisión
+        justifications_start_index: Índice en la lista global de justificaciones donde empiezan las de esta decisión.
     """
     variable: str
     value: Any
-    justifications: List[Justification] = field(default_factory=list)
+    justifications_start_index: int
 
 
 class TruthMaintenanceSystem:
@@ -68,14 +68,31 @@ class TruthMaintenanceSystem:
     """
     
     def __init__(self):
-        """Inicializa el TMS."""
+        """
+        Inicializa el TMS.
+        
+        `domain_restore_callback`: Función que el TMS llamará para restaurar el dominio de una variable.
+                                   Debe aceptar (variable_name: str, value_to_restore: Any).
+        """
         self.justifications: List[Justification] = []
         self.decisions: List[Decision] = []
-        self.dependency_graph: Dict[str, Set[Justification]] = {}
-        self.constraint_removals: Dict[str, List[Justification]] = {}
+        # self.dependency_graph: Dict[str, Set[Justification]] = {}
+        # self.constraint_removals: Dict[str, List[Justification]] = {}
+        
+        # Nuevo: Historial de eliminaciones por nivel de decisión
+        self.removals_by_decision_level: List[List[Justification]] = []
+        
+        # Callback para restaurar dominios en el ArcEngine
+        self.domain_restore_callback: Optional[Callable[[str, Any], None]] = None
         
         logger.debug("TMS inicializado")
     
+    def set_domain_restore_callback(self, callback: Callable[[str, Any], None]):
+        """
+        Establece la función de callback para restaurar dominios.
+        """
+        self.domain_restore_callback = callback
+
     def record_removal(self, variable: str, value: Any, 
                       constraint_id: str, 
                       supporting_values: Dict[str, List[Any]]):
@@ -88,26 +105,23 @@ class TruthMaintenanceSystem:
             constraint_id: Restricción que causó la eliminación
             supporting_values: Valores que justifican la eliminación
         """
+        current_decision_level = len(self.decisions) - 1
         justification = Justification(
             variable=variable,
             removed_value=value,
             reason_constraint=constraint_id,
-            supporting_values=supporting_values.copy()
+            supporting_values=supporting_values.copy(),
+            decision_level=current_decision_level
         )
         
         self.justifications.append(justification)
         
-        # Actualizar grafo de dependencias
-        if variable not in self.dependency_graph:
-            self.dependency_graph[variable] = set()
-        self.dependency_graph[variable].add(justification)
+        if current_decision_level >= 0:
+            while len(self.removals_by_decision_level) <= current_decision_level:
+                self.removals_by_decision_level.append([])
+            self.removals_by_decision_level[current_decision_level].append(justification)
         
-        # Indexar por restricción
-        if constraint_id not in self.constraint_removals:
-            self.constraint_removals[constraint_id] = []
-        self.constraint_removals[constraint_id].append(justification)
-        
-        logger.debug(f"Registrado: {variable}={value} eliminado por {constraint_id}")
+        logger.debug(f"Registrado: {variable}={value} eliminado por {constraint_id} en nivel {current_decision_level}")
     
     def record_decision(self, variable: str, value: Any):
         """
@@ -117,11 +131,56 @@ class TruthMaintenanceSystem:
             variable: Variable asignada
             value: Valor asignado
         """
-        decision = Decision(variable=variable, value=value)
+        # El índice de inicio de justificaciones para esta decisión es el tamaño actual de la lista global
+        justifications_start_index = len(self.justifications)
+        decision = Decision(variable=variable, value=value, justifications_start_index=justifications_start_index)
         self.decisions.append(decision)
         
-        logger.debug(f"Decisión registrada: {variable}={value}")
+        # Asegurarse de que haya una lista para este nivel de decisión
+        self.removals_by_decision_level.append([])
+        
+        logger.debug(f"Decisión registrada: {variable}={value} en nivel {len(self.decisions) - 1}")
     
+    def backtrack_to_decision(self, decision_level: int):
+        """
+        Retrocede a un nivel de decisión anterior.
+        
+        Args:
+            decision_level: Nivel al que retroceder (0-indexed). Si es -1, limpia todo.
+        """
+        if decision_level < -1 or decision_level >= len(self.decisions):
+            logger.warning(f"Nivel de decisión inválido para retroceso: {decision_level}. Nivel actual: {len(self.decisions) - 1}")
+            return
+        
+        if decision_level == -1:
+            self.clear()
+            return
+
+        # Restaurar dominios de las justificaciones realizadas DESPUÉS del nivel de decisión
+        for i in range(len(self.removals_by_decision_level) - 1, decision_level, -1):
+            for justification in self.removals_by_decision_level[i]:
+                if self.domain_restore_callback:
+                    self.domain_restore_callback(justification.variable, justification.removed_value)
+                logger.debug(f"Restaurado {justification.removed_value} a {justification.variable} (nivel {justification.decision_level})")
+        
+        # Eliminar decisiones posteriores
+        self.decisions = self.decisions[:decision_level + 1]
+        
+        # Eliminar justificaciones posteriores
+        # Todas las justificaciones con decision_level > decision_level deben ser eliminadas
+        self.justifications = [j for j in self.justifications if j.decision_level <= decision_level]
+        
+        # Recortar la lista de eliminaciones por nivel de decisión
+        self.removals_by_decision_level = self.removals_by_decision_level[:decision_level + 1]
+
+        logger.info(f"Retroceso a nivel de decisión {decision_level}. Decisiones restantes: {len(self.decisions)}")
+    
+    def get_current_decision_level(self) -> int:
+        """
+        Retorna el nivel de decisión actual (0-indexed).
+        """
+        return len(self.decisions) - 1
+
     def explain_inconsistency(self, variable: str) -> List[Justification]:
         """
         Explica por qué una variable quedó sin valores.
@@ -132,16 +191,14 @@ class TruthMaintenanceSystem:
         Returns:
             Lista de justificaciones que causaron la inconsistencia
         """
-        if variable not in self.dependency_graph:
-            return []
-        
-        explanations = list(self.dependency_graph[variable])
+        # Filtra las justificaciones activas (no retrocedidas)
+        active_justifications = [j for j in self.justifications if j.variable == variable and j.decision_level <= self.get_current_decision_level()]
         
         logger.info(f"Inconsistencia en {variable}:")
-        for just in explanations:
-            logger.info(f"  - Valor {just.removed_value} eliminado por {just.reason_constraint}")
+        for just in active_justifications:
+            logger.info(f"  - Valor {just.removed_value} eliminado por {just.reason_constraint} en nivel {just.decision_level}")
         
-        return explanations
+        return active_justifications
     
     def suggest_constraint_to_relax(self, variable: str) -> Optional[str]:
         """
@@ -155,13 +212,12 @@ class TruthMaintenanceSystem:
         Returns:
             ID de restricción sugerida o None
         """
-        if variable not in self.dependency_graph:
-            return None
+        active_justifications = [j for j in self.justifications if j.variable == variable and j.decision_level <= self.get_current_decision_level()]
         
         # Contar eliminaciones por restricción
         constraint_counts: Dict[str, int] = {}
         
-        for just in self.dependency_graph[variable]:
+        for just in active_justifications:
             cid = just.reason_constraint
             constraint_counts[cid] = constraint_counts.get(cid, 0) + 1
         
@@ -185,12 +241,12 @@ class TruthMaintenanceSystem:
         Returns:
             Diccionario {variable: [valores_restaurables]}
         """
-        if constraint_id not in self.constraint_removals:
-            return {}
+        # Filtrar justificaciones activas asociadas a esta restricción
+        active_removals = [j for j in self.justifications if j.reason_constraint == constraint_id and j.decision_level <= self.get_current_decision_level()]
         
         restorable: Dict[str, List[Any]] = {}
         
-        for just in self.constraint_removals[constraint_id]:
+        for just in active_removals:
             var = just.variable
             val = just.removed_value
             
@@ -209,57 +265,14 @@ class TruthMaintenanceSystem:
         Args:
             constraint_id: ID de la restricción eliminada
         """
-        if constraint_id not in self.constraint_removals:
-            return
+        # Eliminar de la lista principal de justificaciones
+        self.justifications = [j for j in self.justifications if j.reason_constraint != constraint_id]
         
-        # Obtener justificaciones a eliminar
-        to_remove = self.constraint_removals[constraint_id]
-        
-        # Eliminar de la lista principal
-        self.justifications = [j for j in self.justifications if j not in to_remove]
-        
-        # Eliminar del grafo de dependencias
-        for var in self.dependency_graph:
-            self.dependency_graph[var] = {
-                j for j in self.dependency_graph[var]
-                if j.reason_constraint != constraint_id
-            }
-        
-        # Eliminar del índice
-        del self.constraint_removals[constraint_id]
+        # Eliminar de las listas por nivel de decisión
+        for level_removals in self.removals_by_decision_level:
+            level_removals[:] = [j for j in level_removals if j.reason_constraint != constraint_id]
         
         logger.debug(f"Justificaciones de {constraint_id} eliminadas")
-    
-    def backtrack_to_decision(self, decision_level: int):
-        """
-        Retrocede a un nivel de decisión anterior.
-        
-        Args:
-            decision_level: Nivel al que retroceder (0-indexed)
-        """
-        if decision_level >= len(self.decisions):
-            return
-        
-        # Eliminar decisiones posteriores
-        removed_decisions = self.decisions[decision_level:]
-        self.decisions = self.decisions[:decision_level]
-        
-        # Eliminar justificaciones que dependen de decisiones eliminadas
-        removed_vars = {d.variable for d in removed_decisions}
-        
-        self.justifications = [
-            j for j in self.justifications
-            if not any(var in removed_vars for var in j.supporting_values)
-        ]
-        
-        # Reconstruir grafo de dependencias
-        self.dependency_graph.clear()
-        for just in self.justifications:
-            if just.variable not in self.dependency_graph:
-                self.dependency_graph[just.variable] = set()
-            self.dependency_graph[just.variable].add(just)
-        
-        logger.info(f"Retroceso a nivel de decisión {decision_level}")
     
     def get_conflict_graph(self, variable: str) -> Dict[str, List[str]]:
         """
@@ -271,12 +284,11 @@ class TruthMaintenanceSystem:
         Returns:
             Grafo de conflictos {restricción: [variables_involucradas]}
         """
-        if variable not in self.dependency_graph:
-            return {}
+        active_justifications = [j for j in self.justifications if j.variable == variable and j.decision_level <= self.get_current_decision_level()]
         
         conflict_graph: Dict[str, List[str]] = {}
         
-        for just in self.dependency_graph[variable]:
+        for just in active_justifications:
             cid = just.reason_constraint
             involved_vars = list(just.supporting_values.keys())
             
@@ -300,29 +312,28 @@ class TruthMaintenanceSystem:
         return {
             'total_justifications': len(self.justifications),
             'total_decisions': len(self.decisions),
-            'variables_with_removals': len(self.dependency_graph),
-            'constraints_involved': len(self.constraint_removals),
-            'avg_removals_per_variable': (
-                len(self.justifications) / len(self.dependency_graph)
-                if self.dependency_graph else 0
-            )
+            'current_decision_level': self.get_current_decision_level(),
+            'removals_by_level': [len(r) for r in self.removals_by_decision_level]
         }
     
     def clear(self):
-        """Limpia todos los datos del TMS."""
+        """
+        Limpia todos los datos del TMS.
+        """
         self.justifications.clear()
         self.decisions.clear()
-        self.dependency_graph.clear()
-        self.constraint_removals.clear()
+        self.removals_by_decision_level.clear()
         
         logger.debug("TMS limpiado")
     
     def __repr__(self) -> str:
-        """Representación del TMS."""
+        """
+        Representación del TMS.
+        """
         stats = self.get_statistics()
         return (f"TMS(justifications={stats['total_justifications']}, "
                 f"decisions={stats['total_decisions']}, "
-                f"constraints={stats['constraints_involved']})")
+                f"current_level={stats['current_decision_level']})")
 
 
 def create_tms() -> TruthMaintenanceSystem:

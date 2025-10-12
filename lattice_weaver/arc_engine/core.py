@@ -1,11 +1,15 @@
-# lattice_weaver/arc_engine/core.py
-
+import logging
+from collections import deque
 from typing import Iterable, Callable, Any, Optional, Dict, Tuple, Set, List
 import networkx as nx
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(name)s:%(message)s")
 
 from .domains import create_optimal_domain, Domain
 from .constraints import Constraint
 from .ac31 import revise_with_last_support
+from .tms import create_tms, TruthMaintenanceSystem # Importar TMS
 
 class ArcEngine:
     """
@@ -34,10 +38,22 @@ class ArcEngine:
         self.last_support: Dict[Tuple[str, str, Any], Any] = {}
         
         # Truth Maintenance System (optional)
-        self.tms = None
+        self.tms: Optional[TruthMaintenanceSystem] = None
         if use_tms:
-            from .tms import create_tms
             self.tms = create_tms()
+            # Establecer el callback para restaurar dominios
+            self.tms.set_domain_restore_callback(self._restore_domain_value)
+
+    def _restore_domain_value(self, variable_name: str, value_to_restore: Any):
+        """
+        Callback para restaurar un valor en el dominio de una variable.
+        Utilizado por el TMS durante el backtracking.
+        """
+        if variable_name in self.variables:
+            self.variables[variable_name].add(value_to_restore)
+            logger.debug(f"[ArcEngine] Restaurado {value_to_restore} a {variable_name}")
+        else:
+            logger.warning(f"[ArcEngine] Intento de restaurar valor a variable inexistente: {variable_name}")
 
     def add_variable(self, name: str, domain: Iterable[Any]):
         """
@@ -92,18 +108,23 @@ class ArcEngine:
         
         # Sequential AC-3.1 algorithm
         # The queue contains tuples of (variable_to_revise, constraining_variable, constraint_id)
-        queue: list[tuple[str, str, str]] = []
+        logger.debug("Iniciando enforce_arc_consistency...")
+        queue: deque[tuple[str, str, str]] = deque()
         for cid, c in self.constraints.items():
             queue.append((c.var1, c.var2, cid))
             queue.append((c.var2, c.var1, cid))
+        logger.debug(f"Cola inicial: {[(x, y) for x, y, _ in queue]}")
 
         while queue:
-            xi, xj, constraint_id = queue.pop(0)
+            xi, xj, constraint_id = queue.popleft()
+            logger.debug(f"Procesando arco ({xi}, {xj}) con restricción {constraint_id}")
+            logger.debug(f"Dominios antes de revisar: {xi}:{list(self.variables[xi].get_values())}, {xj}:{list(self.variables[xj].get_values())}")
 
             # The core of the AC-3.1 algorithm
             revised, removed_values = revise_with_last_support(self, xi, xj, constraint_id)
 
             if revised:
+                logger.debug(f"Dominio de {xi} revisado. Valores eliminados: {removed_values}. Nuevo dominio: {list(self.variables[xi].get_values())}")
                 # Register removals in TMS if enabled
                 if self.use_tms and self.tms and removed_values:
                     for removed_val in removed_values:
@@ -111,10 +132,11 @@ class ArcEngine:
                             variable=xi,
                             value=removed_val,
                             constraint_id=constraint_id,
-                            supporting_values={xj: list(self.variables[xj].get_values())}
+                            supporting_values={xj: list(self.variables[xj].get_values())} # Simplified supporting values
                         )
                 
                 if not self.variables[xi]:
+                    logger.debug(f"Dominio de {xi} se volvió vacío. Inconsistencia detectada.")
                     # Inconsistency detected
                     if self.use_tms and self.tms:
                         # Explain inconsistency
@@ -129,9 +151,17 @@ class ArcEngine:
                 for neighbor in self.graph.neighbors(xi):
                     if neighbor != xj:
                         # Find the constraint ID for the (neighbor, xi) arc
-                        c_id = self.graph.get_edge_data(neighbor, xi)['cid']
-                        queue.append((neighbor, xi, c_id))
+                        # Note: This assumes binary constraints. For n-ary, more complex logic needed.
+                        edge_data = self.graph.get_edge_data(neighbor, xi)
+                        if edge_data and 'cid' in edge_data:
+                            c_id = edge_data['cid']
+                            if (neighbor, xi, c_id) not in queue:
+                                queue.append((neighbor, xi, c_id))
+                            logger.debug(f"Añadiendo arco ({neighbor}, {xi}) a la cola.")
+            else:
+                logger.debug(f"Dominio de {xi} no revisado para arco ({xi}, {xj}).")
         
+        logger.debug("enforce_arc_consistency completado. Consistente.")
         return True
 
     def build_consistency_graph(self) -> nx.Graph:
@@ -225,4 +255,30 @@ class ArcEngine:
 
     def __repr__(self):
         return f"ArcEngine(variables={len(self.variables)}, constraints={len(self.constraints)})"
+
+
+
+
+# Importar el CSPSolver para integrarlo o para que esté disponible
+from .csp_solver import CSPProblem, CSPSolution, CSPSolver
+
+# Añadir el método solve a ArcEngine o reestructurar para usar CSPSolver
+# Por ahora, se asume que el test espera que ArcEngine tenga un método solve.
+# Una mejor práctica sería que el test usara CSPSolver directamente.
+# Sin embargo, para cumplir con la expectativa del test, se añadirá un wrapper.
+
+# Si la intención es que ArcEngine sea el solver principal, se debería integrar
+# la lógica de backtracking directamente aquí o delegar de forma más explícita.
+# Para la Semana 1, se hará un wrapper simple para que los tests pasen.
+
+# Nota: Esta es una solución temporal para que los tests pasen. La integración
+# real de CSPSolver con ArcEngine debería ser más profunda y considerar
+# cómo ArcEngine se usa como componente de propagación dentro de CSPSolver.
+
+# Se añade un método solve a ArcEngine que delega en CSPSolver
+def _solve_wrapper(self, problem: CSPProblem, return_all: bool = False, max_solutions: Optional[int] = None) -> List[CSPSolution]:
+    solver = CSPSolver(use_tms=self.use_tms, parallel=self.parallel, parallel_mode=self.parallel_mode)
+    return solver.solve(problem, return_all, max_solutions)
+
+ArcEngine.solve = _solve_wrapper
 
