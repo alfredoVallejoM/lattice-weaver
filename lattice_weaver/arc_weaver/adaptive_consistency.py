@@ -16,6 +16,7 @@ import time
 
 from .graph_structures import ConstraintGraph, DynamicClusterGraph, Cluster
 from .clustering import ClusterDetector, BoundaryManager, ClusteringMetrics
+from .tracing import SearchSpaceTracer, SearchEvent
 
 
 @dataclass
@@ -198,7 +199,8 @@ class AdaptiveConsistencyEngine:
         self,
         min_cluster_size: int = 2,
         max_cluster_size: int = 20,
-        clustering_resolution: float = 1.0
+        clustering_resolution: float = 1.0,
+        tracer: Optional[SearchSpaceTracer] = None
     ):
         """
         Inicializa el motor ACE.
@@ -207,6 +209,7 @@ class AdaptiveConsistencyEngine:
             min_cluster_size: Tamaño mínimo de clúster
             max_cluster_size: Tamaño máximo de clúster
             clustering_resolution: Resolución del clustering
+            tracer: Tracer para capturar eventos de búsqueda (None = deshabilitado)
         """
         self.min_cluster_size = min_cluster_size
         self.max_cluster_size = max_cluster_size
@@ -219,6 +222,7 @@ class AdaptiveConsistencyEngine:
         )
         self.boundary_manager = BoundaryManager()
         self.ac3_solver = AC3Solver()
+        self.tracer = tracer or SearchSpaceTracer(enabled=False)
     
     def solve(
         self,
@@ -240,12 +244,26 @@ class AdaptiveConsistencyEngine:
         start_time = time.time()
         stats = SolutionStats()
         
+        # Iniciar tracer
+        self.tracer.start()
+        self.tracer.record(SearchEvent(
+            timestamp=time.time(),
+            event_type='search_started',
+            metadata={'max_solutions': max_solutions, 'timeout': timeout}
+        ))
+        
         # Paso 1: Clustering inicial
         gcd, clustering_metrics = self.cluster_detector.detect_clusters(cg)
         stats.clustering_metrics = clustering_metrics
         
         # Paso 2: Aplicar AC-3 a cada clúster
         for cluster in gcd.get_active_clusters():
+            self.tracer.record(SearchEvent(
+                timestamp=time.time(),
+                event_type='ac3_call',
+                metadata={'cluster_id': cluster.id, 'cluster_size': len(cluster.variables)}
+            ))
+            
             consistent = self.ac3_solver.enforce_arc_consistency(
                 cg, cluster.variables
             )
@@ -256,6 +274,12 @@ class AdaptiveConsistencyEngine:
                 cluster.mark_inconsistent()
                 gcd.prune_cluster(cluster.id)
                 stats.cluster_operations["prune"] += 1
+                
+                self.tracer.record(SearchEvent(
+                    timestamp=time.time(),
+                    event_type='cluster_operation',
+                    metadata={'operation': 'prune', 'cluster_id': cluster.id}
+                ))
         
         # Paso 3: Resolver con backtracking estructurado
         assignment: Dict[str, any] = {}
@@ -264,6 +288,20 @@ class AdaptiveConsistencyEngine:
         )
         
         stats.time_elapsed = time.time() - start_time
+        
+        # Finalizar tracer
+        self.tracer.record(SearchEvent(
+            timestamp=time.time(),
+            event_type='search_ended',
+            metadata={
+                'solutions_found': len(stats.solutions),
+                'nodes_explored': stats.nodes_explored,
+                'backtracks': stats.backtracks,
+                'time_elapsed': stats.time_elapsed
+            }
+        ))
+        self.tracer.stop()
+        
         return stats
     
     def _backtrack_structured(
@@ -302,6 +340,14 @@ class AdaptiveConsistencyEngine:
         # Verificar si la asignación está completa
         if len(assignment) == len(cg.get_all_variables()):
             stats.add_solution(assignment)
+            
+            # Registrar solución encontrada
+            self.tracer.record(SearchEvent(
+                timestamp=time.time(),
+                event_type='solution_found',
+                metadata={'solution_number': len(stats.solutions), 'assignment': dict(assignment)}
+            ))
+            
             return len(stats.solutions) < max_solutions
         
         stats.nodes_explored += 1
@@ -312,12 +358,24 @@ class AdaptiveConsistencyEngine:
         if var is None:
             return False
         
+        # Calcular profundidad actual
+        depth = len(assignment)
+        
         # Intentar valores del dominio
         for value in cg.get_domain(var):
             # Verificar consistencia con asignación actual
             if self._is_consistent(cg, var, value, assignment):
                 # Hacer asignación
                 assignment[var] = value
+                
+                # Registrar asignación
+                self.tracer.record(SearchEvent(
+                    timestamp=time.time(),
+                    event_type='variable_assigned',
+                    variable=var,
+                    value=value,
+                    depth=depth
+                ))
                 
                 # Propagar restricciones (AC-3 en vecinos)
                 saved_domains = self._save_domains(cg)
@@ -334,6 +392,14 @@ class AdaptiveConsistencyEngine:
                 del assignment[var]
                 self._restore_domains(cg, saved_domains)
                 stats.backtracks += 1
+                
+                # Registrar backtrack
+                self.tracer.record(SearchEvent(
+                    timestamp=time.time(),
+                    event_type='backtrack',
+                    variable=var,
+                    depth=depth
+                ))
         
         return False
     

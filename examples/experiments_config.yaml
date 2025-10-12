@@ -1,0 +1,45 @@
+# Configuración de Experimentos para LatticeWeaver
+# Este archivo define múltiples experimentos con diferentes parámetros
+
+experiments:
+  # Experimento 1: N-Reinas con diferentes tamaños
+  - name: "nqueens_4"
+    problem_params:
+      n: 4
+    solver_params:
+      max_solutions: 1
+    num_runs: 5
+    enable_tracing: true
+    trace_output_dir: "experiments/traces/nqueens_4"
+    timeout: 10.0
+  
+  - name: "nqueens_6"
+    problem_params:
+      n: 6
+    solver_params:
+      max_solutions: 1
+    num_runs: 5
+    enable_tracing: true
+    trace_output_dir: "experiments/traces/nqueens_6"
+    timeout: 30.0
+  
+  - name: "nqueens_8"
+    problem_params:
+      n: 8
+    solver_params:
+      max_solutions: 1
+    num_runs: 3
+    enable_tracing: true
+    trace_output_dir: "experiments/traces/nqueens_8"
+    timeout: 60.0
+  
+  # Experimento 2: Búsqueda de múltiples soluciones
+  - name: "nqueens_4_all_solutions"
+    problem_params:
+      n: 4
+    solver_params:
+      max_solutions: 10
+    num_runs: 3
+    enable_tracing: false
+    timeout: 30.0
+
