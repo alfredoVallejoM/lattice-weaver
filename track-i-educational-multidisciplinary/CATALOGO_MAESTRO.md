@@ -1,8 +1,8 @@
 # Catálogo Maestro - Track I Zettelkasten
 
 **Última actualización:** 2025-10-13  
-**Total de notas:** 98  
-**Conexiones totales:** 961
+**Total de notas:** 103  
+**Conexiones totales:** 1012
 
 ---
 
@@ -16,13 +16,13 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - **Categorías (C):** 8
 - **Isomorfismos (I):** 8
 - **Técnicas (T):** 7
-- **Dominios (D):** 16
+- **Dominios (D):** 14
 - **Conceptos (K):** 18
 - **Mapeos (M):** 0
 
 ### Métricas de Conectividad
 
-- **Densidad de conexiones:** 9.81 (conexiones por nota)
+- **Densidad de conexiones:** 9.83 (conexiones por nota)
 - **Notas huérfanas:** 0 (0.0%)
 - **Nodo más conectado:** [[D010]] (31 conexiones)
 
@@ -108,9 +108,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### Dominios (D)
 
-- [[D001]] - Ciencias Naturales
 - [[D002]] - Física
-- [[D003]] - Biología
 - [[D004]] - Química
 - [[D005]] - Ecología
 - [[D006]] - Ciencias Formales
@@ -457,19 +455,100 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ## 🏷️ Índice por Tags
 
+### #Biología
+
+- [[D023]] - Sin título
+
+### #Biomedicina
+
+- [[D021]] - Sin título
+- [[D022]] - Sin título
+- [[D023]] - Sin título
+
+### #CienciasAplicadas
+
+- [[D021]] - Sin título
+
+### #CienciasSalud
+
+- [[D022]] - Sin título
+- [[D023]] - Sin título
+- [[D024]] - Sin título
+
+### #CienciasSociales
+
+- [[D024]] - Sin título
+
+### #Clínica
+
+- [[D022]] - Sin título
+
+### #Dinámica
+
+- [[D021]] - Sin título
+
+### #Dominio
+
+- [[D021]] - Sin título
+- [[D022]] - Sin título
+- [[D023]] - Sin título
+- [[D024]] - Sin título
+
+### #Epidemiología
+
+- [[D024]] - Sin título
+
+### #Epistemología
+
+- [[D021]] - Sin título
+- [[D022]] - Sin título
+- [[D023]] - Sin título
+- [[D024]] - Sin título
+
+### #Multinivel
+
+- [[D021]] - Sin título
+
 ### #NP_completo
 
 - [[F006]] - Coloreo de grafos
 - [[F007]] - Satisfacibilidad booleana (SAT)
 - [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
 
+### #Ontología
+
+- [[D021]] - Sin título
+- [[D022]] - Sin título
+- [[D023]] - Sin título
+- [[D024]] - Sin título
+
 ### #P_vs_NP
 
 - [[K003]] - NP-Completitud
 
+### #Población
+
+- [[D024]] - Sin título
+
+### #Química
+
+- [[D023]] - Sin título
+
+### #RazonamientoClínico
+
+- [[D022]] - Sin título
+
 ### #SAT
 
 - [[T004]] - DPLL
+
+### #Salud
+
+- [[D021]] - Sin título
+
+### #SistemasComplejosAdaptativos
+
+- [[D021]] - Sin título
 
 ### #abduccion
 
@@ -545,10 +624,6 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F006]] - Coloreo de grafos
 
-### #astronomia
-
-- [[D001]] - Ciencias Naturales
-
 ### #atractores
 
 - [[C004]] - Sistemas Dinámicos
@@ -573,7 +648,6 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #biologia
 
-- [[D001]] - Ciencias Naturales
 - [[F016]] - Redes de Regulación Génica
 - [[F017]] - Plegamiento de Proteínas
 - [[F018]] - Ecosistemas y Redes Tróficas
@@ -581,9 +655,9 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F020]] - Sistemas Inmunológicos
 - [[F021]] - Redes Neuronales Biológicas
 
-### #biologia_sistemas
+### #biomedicina
 
-- [[D003]] - Biología
+- [[K026]] - Sin título
 
 ### #bioquimica
 
@@ -656,6 +730,11 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #comercio_internacional
 
 - [[F028]] - Redes de Comercio
+
+### #complejidad
+
+- [[I009]] - Sin título
+- [[K026]] - Sin título
 
 ### #complejidad_computacional
 
@@ -743,6 +822,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[K004]] - Función de Lyapunov
 
+### #control_glicemico
+
+- [[F042]] - Sin título
+
 ### #cooperacion
 
 - [[F001]] - Teoría de Juegos Evolutiva
@@ -805,9 +888,17 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F032]] - Movilidad Social
 
+### #diabetes
+
+- [[F042]] - Sin título
+
 ### #dialogo
 
 - [[K018]] - Lógica Dialógica y Juegos de Diálogo
+
+### #dinamica
+
+- [[K026]] - Sin título
 
 ### #dinamica_de_opiniones
 
@@ -845,8 +936,6 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #ecologia
 
-- [[D001]] - Ciencias Naturales
-- [[D003]] - Biología
 - [[F018]] - Ecosistemas y Redes Tróficas
 - [[F026]] - Sistemas Climáticos
 
@@ -869,9 +958,17 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[D002]] - Física
 
+### #emergencia
+
+- [[I009]] - Sin título
+
 ### #emociones
 
 - [[D015]] - Psicología
+
+### #endocrinologia
+
+- [[F042]] - Sin título
 
 ### #epistemica
 
@@ -939,10 +1036,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #evolucion
 
-- [[D003]] - Biología
 - [[F001]] - Teoría de Juegos Evolutiva
 - [[F019]] - Evolución y Filogenia
 - [[K002]] - Estrategia Evolutivamente Estable (ESS)
+- [[K026]] - Sin título
 - [[T005]] - Algoritmo Genético
 
 ### #evolucion_temporal
@@ -980,7 +1077,6 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #fisica
 
-- [[D001]] - Ciencias Naturales
 - [[F003]] - Modelo de Ising 2D
 - [[F023]] - Transiciones de Fase
 - [[F025]] - Sistemas Cuánticos
@@ -1006,7 +1102,6 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #genetica
 
-- [[D003]] - Biología
 - [[F016]] - Redes de Regulación Génica
 - [[F019]] - Evolución y Filogenia
 
@@ -1049,6 +1144,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #historia
 
 - [[D010]] - Ciencias Sociales y Humanidades
+
+### #homeostasis
+
+- [[F042]] - Sin título
 
 ### #implicacion
 
@@ -1129,6 +1228,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
 - [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
 - [[I008]] - Isomorfismo entre Marcos de Argumentación Abstractos (AFs) y CSP
+- [[I009]] - Sin título
 
 ### #jerarquia
 
@@ -1216,6 +1316,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F025]] - Sistemas Cuánticos
 
+### #medicina
+
+- [[F042]] - Sin título
+
 ### #medio_ambiente
 
 - [[D005]] - Ecología
@@ -1277,6 +1381,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[T003]] - Algoritmos de Monte Carlo
 
+### #multinivel
+
+- [[K026]] - Sin título
+
 ### #mundos_posibles
 
 - [[K012]] - Lógica Modal
@@ -1287,13 +1395,16 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #neurociencia
 
-- [[D003]] - Biología
 - [[F021]] - Redes Neuronales Biológicas
 - [[F022]] - Dinámica de Actividad Cerebral
 
 ### #neurociencia_cognitiva
 
 - [[D015]] - Psicología
+
+### #no_linealidad
+
+- [[I009]] - Sin título
 
 ### #no_monotonica
 
@@ -1439,7 +1550,6 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #quimica
 
-- [[D001]] - Ciencias Naturales
 - [[F023]] - Transiciones de Fase
 - [[F024]] - Reacciones Químicas
 
@@ -1503,6 +1613,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[D012]] - Sociología
 - [[F009]] - Modelo de votantes
 
+### #reduccionismo
+
+- [[K026]] - Sin título
+
 ### #reglas
 
 - [[F015]] - Marcos de Argumentación Basados en Supuestos (ABAs)
@@ -1558,6 +1672,11 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F008]] - Percolación
 
+### #salud
+
+- [[F042]] - Sin título
+- [[K026]] - Sin título
+
 ### #sat
 
 - [[C006]] - Satisfacibilidad Lógica
@@ -1607,6 +1726,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #sistemas
 
 - [[D017]] - Ingeniería y Tecnología
+- [[K026]] - Sin título
 
 ### #sistemas_biologicos
 
@@ -1640,8 +1760,14 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
 - [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
 
+### #sistemas_complejos_adaptativos
+
+- [[F042]] - Sin título
+- [[I009]] - Sin título
+
 ### #sistemas_dinamicos
 
+- [[I009]] - Sin título
 - [[K004]] - Función de Lyapunov
 
 ### #sociedad
@@ -1814,9 +1940,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[C006]] - Satisfacibilidad Lógica
 - [[C007]] - Sistemas de Razonamiento
 - [[C008]] - Toma de Decisiones
-- [[D001]] - Ciencias Naturales
 - [[D002]] - Física
-- [[D003]] - Biología
 - [[D004]] - Química
 - [[D005]] - Ecología
 - [[D006]] - Ciencias Formales
@@ -1922,9 +2046,9 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### Top 10 Nodos Más Conectados
 
 1. [[D010]] - Ciencias Sociales y Humanidades (31 conexiones)
-2. [[C001]] - Redes de Interacción (26 conexiones)
-3. [[C004]] - Sistemas Dinámicos (26 conexiones)
-4. [[D001]] - Ciencias Naturales (24 conexiones)
+2. [[D021]] - Sin título (31 conexiones)
+3. [[C001]] - Redes de Interacción (26 conexiones)
+4. [[C004]] - Sistemas Dinámicos (26 conexiones)
 5. [[T003]] - Algoritmos de Monte Carlo (23 conexiones)
 6. [[F011]] - Lógica y Argumentación (Filosofía) (21 conexiones)
 7. [[D008]] - Informática (20 conexiones)
@@ -1958,7 +2082,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 | Estado | Fenómenos | Porcentaje |
 |--------|-----------|------------|
-| Completo | 63 | 154% |
+| Completo | 61 | 149% |
 | En Revision | 8 | 20% |
 | Borrador | 27 | 66% |
 | **TOTAL** | **41** | **100%** |
