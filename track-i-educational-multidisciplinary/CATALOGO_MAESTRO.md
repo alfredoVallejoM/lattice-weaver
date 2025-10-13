@@ -1,8 +1,8 @@
 # Catálogo Maestro - Track I Zettelkasten
 
 **Última actualización:** 2025-10-13  
-**Total de notas:** 43  
-**Conexiones totales:** 251
+**Total de notas:** 66  
+**Conexiones totales:** 698
 
 ---
 
@@ -14,17 +14,17 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - **Fenómenos (F):** 15
 - **Categorías (C):** 8
-- **Isomorfismos (I):** 3
-- **Técnicas (T):** 3
-- **Dominios (D):** 0
-- **Conceptos (K):** 14
+- **Isomorfismos (I):** 8
+- **Técnicas (T):** 7
+- **Dominios (D):** 10
+- **Conceptos (K):** 18
 - **Mapeos (M):** 0
 
 ### Métricas de Conectividad
 
-- **Densidad de conexiones:** 5.84 (conexiones por nota)
+- **Densidad de conexiones:** 10.58 (conexiones por nota)
 - **Notas huérfanas:** 0 (0.0%)
-- **Nodo más conectado:** [[F011]] (21 conexiones)
+- **Nodo más conectado:** [[C001]] (26 conexiones)
 
 ---
 
@@ -36,12 +36,12 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F002]] - Redes de Regulación Génica (biologia, bioinformatica, biologia_sistemas)
 - [[F003]] - Modelo de Ising 2D (fisica_estadistica, ciencia_computacional, sociologia)
 - [[F004]] - Redes neuronales de Hopfield (inteligencia_artificial, neurociencia, fisica_estadistica)
-- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos (informatica, matematicas, logistica, transporte)
-- [[F006]] - Coloreo de grafos (matematicas, informatica, logistica, planificacion)
-- [[F007]] - Satisfacibilidad booleana (SAT) (informatica, matematicas, logica, inteligencia_artificial)
-- [[F008]] - Percolación (fisica_estadistica, ciencia_materiales, ecologia, epidemiologia)
-- [[F009]] - Modelo de votantes (sociologia, fisica_estadistica, opinion_dinamica)
-- [[F010]] - Segregación urbana (Schelling) (sociologia, economia, urbanismo)
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos (informatica, matematicas, logistica, transporte, redes)
+- [[F006]] - Coloreo de grafos (matematicas, informatica, logistica, planificacion, biologia)
+- [[F007]] - Satisfacibilidad booleana (SAT) (informatica, matematicas, logica, inteligencia_artificial, ingenieria_electronica)
+- [[F008]] - Percolación (fisica_estadistica, ciencia_materiales, ecologia, epidemiologia, redes)
+- [[F009]] - Modelo de votantes (sociologia, fisica_estadistica, opinion_dinamica, ecologia)
+- [[F010]] - Segregación urbana (Schelling) (sociologia, economia, urbanismo, modelos_basados_en_agentes)
 - [[F011]] - Lógica y Argumentación (Filosofía) (filosofia, logica, inteligencia_artificial)
 - [[F012]] - Marcos de Argumentación Abstractos (Dung's Framework) (logica, inteligencia_artificial, filosofia)
 - [[F013]] - Marcos de Argumentación Basados en Lógica (logica, inteligencia_artificial, filosofia)
@@ -63,20 +63,42 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones) (fisica_estadistica, sociologia)
 - [[I002]] - Dilema del Prisionero Multidominio (economia, biologia, sociologia, ciencia_politica)
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales (biologia, inteligencia_artificial, neurociencia)
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield (fisica_estadistica, inteligencia_artificial, neurociencia)
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales (biologia, informatica, ingenieria_electronica)
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes (economia, biologia, sociologia, fisica_estadistica)
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT) (informatica, matematicas, logica)
 - [[I008]] - Isomorfismo entre Marcos de Argumentación Abstractos (AFs) y CSP (logica, inteligencia_artificial, informatica)
 
 ### Técnicas (T)
 
 - [[T001]] - Constraint Propagation (Propagación de Restricciones) (inteligencia_artificial, informatica, optimizacion)
 - [[T002]] - Backtracking (inteligencia_artificial, informatica, optimizacion)
+- [[T003]] - Algoritmos de Monte Carlo
+- [[T004]] - DPLL
+- [[T005]] - Algoritmo Genético
+- [[T006]] - Recocido Simulado (Simulated Annealing)
 - [[T007]] - Formal Concept Analysis (Análisis Formal de Conceptos) (matematicas, informatica, inteligencia_artificial)
 
 ### Dominios (D)
 
-*No hay notas de tipo dominio aún.*
+- [[D001]] - Ciencias Naturales
+- [[D002]] - Física
+- [[D003]] - Biología
+- [[D004]] - Química
+- [[D005]] - Ecología
+- [[D006]] - Ciencias Formales
+- [[D007]] - Matemáticas
+- [[D008]] - Informática
+- [[D010]] - Ciencias Sociales y Humanidades
+- [[D017]] - Ingeniería y Tecnología
 
 ### Conceptos (K)
 
+- [[K001]] - Equilibrio de Nash
+- [[K002]] - Estrategia Evolutivamente Estable (ESS)
+- [[K003]] - NP-Completitud
+- [[K004]] - Función de Lyapunov
 - [[K005]] - Lattice (Teoría de Retículos) (matematicas, informatica, filosofia)
 - [[K006]] - Lógica Proposicional (logica, filosofia, informatica)
 - [[K007]] - Lógica de Predicados (logica, filosofia, informatica)
@@ -105,7 +127,11 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[C005]] - Jerarquías y Taxonomías
 - [[F001]] - Teoría de Juegos Evolutiva
 - [[F002]] - Redes de Regulación Génica
+- [[F006]] - Coloreo de grafos
 - [[I002]] - Dilema del Prisionero Multidominio
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
 
 ### Economia
 
@@ -113,6 +139,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F001]] - Teoría de Juegos Evolutiva
 - [[F010]] - Segregación urbana (Schelling)
 - [[I002]] - Dilema del Prisionero Multidominio
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
 - [[K011]] - Valores y Preferencias
 
 ### Fisica
@@ -127,6 +154,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F010]] - Segregación urbana (Schelling)
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
 - [[I002]] - Dilema del Prisionero Multidominio
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
 
 ### Informatica
 
@@ -135,6 +163,8 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
 - [[F006]] - Coloreo de grafos
 - [[F007]] - Satisfacibilidad booleana (SAT)
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
 - [[I008]] - Isomorfismo entre Marcos de Argumentación Abstractos (AFs) y CSP
 - [[K005]] - Lattice (Teoría de Retículos)
 - [[K006]] - Lógica Proposicional
@@ -152,6 +182,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
 - [[F006]] - Coloreo de grafos
 - [[F007]] - Satisfacibilidad booleana (SAT)
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
 - [[K005]] - Lattice (Teoría de Retículos)
 - [[T007]] - Formal Concept Analysis (Análisis Formal de Conceptos)
 
@@ -162,6 +193,8 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### Neurociencia
 
 - [[F004]] - Redes neuronales de Hopfield
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
 
 ### Medicina
 
@@ -213,14 +246,15 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 **Ecologia:**
 - [[F008]] - Percolación
+- [[F009]] - Modelo de votantes
 
 **Epidemiologia:**
 - [[F008]] - Percolación
 
 **Etica:**
 - [[F014]] - Marcos de Argumentación Basados en Valores (VAFs)
-- [[K013]] - Lógica Deóntica
 - [[K011]] - Valores y Preferencias
+- [[K013]] - Lógica Deóntica
 
 **Fisica Estadistica:**
 - [[F003]] - Modelo de Ising 2D
@@ -228,39 +262,51 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F008]] - Percolación
 - [[F009]] - Modelo de votantes
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
+
+**Ingenieria Electronica:**
+- [[F007]] - Satisfacibilidad booleana (SAT)
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
 
 **Inteligencia Artificial:**
+- [[F007]] - Satisfacibilidad booleana (SAT)
+- [[F004]] - Redes neuronales de Hopfield
 - [[F011]] - Lógica y Argumentación (Filosofía)
 - [[F012]] - Marcos de Argumentación Abstractos (Dung's Framework)
 - [[F013]] - Marcos de Argumentación Basados en Lógica
 - [[F014]] - Marcos de Argumentación Basados en Valores (VAFs)
 - [[F015]] - Marcos de Argumentación Basados en Supuestos (ABAs)
-- [[F004]] - Redes neuronales de Hopfield
-- [[F007]] - Satisfacibilidad booleana (SAT)
+- [[K008]] - Inferencia
 - [[K010]] - Semánticas de Aceptación (Argumentación)
+- [[K011]] - Valores y Preferencias
 - [[K012]] - Lógica Modal
 - [[K014]] - Lógica Temporal
 - [[K015]] - Lógica Difusa (Fuzzy Logic)
 - [[K016]] - Lógica Paraconsistente
 - [[K017]] - Lógica Relevante
 - [[K018]] - Lógica Dialógica y Juegos de Diálogo
-- [[K011]] - Valores y Preferencias
-- [[K008]] - Inferencia
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
 - [[I008]] - Isomorfismo entre Marcos de Argumentación Abstractos (AFs) y CSP
 - [[C006]] - Satisfacibilidad Lógica
 - [[C007]] - Sistemas de Razonamiento
 - [[C008]] - Toma de Decisiones
 - [[T001]] - Constraint Propagation (Propagación de Restricciones)
-- [[T007]] - Formal Concept Analysis (Análisis Formal de Conceptos)
 - [[T002]] - Backtracking
+- [[T007]] - Formal Concept Analysis (Análisis Formal de Conceptos)
 
 **Logica:**
+- [[F007]] - Satisfacibilidad booleana (SAT)
 - [[F011]] - Lógica y Argumentación (Filosofía)
 - [[F012]] - Marcos de Argumentación Abstractos (Dung's Framework)
 - [[F013]] - Marcos de Argumentación Basados en Lógica
 - [[F014]] - Marcos de Argumentación Basados en Valores (VAFs)
 - [[F015]] - Marcos de Argumentación Basados en Supuestos (ABAs)
-- [[F007]] - Satisfacibilidad booleana (SAT)
+- [[K006]] - Lógica Proposicional
+- [[K007]] - Lógica de Predicados
+- [[K008]] - Inferencia
+- [[K009]] - Validez Lógica
 - [[K010]] - Semánticas de Aceptación (Argumentación)
 - [[K012]] - Lógica Modal
 - [[K013]] - Lógica Deóntica
@@ -269,17 +315,17 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[K016]] - Lógica Paraconsistente
 - [[K017]] - Lógica Relevante
 - [[K018]] - Lógica Dialógica y Juegos de Diálogo
-- [[K006]] - Lógica Proposicional
-- [[K007]] - Lógica de Predicados
-- [[K008]] - Inferencia
-- [[K009]] - Validez Lógica
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
 - [[I008]] - Isomorfismo entre Marcos de Argumentación Abstractos (AFs) y CSP
 - [[C006]] - Satisfacibilidad Lógica
 - [[C007]] - Sistemas de Razonamiento
 
 **Logistica:**
-- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
 - [[F006]] - Coloreo de grafos
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+
+**Modelos Basados En Agentes:**
+- [[F010]] - Segregación urbana (Schelling)
 
 **Opinion Dinamica:**
 - [[F009]] - Modelo de votantes
@@ -293,6 +339,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 **Psicologia:**
 - [[C008]] - Toma de Decisiones
+
+**Redes:**
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+- [[F008]] - Percolación
 
 **Transporte:**
 - [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
@@ -315,6 +365,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F009]] - Modelo de votantes
 - [[F010]] - Segregación urbana (Schelling)
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
 
 ### C002 - Asignación Óptima
 
@@ -326,6 +380,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F006]] - Coloreo de grafos
 - [[F007]] - Satisfacibilidad booleana (SAT)
 - [[I002]] - Dilema del Prisionero Multidominio
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
 
 ### C004 - Sistemas Dinámicos
 
@@ -337,6 +392,9 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F010]] - Segregación urbana (Schelling)
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
 - [[I002]] - Dilema del Prisionero Multidominio
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
 
 ### C005 - Jerarquías y Taxonomías
 
@@ -348,6 +406,8 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F011]] - Lógica y Argumentación (Filosofía)
 - [[F013]] - Marcos de Argumentación Basados en Lógica
 - [[F015]] - Marcos de Argumentación Basados en Supuestos (ABAs)
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
 - [[I008]] - Isomorfismo entre Marcos de Argumentación Abstractos (AFs) y CSP
 - [[K006]] - Lógica Proposicional
 - [[K007]] - Lógica de Predicados
@@ -369,10 +429,23 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F006]] - Coloreo de grafos
 - [[F007]] - Satisfacibilidad booleana (SAT)
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
+
+### #P_vs_NP
+
+- [[K003]] - NP-Completitud
+
+### #SAT
+
+- [[T004]] - DPLL
 
 ### #abduccion
 
 - [[K008]] - Inferencia
+
+### #abstraccion
+
+- [[D006]] - Ciencias Formales
 
 ### #aceptacion
 
@@ -385,10 +458,27 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[I008]] - Isomorfismo entre Marcos de Argumentación Abstractos (AFs) y CSP
 - [[K010]] - Semánticas de Aceptación (Argumentación)
 
+### #algebra
+
+- [[D007]] - Matemáticas
+
 ### #algoritmos
 
+- [[D008]] - Informática
 - [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
 - [[T002]] - Backtracking
+
+### #algoritmos_de_busqueda
+
+- [[T004]] - DPLL
+
+### #algoritmos_probabilisticos
+
+- [[T006]] - Recocido Simulado (Simulated Annealing)
+
+### #aplicacion
+
+- [[D017]] - Ingeniería y Tecnología
 
 ### #aprendizaje_maquina
 
@@ -419,6 +509,14 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F006]] - Coloreo de grafos
 
+### #astronomia
+
+- [[D001]] - Ciencias Naturales
+
+### #atomos
+
+- [[D004]] - Química
+
 ### #atractores
 
 - [[C004]] - Sistemas Dinámicos
@@ -427,6 +525,27 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #autoorganizacion
 
 - [[F010]] - Segregación urbana (Schelling)
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
+
+### #backtracking
+
+- [[T004]] - DPLL
+
+### #biodiversidad
+
+- [[D005]] - Ecología
+
+### #biofisica
+
+- [[D004]] - Química
+
+### #biologia
+
+- [[D001]] - Ciencias Naturales
+
+### #biologia_sistemas
+
+- [[D003]] - Biología
 
 ### #boolean_networks
 
@@ -437,6 +556,18 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[T001]] - Constraint Propagation (Propagación de Restricciones)
 - [[T002]] - Backtracking
 
+### #busqueda_global
+
+- [[T005]] - Algoritmo Genético
+
+### #busqueda_local
+
+- [[T006]] - Recocido Simulado (Simulated Annealing)
+
+### #calculo
+
+- [[D007]] - Matemáticas
+
 ### #caminos_cortos
 
 - [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
@@ -445,10 +576,36 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[C004]] - Sistemas Dinámicos
 
+### #circuitos_digitales
+
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
+
 ### #clasificacion
 
 - [[C005]] - Jerarquías y Taxonomías
 - [[T007]] - Formal Concept Analysis (Análisis Formal de Conceptos)
+
+### #complejidad_computacional
+
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
+- [[K003]] - NP-Completitud
+
+### #comportamiento
+
+- [[D010]] - Ciencias Sociales y Humanidades
+
+### #computacion
+
+- [[D008]] - Informática
+
+### #computacion_biologica
+
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
+
+### #computacion_evolutiva
+
+- [[T005]] - Algoritmo Genético
 
 ### #conceptos
 
@@ -482,6 +639,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #consenso
 
+- [[F009]] - Modelo de votantes
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
 
 ### #consistencia
@@ -493,6 +651,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #contradiccion
 
 - [[K016]] - Lógica Paraconsistente
+
+### #control
+
+- [[K004]] - Función de Lyapunov
 
 ### #cooperacion
 
@@ -511,9 +673,21 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[T001]] - Constraint Propagation (Propagación de Restricciones)
 - [[T002]] - Backtracking
 
+### #cuantica
+
+- [[D002]] - Física
+
 ### #cuantificadores
 
 - [[K007]] - Lógica de Predicados
+
+### #cultura
+
+- [[D010]] - Ciencias Sociales y Humanidades
+
+### #datos
+
+- [[D008]] - Informática
 
 ### #decision
 
@@ -530,6 +704,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[K013]] - Lógica Deóntica
 
+### #desarrollo
+
+- [[D017]] - Ingeniería y Tecnología
+
 ### #dialogo
 
 - [[K018]] - Lógica Dialógica y Juegos de Diálogo
@@ -537,10 +715,19 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #dinamica_de_opiniones
 
 - [[F009]] - Modelo de votantes
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
+
+### #dinamica_no_lineal
+
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
 
 ### #dinamicas
 
 - [[C004]] - Sistemas Dinámicos
+
+### #diseño
+
+- [[D017]] - Ingeniería y Tecnología
 
 ### #doxastica
 
@@ -551,9 +738,22 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F012]] - Marcos de Argumentación Abstractos (Dung's Framework)
 - [[K010]] - Semánticas de Aceptación (Argumentación)
 
+### #ecologia
+
+- [[D001]] - Ciencias Naturales
+- [[D003]] - Biología
+
+### #ecosistemas
+
+- [[D005]] - Ecología
+
 ### #eleccion
 
 - [[C008]] - Toma de Decisiones
+
+### #electromagnetismo
+
+- [[D002]] - Física
 
 ### #epistemica
 
@@ -566,6 +766,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #equilibrio
 
 - [[F001]] - Teoría de Juegos Evolutiva
+- [[K001]] - Equilibrio de Nash
 
 ### #equilibrio_nash
 
@@ -574,10 +775,17 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #estabilidad
 
 - [[C004]] - Sistemas Dinámicos
+- [[K002]] - Estrategia Evolutivamente Estable (ESS)
+- [[K004]] - Función de Lyapunov
+
+### #estocastico
+
+- [[T003]] - Algoritmos de Monte Carlo
 
 ### #estrategia
 
 - [[F001]] - Teoría de Juegos Evolutiva
+- [[K001]] - Equilibrio de Nash
 - [[K018]] - Lógica Dialógica y Juegos de Diálogo
 
 ### #estructura_algebraica
@@ -597,7 +805,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #evolucion
 
+- [[D003]] - Biología
 - [[F001]] - Teoría de Juegos Evolutiva
+- [[K002]] - Estrategia Evolutivamente Estable (ESS)
+- [[T005]] - Algoritmo Genético
 
 ### #evolucion_temporal
 
@@ -618,7 +829,18 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #fisica
 
+- [[D001]] - Ciencias Naturales
 - [[F003]] - Modelo de Ising 2D
+
+### #fisica_estadistica
+
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
+- [[T003]] - Algoritmos de Monte Carlo
+- [[T006]] - Recocido Simulado (Simulated Annealing)
+
+### #formalizacion
+
+- [[D006]] - Ciencias Formales
 
 ### #futuro
 
@@ -627,6 +849,14 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #genes
 
 - [[F002]] - Redes de Regulación Génica
+
+### #genetica
+
+- [[D003]] - Biología
+
+### #geometria
+
+- [[D007]] - Matemáticas
 
 ### #grados_de_verdad
 
@@ -638,6 +868,14 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[C005]] - Jerarquías y Taxonomías
 - [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
 - [[F006]] - Coloreo de grafos
+
+### #greedy
+
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+
+### #historia
+
+- [[D010]] - Ciencias Sociales y Humanidades
 
 ### #implicacion
 
@@ -662,13 +900,39 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F015]] - Marcos de Argumentación Basados en Supuestos (ABAs)
 - [[K007]] - Lógica de Predicados
 
+### #informatica
+
+- [[D006]] - Ciencias Formales
+
+### #innovacion
+
+- [[D017]] - Ingeniería y Tecnología
+
+### #integracion_numerica
+
+- [[T003]] - Algoritmos de Monte Carlo
+
+### #inteligencia_artificial
+
+- [[D008]] - Informática
+- [[T005]] - Algoritmo Genético
+
 ### #interaccion
 
 - [[K018]] - Lógica Dialógica y Juegos de Diálogo
 
+### #interaccion_racional
+
+- [[K001]] - Equilibrio de Nash
+
+### #interaccion_social
+
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
+
 ### #interacciones
 
 - [[C001]] - Redes de Interacción
+- [[D005]] - Ecología
 
 ### #ising
 
@@ -676,6 +940,11 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #isomorfismo
 
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
 - [[I008]] - Isomorfismo entre Marcos de Argumentación Abstractos (AFs) y CSP
 
 ### #jerarquia
@@ -687,6 +956,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F001]] - Teoría de Juegos Evolutiva
 - [[K018]] - Lógica Dialógica y Juegos de Diálogo
 
+### #juegos_evolutivos
+
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
+
 ### #lattices
 
 - [[T007]] - Formal Concept Analysis (Análisis Formal de Conceptos)
@@ -694,16 +967,27 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #logica
 
 - [[C006]] - Satisfacibilidad Lógica
+- [[D006]] - Ciencias Formales
 - [[F011]] - Lógica y Argumentación (Filosofía)
 - [[F013]] - Marcos de Argumentación Basados en Lógica
+
+### #logica_booleana
+
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
 
 ### #logica_clasica
 
 - [[K017]] - Lógica Relevante
 
+### #logica_matematica
+
+- [[D007]] - Matemáticas
+
 ### #logica_proposicional
 
 - [[F007]] - Satisfacibilidad booleana (SAT)
+- [[T004]] - DPLL
 
 ### #magnetismo
 
@@ -713,13 +997,35 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[I008]] - Isomorfismo entre Marcos de Argumentación Abstractos (AFs) y CSP
 
+### #matematicas
+
+- [[D006]] - Ciencias Formales
+
+### #materiales
+
+- [[D004]] - Química
+
+### #mecanica
+
+- [[D002]] - Física
+
+### #medio_ambiente
+
+- [[D005]] - Ecología
+
 ### #memoria_asociativa
 
 - [[F004]] - Redes neuronales de Hopfield
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
 
 ### #metafisica
 
 - [[F011]] - Lógica y Argumentación (Filosofía)
+
+### #metaheuristica
+
+- [[T005]] - Algoritmo Genético
+- [[T006]] - Recocido Simulado (Simulated Annealing)
 
 ### #mineria_de_datos
 
@@ -737,6 +1043,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F009]] - Modelo de votantes
 
+### #moleculas
+
+- [[D004]] - Química
+
 ### #monte_carlo
 
 - [[F003]] - Modelo de Ising 2D
@@ -745,6 +1055,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[K013]] - Lógica Deóntica
 
+### #muestreo
+
+- [[T003]] - Algoritmos de Monte Carlo
+
 ### #mundos_posibles
 
 - [[K012]] - Lógica Modal
@@ -752,6 +1066,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #necesidad
 
 - [[K012]] - Lógica Modal
+
+### #neurociencia
+
+- [[D003]] - Biología
 
 ### #no_monotonica
 
@@ -783,6 +1101,13 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
 - [[F006]] - Coloreo de grafos
 - [[I002]] - Dilema del Prisionero Multidominio
+- [[T003]] - Algoritmos de Monte Carlo
+- [[T005]] - Algoritmo Genético
+- [[T006]] - Recocido Simulado (Simulated Annealing)
+
+### #optimizacion_con_restricciones
+
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
 
 ### #orden
 
@@ -797,6 +1122,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[K014]] - Lógica Temporal
 
+### #pensamiento
+
+- [[D010]] - Ciencias Sociales y Humanidades
+
 ### #permiso
 
 - [[K013]] - Lógica Deóntica
@@ -804,9 +1133,15 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #planificacion
 
 - [[F006]] - Coloreo de grafos
+- [[F007]] - Satisfacibilidad booleana (SAT)
+
+### #poblaciones
+
+- [[D005]] - Ecología
 
 ### #polarizacion
 
+- [[F009]] - Modelo de votantes
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
 
 ### #posibilidad
@@ -822,6 +1157,14 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[C008]] - Toma de Decisiones
 - [[F014]] - Marcos de Argumentación Basados en Valores (VAFs)
 - [[K011]] - Valores y Preferencias
+
+### #probabilidad
+
+- [[T003]] - Algoritmos de Monte Carlo
+
+### #problemas_dificiles
+
+- [[K003]] - NP-Completitud
 
 ### #procesos
 
@@ -843,6 +1186,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[K006]] - Lógica Proposicional
 
+### #quimica
+
+- [[D001]] - Ciencias Naturales
+
 ### #razonamiento
 
 - [[C007]] - Sistemas de Razonamiento
@@ -857,19 +1204,33 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[K016]] - Lógica Paraconsistente
 
+### #reacciones
+
+- [[D004]] - Química
+
 ### #redes
 
 - [[C001]] - Redes de Interacción
 - [[F002]] - Redes de Regulación Génica
 - [[F003]] - Modelo de Ising 2D
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
 
 ### #redes_aleatorias
 
 - [[F008]] - Percolación
 
+### #redes_de_transporte
+
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+
 ### #redes_neuronales
 
 - [[F004]] - Redes neuronales de Hopfield
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
+
+### #redes_sociales
+
+- [[F009]] - Modelo de votantes
 
 ### #reglas
 
@@ -879,9 +1240,21 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F002]] - Redes de Regulación Génica
 
+### #regulacion_genica
+
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
+
+### #relatividad
+
+- [[D002]] - Física
+
 ### #relevancia
 
 - [[K017]] - Lógica Relevante
+
+### #resolucion
+
+- [[T004]] - DPLL
 
 ### #resolucion_problemas
 
@@ -900,6 +1273,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[C008]] - Toma de Decisiones
 
+### #robustez
+
+- [[F008]] - Percolación
+
 ### #sat
 
 - [[C006]] - Satisfacibilidad Lógica
@@ -912,13 +1289,33 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[T001]] - Constraint Propagation (Propagación de Restricciones)
 - [[T002]] - Backtracking
 
+### #satisfacibilidad_booleana
+
+- [[T004]] - DPLL
+
+### #scheduling
+
+- [[F006]] - Coloreo de grafos
+
 ### #segregacion
 
 - [[F010]] - Segregación urbana (Schelling)
 
+### #seleccion_natural
+
+- [[K002]] - Estrategia Evolutivamente Estable (ESS)
+
 ### #semanticas
 
 - [[F012]] - Marcos de Argumentación Abstractos (Dung's Framework)
+
+### #simulacion
+
+- [[T003]] - Algoritmos de Monte Carlo
+
+### #sistemas
+
+- [[D017]] - Ingeniería y Tecnología
 
 ### #sistemas_biologicos
 
@@ -927,10 +1324,28 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #sistemas_complejos
 
 - [[C001]] - Redes de Interacción
+- [[F004]] - Redes neuronales de Hopfield
+- [[F010]] - Segregación urbana (Schelling)
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
+
+### #sistemas_dinamicos
+
+- [[K004]] - Función de Lyapunov
+
+### #sociedad
+
+- [[D010]] - Ciencias Sociales y Humanidades
 
 ### #sociofisica
 
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
+
+### #software
+
+- [[D008]] - Informática
 
 ### #solidez
 
@@ -960,17 +1375,50 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[C005]] - Jerarquías y Taxonomías
 
+### #teoria_de_grafos
+
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
+
+### #teoria_de_juegos
+
+- [[K001]] - Equilibrio de Nash
+
+### #teoria_de_juegos_evolutiva
+
+- [[K002]] - Estrategia Evolutivamente Estable (ESS)
+
+### #teoria_de_la_computacion
+
+- [[K003]] - NP-Completitud
+
 ### #teoria_de_orden
 
 - [[K005]] - Lattice (Teoría de Retículos)
+
+### #teoria_de_sistemas
+
+- [[K004]] - Función de Lyapunov
 
 ### #teoria_juegos
 
 - [[I002]] - Dilema del Prisionero Multidominio
 
+### #teoria_numeros
+
+- [[D007]] - Matemáticas
+
+### #termodinamica
+
+- [[D002]] - Física
+- [[T006]] - Recocido Simulado (Simulated Annealing)
+
 ### #tiempo
 
 - [[K014]] - Lógica Temporal
+
+### #tipping_points
+
+- [[F010]] - Segregación urbana (Schelling)
 
 ### #toma_de_decisiones
 
@@ -984,6 +1432,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F008]] - Percolación
 - [[F009]] - Modelo de votantes
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
 
 ### #transiciones_fase
 
@@ -1012,6 +1461,14 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[K009]] - Validez Lógica
 
+### #verificacion
+
+- [[F007]] - Satisfacibilidad booleana (SAT)
+
+### #vulnerabilidad
+
+- [[F008]] - Percolación
+
 ---
 
 ## 📊 Índice por Estado
@@ -1022,12 +1479,37 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[C006]] - Satisfacibilidad Lógica
 - [[C007]] - Sistemas de Razonamiento
 - [[C008]] - Toma de Decisiones
+- [[D001]] - Ciencias Naturales
+- [[D002]] - Física
+- [[D003]] - Biología
+- [[D005]] - Ecología
+- [[D006]] - Ciencias Formales
+- [[D007]] - Matemáticas
+- [[D008]] - Informática
+- [[D010]] - Ciencias Sociales y Humanidades
+- [[D017]] - Ingeniería y Tecnología
+- [[F004]] - Redes neuronales de Hopfield
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+- [[F006]] - Coloreo de grafos
+- [[F007]] - Satisfacibilidad booleana (SAT)
+- [[F008]] - Percolación
+- [[F009]] - Modelo de votantes
+- [[F010]] - Segregación urbana (Schelling)
 - [[F011]] - Lógica y Argumentación (Filosofía)
 - [[F012]] - Marcos de Argumentación Abstractos (Dung's Framework)
 - [[F013]] - Marcos de Argumentación Basados en Lógica
 - [[F014]] - Marcos de Argumentación Basados en Valores (VAFs)
 - [[F015]] - Marcos de Argumentación Basados en Supuestos (ABAs)
+- [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
+- [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
+- [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
+- [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
 - [[I008]] - Isomorfismo entre Marcos de Argumentación Abstractos (AFs) y CSP
+- [[K001]] - Equilibrio de Nash
+- [[K002]] - Estrategia Evolutivamente Estable (ESS)
+- [[K003]] - NP-Completitud
+- [[K004]] - Función de Lyapunov
 - [[K005]] - Lattice (Teoría de Retículos)
 - [[K006]] - Lógica Proposicional
 - [[K007]] - Lógica de Predicados
@@ -1044,6 +1526,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[K018]] - Lógica Dialógica y Juegos de Diálogo
 - [[T001]] - Constraint Propagation (Propagación de Restricciones)
 - [[T002]] - Backtracking
+- [[T003]] - Algoritmos de Monte Carlo
+- [[T004]] - DPLL
+- [[T005]] - Algoritmo Genético
+- [[T006]] - Recocido Simulado (Simulated Annealing)
 - [[T007]] - Formal Concept Analysis (Análisis Formal de Conceptos)
 
 ### En Revision
@@ -1060,13 +1546,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### Borrador
 
 - [[C002]] - Asignación Óptima
-- [[F004]] - Redes neuronales de Hopfield
-- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
-- [[F006]] - Coloreo de grafos
-- [[F007]] - Satisfacibilidad booleana (SAT)
-- [[F008]] - Percolación
-- [[F009]] - Modelo de votantes
-- [[F010]] - Segregación urbana (Schelling)
+- [[D004]] - Química
 
 ---
 
@@ -1074,16 +1554,16 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### Top 10 Nodos Más Conectados
 
-1. [[F011]] - Lógica y Argumentación (Filosofía) (21 conexiones)
-2. [[K006]] - Lógica Proposicional (14 conexiones)
-3. [[C001]] - Redes de Interacción (13 conexiones)
-4. [[C004]] - Sistemas Dinámicos (12 conexiones)
-5. [[K007]] - Lógica de Predicados (11 conexiones)
-6. [[K009]] - Validez Lógica (11 conexiones)
-7. [[T001]] - Constraint Propagation (Propagación de Restricciones) (11 conexiones)
-8. [[K010]] - Semánticas de Aceptación (Argumentación) (10 conexiones)
-9. [[C007]] - Sistemas de Razonamiento (9 conexiones)
-10. [[K008]] - Inferencia (8 conexiones)
+1. [[C001]] - Redes de Interacción (26 conexiones)
+2. [[C004]] - Sistemas Dinámicos (26 conexiones)
+3. [[T003]] - Algoritmos de Monte Carlo (23 conexiones)
+4. [[F011]] - Lógica y Argumentación (Filosofía) (21 conexiones)
+5. [[D008]] - Informática (20 conexiones)
+6. [[T005]] - Algoritmo Genético (20 conexiones)
+7. [[F001]] - Teoría de Juegos Evolutiva (19 conexiones)
+8. [[F003]] - Modelo de Ising 2D (19 conexiones)
+9. [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales (19 conexiones)
+10. [[F009]] - Modelo de votantes (18 conexiones)
 
 ### Notas Huérfanas
 
@@ -1097,23 +1577,23 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 | Dominio | Fenómenos | Objetivo Año 1 | Progreso |
 |---------|-----------|----------------|----------|
-| Biologia | 4 | 3 | 133% |
-| Economia | 5 | 2 | 250% |
+| Biologia | 8 | 3 | 267% |
+| Economia | 6 | 2 | 300% |
 | Fisica | 0 | 3 | 0% |
-| Matematicas | 6 | 2 | 300% |
-| Sociologia | 6 | 2 | 300% |
+| Matematicas | 7 | 2 | 350% |
+| Sociologia | 7 | 2 | 350% |
 | Linguistica | 1 | 1 | 100% |
-| Informatica | 15 | 1 | 1500% |
-| Neurociencia | 1 | 1 | 100% |
-| **TOTAL** | **38** | **15** | **253%** |
+| Informatica | 17 | 1 | 1700% |
+| Neurociencia | 3 | 1 | 300% |
+| **TOTAL** | **49** | **15** | **327%** |
 
 ### Estado de Implementación
 
 | Estado | Fenómenos | Porcentaje |
 |--------|-----------|------------|
-| Completo | 27 | 180% |
+| Completo | 56 | 373% |
 | En Revision | 8 | 53% |
-| Borrador | 8 | 53% |
+| Borrador | 2 | 13% |
 | **TOTAL** | **15** | **100%** |
 
 ---
