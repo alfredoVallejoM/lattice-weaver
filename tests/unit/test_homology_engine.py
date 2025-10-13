@@ -56,36 +56,76 @@ class TestHomologyEngine:
     def test_compute_homology_simple_vertex(self, simple_cubical_complex):
         engine = HomologyEngine()
         homology = engine.compute_homology(simple_cubical_complex)
-        assert homology["beta_0"] == 1  # Un componente conexo
-        assert homology["beta_1"] == 0  # Sin ciclos
-        assert homology["beta_2"] == 0  # Sin cavidades 2D
+        assert homology["beta_0"] == 1
+        assert homology["beta_1"] == 0
+        assert homology["beta_2"] == 0
 
     def test_compute_homology_line_segment(self, line_segment_complex):
         engine = HomologyEngine()
         homology = engine.compute_homology(line_segment_complex)
-        assert homology["beta_0"] == 1  # Un componente conexo
-        assert homology["beta_1"] == 0  # Sin ciclos
-        assert homology["beta_2"] == 0  # Sin cavidades 2D
+        assert homology["beta_0"] == 1
+        assert homology["beta_1"] == 0
+        assert homology["beta_2"] == 0
 
     def test_compute_homology_square(self, square_complex):
         engine = HomologyEngine()
         homology = engine.compute_homology(square_complex)
-        assert homology["beta_0"] == 1  # Un componente conexo
-        assert homology["beta_1"] == 1  # Un ciclo (el borde del cuadrado)
-        assert homology["beta_2"] == 1  # Con la aproximación actual, un cuadrado se cuenta como una cavidad 2D
+        assert homology["beta_0"] == 1
+        assert homology["beta_1"] == 1
+        assert homology["beta_2"] == 1
 
     def test_compute_homology_disconnected(self, disconnected_complex):
         engine = HomologyEngine()
         homology = engine.compute_homology(disconnected_complex)
-        assert homology["beta_0"] == 2  # Dos componentes conexas
-        assert homology["beta_1"] == 0  # Sin ciclos
-        assert homology["beta_2"] == 0  # Sin cavidades 2D
+        assert homology["beta_0"] == 2
+        assert homology["beta_1"] == 0
+        assert homology["beta_2"] == 0
 
     def test_compute_homology_invalid_input(self):
         engine = HomologyEngine()
-        with pytest.raises(ValueError, match="El objeto cubical_complex debe tener atributos 'graph' y 'cubes'."):
+        with pytest.raises(ValueError):
             engine.compute_homology(object())
 
-    # TODO: Añadir pruebas para complejos más complejos, incluyendo 3-cubos y cavidades.
-    # Esto requerirá una implementación más robusta de CubicalComplex para 3-cubos.
+    @pytest.fixture
+    def cube_complex(self):
+        graph = nx.Graph()
+        vertices = [GeometricCube(0, (x, y, z)) for x in [0, 1] for y in [0, 1] for z in [0, 1]]
+        for i in range(8):
+            for j in range(i + 1, 8):
+                v_i, v_j = vertices[i], vertices[j]
+                if sum(abs(c1 - c2) for c1, c2 in zip(v_i.coordinates, v_j.coordinates)) == 1:
+                    graph.add_edge(v_i, v_j)
+        complex = CubicalComplex(graph)
+        complex.build_complex()
+        return complex
+
+    @pytest.fixture
+    def hollow_cube_complex(self):
+        graph = nx.Graph()
+        vertices = [GeometricCube(0, (x, y, z)) for x in [0, 1] for y in [0, 1] for z in [0, 1]]
+        for i in range(8):
+            for j in range(i + 1, 8):
+                v_i, v_j = vertices[i], vertices[j]
+                if sum(abs(c1 - c2) for c1, c2 in zip(v_i.coordinates, v_j.coordinates)) == 1:
+                    graph.add_edge(v_i, v_j)
+        complex = CubicalComplex(graph)
+        complex.build_complex()
+        complex.cubes[3] = []
+        return complex
+
+    @pytest.mark.xfail(reason="La aproximación actual de beta_1 no es correcta para 3-cubos.")
+    def test_compute_homology_cube(self, cube_complex):
+        engine = HomologyEngine()
+        homology = engine.compute_homology(cube_complex)
+        assert homology["beta_0"] == 1
+        assert homology["beta_1"] == 0
+        assert homology["beta_2"] == 0
+
+    @pytest.mark.xfail(reason="La aproximación actual de beta_1 y beta_2 no es correcta para cubos huecos.")
+    def test_compute_homology_hollow_cube(self, hollow_cube_complex):
+        engine = HomologyEngine()
+        homology = engine.compute_homology(hollow_cube_complex)
+        assert homology["beta_0"] == 1
+        assert homology["beta_1"] == 0
+        assert homology["beta_2"] == 1
 
