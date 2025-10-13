@@ -146,7 +146,16 @@ Donde:
 
 ## Conexiones
 
-### Categoría Estructural
+#- [[F001]] - Conexión inversa con Fenómeno.
+- [[F001]] - Conexión inversa con Fenómeno.
+- [[F001]] - Conexión inversa con Fenómeno.
+- [[F001]] - Conexión inversa con Fenómeno.
+- [[F001]] - Conexión inversa con Fenómeno.
+- [[F001]] - Conexión inversa con Fenómeno.
+- [[F001]] - Conexión inversa con Fenómeno.
+- [[F001]] - Conexión inversa con Fenómeno.
+- [[F001]] - Conexión inversa con Fenómeno.
+## Categoría Estructural
 - [[C001]] - Redes de Interacción
 - [[C004]] - Sistemas Dinámicos
 
@@ -155,23 +164,27 @@ Donde:
 - [[C004]] - Sistemas Dinámicos (instancia)
 
 
-### Isomorfismos
+#- [[F001]] - Conexión inversa con Fenómeno.
+## Isomorfismos
 - [[I002]] - Dilema del Prisionero Multidominio - Aparece en biología, economía y sociología
 - [[I001]] - Modelo de Ising ≅ Redes Sociales: Isomorfismo entre espines magnéticos y opiniones binarias.
+- [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes: Isomorfismo entre la dinámica de estrategias y la evolución de opiniones.
 
 ### Instancias en Otros Dominios
 - [[F003]] - Modelo de Ising 2D - Dinámicas de opinión análogas a espines magnéticos
 - [[F002]] - Redes de Regulación Génica - Evolución de estrategias regulatorias
+- [[F004]] - Redes neuronales de Hopfield - Modelos de memoria asociativa con dinámicas de equilibrio
+- [[F009]] - Modelo de votantes - Dinámicas de opinión con interacciones locales
 
 ### Técnicas Aplicables
-- Replicator Dynamics - Ecuaciones diferenciales que modelan evolución de frecuencias
-- Simulación basada en agentes - Modelado computacional de poblaciones
+- [[T001]] - Replicator Dynamics - Ecuaciones diferenciales que modelan evolución de frecuencias
+- [[T007]] - Simulación Basada en Agentes - Modelado computacional de poblaciones
 - Análisis de estabilidad - Linearización alrededor de equilibrios
 - Teoría de perturbaciones - Análisis de invasibilidad
 
 ### Conceptos Fundamentales
-- Equilibrio de Nash - Concepto base de teoría de juegos
-- Estrategia Evolutivamente Estable (ESS) - Extensión evolutiva del equilibrio
+- [[K001]] - Equilibrio de Nash - Concepto base de teoría de juegos
+- [[K002]] - Estrategia Evolutivamente Estable (ESS) - Extensión evolutiva del equilibrio
 - Fitness - Medida de éxito reproductivo
 - Invasibilidad - Capacidad de una estrategia mutante de invadir
 
@@ -338,4 +351,8 @@ La teoría de juegos evolutiva es un ejemplo paradigmático de **isomorfismo int
 
 **Última actualización:** 2025-10-12  
 **Responsable:** Agente Autónomo de Análisis
-
+- [[I003]]
+- [[I004]]
+- [[T005]]
+- [[K005]]
+- [[K010]]

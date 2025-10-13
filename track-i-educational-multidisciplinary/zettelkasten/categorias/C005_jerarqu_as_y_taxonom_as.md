@@ -333,6 +333,10 @@ class [NombreCategoria]Phenomenon(BasePhenomenon):
 
 [Cualquier observación relevante]
 
+
+## Conexiones
+
+- [[C005]] - Conexión inversa con Categoría.
 ---
 
 **Última actualización:** 2025-10-12  

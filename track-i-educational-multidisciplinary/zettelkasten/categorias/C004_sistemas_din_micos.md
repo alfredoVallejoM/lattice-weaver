@@ -342,8 +342,49 @@ Los Sistemas Dinámicos son paradigmáticos de **emergencia**: comportamiento co
 
 El caos determinista muestra que incluso sistemas completamente deterministas pueden ser impredecibles a largo plazo debido a sensibilidad a condiciones iniciales. Esto tiene implicaciones filosóficas sobre los límites de la predictibilidad científica.
 
+
+## Conexiones
+
+-- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+- [[C004]] - Conexión inversa con Categoría.
+ [[C004]] - Conexión inversa.
 ---
 
 **Última actualización:** 2025-10-12  
 **Responsable:** Agente Autónomo de Análisis
-
+- [[I003]]
+- [[I004]]
+- [[I006]]
+- [[I008]]
+- [[T001]]
+- [[T003]]
+- [[T007]]
+- [[K001]]
+- [[K002]]
+- [[K004]]
+- [[K005]]
+- [[K007]]
+- [[K009]]

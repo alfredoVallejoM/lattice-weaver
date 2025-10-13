@@ -322,8 +322,34 @@ class ConstraintProblem(ABC):
 -   **Progreso de implementación:** 10%
 -   **Progreso de documentación:** 25%
 
+
+## Conexiones
+
+-- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+- [[C003]] - Conexión inversa con Categoría.
+ [[C003]] - Conexión inversa.
 ---
 
 **Última actualización:** 2025-10-12  
 **Responsable:** Agente Autónomo de Análisis
-
+- [[I007]]
+- [[T002]]
+- [[T004]]
+- [[T005]]
+- [[T003]]
+- [[K003]]
+- [[K006]]
+- [[K008]]

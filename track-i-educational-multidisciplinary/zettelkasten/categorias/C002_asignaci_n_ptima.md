@@ -333,8 +333,19 @@ class [NombreCategoria]Phenomenon(BasePhenomenon):
 
 [Cualquier observación relevante]
 
+
+## Conexiones
+
+-- [[C002]] - Conexión inversa con Categoría.
+- [[C002]] - Conexión inversa con Categoría.
+- [[C002]] - Conexión inversa con Categoría.
+- [[C002]] - Conexión inversa con Categoría.
+- [[C002]] - Conexión inversa con Categoría.
+ [[C002]] - Conexión inversa.
 ---
 
 **Última actualización:** 2025-10-12  
 **Responsable:** [Nombre del agente/persona]
-
+- [[T005]]
+- [[K009]]
+- [[K010]]

@@ -180,8 +180,25 @@ class SatisfiabilityProblem(ABC):
 -   [ ] Técnicas comunes identificadas
 -   [ ] Clase base implementada
 
+
+## Conexiones
+
+-- [[C006]] - Conexión inversa con Categoría.
+- [[C006]] - Conexión inversa con Categoría.
+- [[C006]] - Conexión inversa con Categoría.
+- [[C006]] - Conexión inversa con Categoría.
+- [[C006]] - Conexión inversa con Categoría.
+- [[C006]] - Conexión inversa con Categoría.
+- [[C006]] - Conexión inversa con Categoría.
+- [[C006]] - Conexión inversa con Categoría.
+- [[C006]] - Conexión inversa con Categoría.
+ [[C006]] - Conexión inversa.
 ---
 
 **Última actualización:** 2025-10-12
 **Responsable:** Agente Autónomo de Análisis
-
+- [[I005]]
+- [[I007]]
+- [[T004]]
+- [[K003]]
+- [[K008]]

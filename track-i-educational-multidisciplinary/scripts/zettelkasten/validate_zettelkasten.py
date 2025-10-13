@@ -20,7 +20,7 @@ import argparse
 import re
 import yaml
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Optional
 from collections import defaultdict
 
 # Añadir el directorio raíz al path
@@ -28,6 +28,41 @@ SCRIPT_DIR = Path(__file__).parent
 TRACK_DIR = SCRIPT_DIR.parent.parent
 ZETTEL_DIR = TRACK_DIR / "zettelkasten"
 
+# Mapeo de tipos a prefijos y directorios
+TYPE_CONFIG = {
+    "fenomeno": {"prefix": "F", "dir": "fenomenos"},
+    "categoria": {"prefix": "C", "dir": "categorias"},
+    "isomorfismo": {"prefix": "I", "dir": "isomorfismos"},
+    "tecnica": {"prefix": "T", "dir": "tecnicas"},
+    "dominio": {"prefix": "D", "dir": "dominios"},
+    "concepto": {"prefix": "K", "dir": "conceptos"},
+    "mapeo": {"prefix": "M", "dir": "mapeos"},
+}
+
+def get_note_id_from_filename(filename):
+    # Intenta coincidir con el patrón ID_nombre.md
+    match = re.match(r'([FCIKDTM]\d{3})_.*\.md', filename)
+    if match:
+        return match.group(1)
+    # Si no coincide, intenta coincidir con el patrón ID.md
+    match = re.match(r'([FCIKDTM]\d{3})\.md', filename)
+    if match:
+        return match.group(1)
+    return None
+
+def get_filename_from_note_id(note_id: str) -> Optional[Path]:
+    prefix = note_id[0]
+    for config_type, config_data in TYPE_CONFIG.items():
+        if config_data["prefix"] == prefix:
+            notes_dir = ZETTEL_DIR / config_data["dir"]
+            if notes_dir.exists():
+                # Priorizar el archivo con el patrón ID_nombre.md
+                for file in notes_dir.glob(f"{note_id}_*.md"):
+                    return file
+                # Si no se encuentra, intentar con el patrón ID.md
+                if (notes_dir / f"{note_id}.md").exists():
+                    return notes_dir / f"{note_id}.md"
+    return None
 
 class ValidationError:
     """Representa un error de validación."""
@@ -47,7 +82,6 @@ class ValidationError:
         else:
             return f"{emoji} [{self.category}] {self.message}"
 
-
 def extract_metadata(filepath: Path) -> Tuple[Dict, List[ValidationError]]:
     """
     Extrae y valida los metadatos YAML de una nota.
@@ -59,6 +93,7 @@ def extract_metadata(filepath: Path) -> Tuple[Dict, List[ValidationError]]:
         Tupla (metadata, errores)
     """
     errors = []
+    metadata = {"_filepath": filepath} # Asegurar que _filepath siempre esté presente
     
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
@@ -69,7 +104,7 @@ def extract_metadata(filepath: Path) -> Tuple[Dict, List[ValidationError]]:
             f"No se pudo leer el archivo: {e}",
             str(filepath)
         ))
-        return {}, errors
+        return metadata, errors
     
     # Buscar el bloque YAML front matter
     match = re.match(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
@@ -79,18 +114,20 @@ def extract_metadata(filepath: Path) -> Tuple[Dict, List[ValidationError]]:
             "No se encontró bloque YAML front matter",
             str(filepath)
         ))
-        return {}, errors
+        return metadata, errors
     
     yaml_content = match.group(1)
     try:
-        metadata = yaml.safe_load(yaml_content)
+        yaml_data = yaml.safe_load(yaml_content)
+        if yaml_data:
+            metadata.update(yaml_data)
     except yaml.YAMLError as e:
         errors.append(ValidationError(
             'error', 'YAML_INVALID',
             f"YAML inválido: {e}",
             str(filepath)
         ))
-        return {}, errors
+        return metadata, errors
     
     # Validar campos requeridos
     required_fields = ['id', 'tipo', 'titulo', 'fecha_creacion', 'estado']
@@ -105,7 +142,7 @@ def extract_metadata(filepath: Path) -> Tuple[Dict, List[ValidationError]]:
     # Validar formato de ID
     if 'id' in metadata:
         note_id = metadata['id']
-        if not re.match(r'^[A-Z]\d{3}$', note_id):
+        if not re.match(r'^[A-Z]\d{3}$', str(note_id)):
             errors.append(ValidationError(
                 'error', 'ID_FORMAT',
                 f"ID '{note_id}' no tiene formato válido (debe ser LNNN, ej. F001)",
@@ -122,28 +159,7 @@ def extract_metadata(filepath: Path) -> Tuple[Dict, List[ValidationError]]:
                 str(filepath)
             ))
     
-    # Validar estado
-    valid_states = ['borrador', 'en_revision', 'completo']
-    if 'estado' in metadata:
-        if metadata['estado'] not in valid_states:
-            errors.append(ValidationError(
-                'warning', 'STATE_INVALID',
-                f"Estado '{metadata['estado']}' no es uno de los estados válidos: {valid_states}",
-                str(filepath)
-            ))
-    
-    # Validar formato de fecha
-    if 'fecha_creacion' in metadata:
-        if not re.match(r'^\d{4}-\d{2}-\d{2}$', str(metadata['fecha_creacion'])):
-            errors.append(ValidationError(
-                'warning', 'DATE_FORMAT',
-                f"Fecha de creación '{metadata['fecha_creacion']}' no tiene formato YYYY-MM-DD",
-                str(filepath)
-            ))
-    
-    metadata['_filepath'] = filepath
     return metadata, errors
-
 
 def extract_links(filepath: Path) -> List[str]:
     """
@@ -159,9 +175,9 @@ def extract_links(filepath: Path) -> List[str]:
         content = f.read()
     
     # Buscar todos los enlaces [[ID]] o [[ID|texto]]
-    links = re.findall(r'\[\[([A-Z]\d{3})', content)
-    return links  # No eliminar duplicados para detectar enlaces múltiples
+    links = re.findall(r'\[\[([A-Z]\d{3})(?:\|.*?)?\]\]', content) # Captura [[ID]] o [[ID|Alias]]
 
+    return links  # No eliminar duplicados para detectar enlaces múltiples
 
 def collect_all_notes() -> Tuple[Dict[str, Dict], List[ValidationError]]:
     """
@@ -173,7 +189,8 @@ def collect_all_notes() -> Tuple[Dict[str, Dict], List[ValidationError]]:
     notes = {}
     errors = []
     
-    for subdir in ZETTEL_DIR.iterdir():
+    for subdir_config in TYPE_CONFIG.values(): # Iterar sobre los directorios definidos en TYPE_CONFIG
+        subdir = ZETTEL_DIR / subdir_config["dir"]
         if not subdir.is_dir():
             continue
         
@@ -181,27 +198,61 @@ def collect_all_notes() -> Tuple[Dict[str, Dict], List[ValidationError]]:
             metadata, file_errors = extract_metadata(filepath)
             errors.extend(file_errors)
             
-            if metadata and 'id' in metadata:
-                note_id = metadata['id']
-                
-                # Verificar IDs duplicados
-                if note_id in notes:
-                    errors.append(ValidationError(
-                        'error', 'ID_DUPLICATE',
-                        f"ID duplicado '{note_id}' encontrado en múltiples archivos",
-                        str(filepath)
-                    ))
-                    errors.append(ValidationError(
-                        'error', 'ID_DUPLICATE',
-                        f"ID duplicado '{note_id}' (primera ocurrencia)",
-                        str(notes[note_id]['_filepath'])
-                    ))
-                
-                metadata['_links'] = extract_links(filepath)
-                notes[note_id] = metadata
+            # Asegurarse de que _filepath esté en metadata para evitar KeyError
+            metadata['_filepath'] = filepath
+
+            note_id_from_filename = get_note_id_from_filename(filepath.name)
+
+            # Si no se pudo extraer el ID del nombre del archivo, se añade un error y se salta la nota
+            if not note_id_from_filename:
+                errors.append(ValidationError(
+                    'error', 'FILENAME_INVALID',
+                    f"Nombre de archivo no válido o ID no extraíble: {filepath.name}",
+                    str(filepath)
+                ))
+                continue
+
+            # Si no hay metadatos o no hay ID en los metadatos, se intenta usar el del nombre del archivo
+            if 'id' not in metadata:
+                metadata['id'] = note_id_from_filename
+                # Si no se pudo extraer el título del frontmatter, se usa el nombre del archivo (sin extensión)
+                if 'titulo' not in metadata:
+                    metadata['titulo'] = filepath.stem.replace(f'{note_id_from_filename}_', '').replace('_', ' ').title()
+                errors.append(ValidationError(
+                    'warning', 'METADATA_MISSING_ID_OR_TITLE',
+                    f"ID o título faltante en frontmatter. Usando ID '{note_id_from_filename}' y título '{metadata['titulo']}' del nombre de archivo.",
+                    str(filepath)
+                ))
+            
+            note_id = metadata['id']
+
+            # Asegurarse de que el ID del frontmatter coincida con el del nombre del archivo
+            if str(note_id) != note_id_from_filename:
+                errors.append(ValidationError(
+                    'error', 'ID_MISMATCH',
+                    f"ID en frontmatter '{note_id}' no coincide con ID en nombre de archivo '{note_id_from_filename}'",
+                    str(filepath)
+                ))
+                continue # Saltar esta nota para evitar más errores en cascada
+            
+            # Verificar IDs duplicados
+            if note_id in notes:
+                errors.append(ValidationError(
+                    'error', 'ID_DUPLICATE',
+                    f"ID duplicado '{note_id}' encontrado en múltiples archivos",
+                    str(filepath)
+                ))
+                errors.append(ValidationError(
+                    'error', 'ID_DUPLICATE',
+                    f"ID duplicado '{note_id}' (primera ocurrencia)",
+                    str(notes[note_id]['_filepath'])
+                ))
+                continue # Saltar esta nota para evitar más errores en cascada
+            
+            metadata['_links'] = extract_links(filepath)
+            notes[note_id] = metadata
     
     return notes, errors
-
 
 def validate_bidirectional_links(notes: Dict[str, Dict]) -> List[ValidationError]:
     """
@@ -239,7 +290,6 @@ def validate_bidirectional_links(notes: Dict[str, Dict]) -> List[ValidationError
     
     return errors
 
-
 def validate_orphan_notes(notes: Dict[str, Dict]) -> List[ValidationError]:
     """
     Detecta notas huérfanas (sin conexiones).
@@ -268,7 +318,6 @@ def validate_orphan_notes(notes: Dict[str, Dict]) -> List[ValidationError]:
     
     return errors
 
-
 def validate_filename_consistency(notes: Dict[str, Dict]) -> List[ValidationError]:
     """
     Valida que los nombres de archivo sean consistentes con los IDs.
@@ -294,7 +343,6 @@ def validate_filename_consistency(notes: Dict[str, Dict]) -> List[ValidationErro
             ))
     
     return errors
-
 
 def validate_category_references(notes: Dict[str, Dict]) -> List[ValidationError]:
     """
@@ -326,7 +374,6 @@ def validate_category_references(notes: Dict[str, Dict]) -> List[ValidationError
                 ))
     
     return errors
-
 
 def print_validation_report(errors: List[ValidationError]):
     """
@@ -401,7 +448,6 @@ def print_validation_report(errors: List[ValidationError]):
     else:
         print("❌ Se encontraron errores que deben corregirse.")
     print("="*80 + "\n")
-
 
 def main():
     parser = argparse.ArgumentParser(

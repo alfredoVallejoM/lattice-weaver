@@ -267,9 +267,28 @@ Este isomorfismo es un ejemplo paradigmático de cómo estructuras matemáticas 
 
 La aplicabilidad del modelo de Ising a redes sociales también plantea preguntas filosóficas: ¿Hasta qué punto el comportamiento social es "determinista" (gobernado por leyes como en física) vs "libre"? El modelo sugiere que, aunque individuos tienen libre albedrío, el comportamiento colectivo puede ser predecible estadísticamente.
 
+
+## Conexiones
+
+-- [[I001]] - Conexión inversa con Isomorfismo.
+- [[I001]] - Conexión inversa con Isomorfismo.
+- [[I001]] - Conexión inversa con Isomorfismo.
+- [[I001]] - Conexión inversa con Isomorfismo.
+- [[I001]] - Conexión inversa con Isomorfismo.
+- [[I001]] - Conexión inversa con Isomorfismo.
+- [[I001]] - Conexión inversa con Isomorfismo.
+- [[I001]] - Conexión inversa con Isomorfismo.
+- [[I001]] - Conexión inversa con Isomorfismo.
+- [[I001]] - Conexión inversa con Isomorfismo.
+- [[I001]] - Conexión inversa con Isomorfismo.
+ [[I001]] - Conexión inversa.
 ---
 
 **Última actualización:** 2025-10-12  
 **Responsable:** Agente Autónomo de Análisis  
 **Validación:** Isomorfismo validado por literatura en sociofísica (Castellano et al. 2009)
-
+- [[F004]]
+- [[I003]]
+- [[I004]]
+- [[I006]]
+- [[I008]]

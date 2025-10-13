@@ -162,7 +162,26 @@ El modelado de GRNs permite capturar la lógica regulatoria subyacente a proceso
 
 ## Conexiones
 
-### Categoría Estructural
+#- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+- [[F002]] - Conexión inversa con Fenómeno.
+## Categoría Estructural
 - [[C001]] - Redes de Interacción
 - [[C004]] - Sistemas Dinámicos: Las redes de regulación génica son un tipo de sistema dinámico discreto.
 
@@ -171,7 +190,8 @@ El modelado de GRNs permite capturar la lógica regulatoria subyacente a proceso
 - [[C004]] - Sistemas Dinámicos (instancia)
 
 
-### Isomorfismos
+#- [[F002]] - Conexión inversa con Fenómeno.
+## Isomorfismos
 - **Redes neuronales artificiales:** Nodos con activación binaria, propagación de señales
 - **Circuitos digitales:** Puertas lógicas análogas a funciones booleanas
 - **Redes sociales:** Influencia social análoga a regulación génica
@@ -385,4 +405,13 @@ Un insight clave es que la **robustez** de las GRNs (su capacidad de mantener fu
 
 **Última actualización:** 2025-10-12  
 **Responsable:** Agente Autónomo de Análisis
-
+- [[F007]]
+- [[I003]]
+- [[I005]]
+- [[I007]]
+- [[T004]]
+- [[T005]]
+- [[K005]]
+- [[K006]]
+- [[K009]]
+- [[K010]]

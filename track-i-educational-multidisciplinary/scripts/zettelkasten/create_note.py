@@ -1,15 +1,3 @@
-#!/usr/bin/env python3
-"""
-Script para crear nuevas notas en el Zettelkasten del Track I.
-
-Asiste en la creación de notas asignando IDs automáticamente,
-usando templates apropiados y sugiriendo conexiones.
-
-Uso:
-    python create_note.py --type fenomeno
-    python create_note.py --type isomorfismo --interactive
-"""
-
 import os
 import sys
 import argparse
@@ -30,8 +18,8 @@ TYPE_CONFIG = {
     "categoria": {"prefix": "C", "dir": "categorias", "template": "template_categoria.md"},
     "isomorfismo": {"prefix": "I", "dir": "isomorfismos", "template": "template_isomorfismo.md"},
     "tecnica": {"prefix": "T", "dir": "tecnicas", "template": "template_tecnica.md"},
-    "dominio": {"prefix": "D", "dir": "dominios", "template": None},
-    "concepto": {"prefix": "K", "dir": "conceptos", "template": None},
+    "dominio": {"prefix": "D", "dir": "dominios", "template": "template_dominio.md"},
+    "concepto": {"prefix": "K", "dir": "conceptos", "template": "template_concepto.md"},
     "mapeo": {"prefix": "M", "dir": "mapeos", "template": None},
 }
 
@@ -100,7 +88,9 @@ def create_note_interactive(note_type: str) -> Dict[str, str]:
     print(f"\n=== Creando nueva nota de tipo: {note_type.upper()} ===\n")
     
     # Obtener ID automáticamente
-    note_id = get_next_id(note_type)
+    note_id = input(f"ID de la nota (dejar en blanco para {get_next_id(note_type)}): ").strip()
+    if not note_id:
+        note_id = get_next_id(note_type)
     print(f"ID asignado: {note_id}")
     
     # Pedir información básica
@@ -165,6 +155,23 @@ def create_note_interactive(note_type: str) -> Dict[str, str]:
         info["tags"] = [t.strip() for t in tags_str.split(",") if t.strip()]
         
         info["implementado"] = False
+
+    elif note_type == "dominio":
+        tags_str = input("Tags (separados por coma): ").strip()
+        info["tags"] = [t.strip() for t in tags_str.split(",") if t.strip()]
+        info["dominio_origen"] = info["titulo"]
+        info["categorias_aplicables"] = []
+        info["prioridad"] = input("Prioridad (maxima/alta/media/baja) [media]: ").strip() or "media"
+
+    elif note_type == "concepto":
+        dominios_str = input("Dominios (separados por coma): ").strip()
+        info["dominios"] = [d.strip() for d in dominios_str.split(",") if d.strip()]
+        
+        tags_str = input("Tags (separados por coma): ").strip()
+        info["tags"] = [t.strip() for t in tags_str.split(",") if t.strip()]
+        
+        prioridad = input("Prioridad (maxima/alta/media/baja) [media]: ").strip() or "media"
+        info["prioridad"] = prioridad
     
     return info
 
@@ -180,68 +187,20 @@ def fill_template(template: str, info: Dict[str, str]) -> str:
     Returns:
         Template rellenado
     """
-    # Reemplazar ID
-    template = template.replace("id: F###", f"id: {info['id']}")
-    template = template.replace("id: C###", f"id: {info['id']}")
-    template = template.replace("id: I###", f"id: {info['id']}")
-    template = template.replace("id: T###", f"id: {info['id']}")
+    # Reemplazar placeholders genéricos en el front matter y el cuerpo
+    for key, value in info.items():
+        if isinstance(value, list):
+            # Format lists as YAML lists for front matter
+            template = template.replace(f"{{{{{key}}}}}", str(value))
+        else:
+            template = template.replace(f"{{{{{key}}}}}", str(value))
+
+    # Replace specific placeholders that might not be in info dict directly
+    template = template.replace("{{date}}", info["fecha_creacion"])
     
-    # Reemplazar tipo
-    template = template.replace(f"tipo: {info['tipo']}", f"tipo: {info['tipo']}")
-    
-    # Reemplazar título
-    template = template.replace("titulo: [Nombre del Fenómeno]", f"titulo: {info['titulo']}")
-    template = template.replace("titulo: [Fenómeno A] ≅ [Fenómeno B]", f"titulo: {info['titulo']}")
-    template = template.replace("titulo: [Nombre de la Categoría Estructural]", f"titulo: {info['titulo']}")
-    template = template.replace("titulo: [Nombre de la Técnica/Algoritmo]", f"titulo: {info['titulo']}")
-    
-    # Reemplazar en el cuerpo
-    template = template.replace("# [Nombre del Fenómeno]", f"# {info['titulo']}")
-    template = template.replace("# Isomorfismo: [Fenómeno A] ≅ [Fenómeno B]", f"# Isomorfismo: {info['titulo']}")
-    template = template.replace("# Categoría: [Nombre de la Categoría Estructural]", f"# Categoría: {info['titulo']}")
-    template = template.replace("# Técnica: [Nombre de la Técnica/Algoritmo]", f"# Técnica: {info['titulo']}")
-    
-    # Reemplazar fechas
-    template = template.replace("fecha_creacion: YYYY-MM-DD", f"fecha_creacion: {info['fecha_creacion']}")
-    template = template.replace("fecha_modificacion: YYYY-MM-DD", f"fecha_modificacion: {info['fecha_modificacion']}")
-    
-    # Reemplazar campos específicos
-    if "dominios" in info:
-        dominios_yaml = "[" + ", ".join(info["dominios"]) + "]"
-        template = re.sub(r"dominios: \[.*?\]", f"dominios: {dominios_yaml}", template)
-    
-    if "categorias" in info:
-        categorias_yaml = "[" + ", ".join(info["categorias"]) + "]"
-        template = re.sub(r"categorias: \[.*?\]", f"categorias: {categorias_yaml}", template)
-    
-    if "tags" in info:
-        tags_yaml = "[" + ", ".join(info["tags"]) + "]"
-        template = re.sub(r"tags: \[.*?\]", f"tags: {tags_yaml}", template)
-    
-    if "prioridad" in info:
-        template = re.sub(r"prioridad: \w+", f"prioridad: {info['prioridad']}", template)
-    
-    if "nivel" in info:
-        template = re.sub(r"nivel: \w+", f"nivel: {info['nivel']}", template)
-    
-    if "fenomenos" in info:
-        fenomenos_yaml = "[" + ", ".join(info["fenomenos"]) + "]"
-        template = re.sub(r"fenomenos: \[.*?\]", f"fenomenos: {fenomenos_yaml}", template)
-    
-    if "dominio_origen" in info:
-        template = template.replace("dominio_origen: [dominio]", f"dominio_origen: {info['dominio_origen']}")
-    
-    if "categorias_aplicables" in info:
-        categorias_yaml = "[" + ", ".join(info["categorias_aplicables"]) + "]"
-        template = re.sub(r"categorias_aplicables: \[.*?\]", f"categorias_aplicables: {categorias_yaml}", template)
-    
-    # Reemplazar última actualización al final
-    template = re.sub(
-        r"\*\*Última actualización:\*\* YYYY-MM-DD",
-        f"**Última actualización:** {info['fecha_creacion']}",
-        template
-    )
-    
+    # Remove any remaining {{...}} placeholders that were not filled
+    template = re.sub(r"{{\w+}}", "", template)
+
     return template
 
 
@@ -289,8 +248,44 @@ def main():
         help="Modo interactivo (pide información al usuario)"
     )
     parser.add_argument(
-        "--titulo",
+        "--title",
         help="Título de la nota (modo no interactivo)"
+    )
+    parser.add_argument(
+        "--id",
+        help="ID de la nota (opcional, se genera automáticamente si no se provee)"
+    )
+    parser.add_argument(
+        "--dominios",
+        help="Dominios de la nota (separados por coma, modo no interactivo)"
+    )
+    parser.add_argument(
+        "--categorias",
+        help="Categorías de la nota (IDs separados por coma, modo no interactivo)"
+    )
+    parser.add_argument(
+        "--tags",
+        help="Tags de la nota (separados por coma, modo no interactivo)"
+    )
+    parser.add_argument(
+        "--prioridad",
+        help="Prioridad de la nota (maxima/alta/media/baja, modo no interactivo)"
+    )
+    parser.add_argument(
+        "--nivel",
+        help="Nivel del isomorfismo (exacto/fuerte/analogia, modo no interactivo)"
+    )
+    parser.add_argument(
+        "--fenomenos",
+        help="Fenómenos relacionados (IDs separados por coma, modo no interactivo)"
+    )
+    parser.add_argument(
+        "--dominio_origen",
+        help="Dominio de origen de la técnica (modo no interactivo)"
+    )
+    parser.add_argument(
+        "--categorias_aplicables",
+        help="Categorías aplicables a la técnica (IDs separados por coma, modo no interactivo)"
     )
     
     args = parser.parse_args()
@@ -304,70 +299,74 @@ def main():
         print(f"Error: Directorio templates no encontrado en {TEMPLATES_DIR}")
         sys.exit(1)
     
+    info = {}
     # Modo interactivo
     if args.interactive:
         info = create_note_interactive(args.type)
     else:
-        # Modo no interactivo (básico)
-        if not args.titulo:
-            print("Error: --titulo es requerido en modo no interactivo")
+        # Modo no interactivo
+        if not args.title:
+            print("Error: --title es requerido en modo no interactivo")
             sys.exit(1)
         
-        note_id = get_next_id(args.type)
+        note_id = args.id if args.id else get_next_id(args.type)
         info = {
             "id": note_id,
             "tipo": args.type,
-            "titulo": args.titulo,
+            "titulo": args.title,
             "fecha_creacion": datetime.now().strftime("%Y-%m-%d"),
             "fecha_modificacion": datetime.now().strftime("%Y-%m-%d"),
             "estado": "borrador",
         }
-    
-    # Cargar template
-    template = load_template(args.type)
-    if not template:
-        print(f"Advertencia: No hay template para tipo '{args.type}'")
-        print("Creando nota básica...")
-        template = f"""---
-id: {info['id']}
-tipo: {info['tipo']}
-titulo: {info['titulo']}
-fecha_creacion: {info['fecha_creacion']}
-fecha_modificacion: {info['fecha_modificacion']}
-estado: borrador
----
 
-# {info['titulo']}
+        if args.dominios:
+            info["dominios"] = [d.strip() for d in args.dominios.split(",") if d.strip()]
+        if args.categorias:
+            info["categorias"] = [c.strip() for c in args.categorias.split(",") if c.strip()]
+        if args.tags:
+            info["tags"] = [t.strip() for t in args.tags.split(",") if t.strip()]
+        if args.prioridad:
+            info["prioridad"] = args.prioridad
+        if args.nivel:
+            info["nivel"] = args.nivel
+        if args.fenomenos:
+            info["fenomenos"] = [f.strip() for f in args.fenomenos.split(",") if f.strip()]
+        if args.dominio_origen:
+            info["dominio_origen"] = args.dominio_origen
+        if args.categorias_aplicables:
+            info["categorias_aplicables"] = [c.strip() for c in args.categorias_aplicables.split(",") if c.strip()]
 
-## Descripción
+        # Default values for specific types if not provided via args
+        if args.type == "isomorfismo" and "nivel" not in info:
+            info["nivel"] = "fuerte"
+        if args.type == "isomorfismo" and "validacion" not in info:
+            info["validacion"] = "pendiente"
+        if args.type == "tecnica" and "implementado" not in info:
+            info["implementado"] = False
+        if args.type == "categoria" and "fenomenos_count" not in info:
+            info["fenomenos_count"] = 0
+        if args.type == "categoria" and "dominios_count" not in info:
+            info["dominios_count"] = 0
+        if args.type == "dominio" and "dominio_origen" not in info:
+            info["dominio_origen"] = info["titulo"]
+        if args.type == "dominio" and "categorias_aplicables" not in info:
+            info["categorias_aplicables"] = []
+        if args.type == "dominio" and "prioridad" not in info:
+            info["prioridad"] = "media"
+        if args.type == "concepto" and "prioridad" not in info:
+            info["prioridad"] = "media"
 
-[Agregar descripción aquí]
-
-## Conexiones
-
-[Agregar conexiones aquí]
-
----
-
-**Última actualización:** {info['fecha_creacion']}
-"""
+    template_content = load_template(args.type)
+    if template_content:
+        final_content = fill_template(template_content, info)
     else:
-        # Rellenar template
-        template = fill_template(template, info)
-    
-    # Guardar nota
-    filepath = save_note(args.type, info, template)
-    
-    print(f"\n✅ Nota creada exitosamente:")
-    print(f"   ID: {info['id']}")
-    print(f"   Archivo: {filepath}")
-    print(f"\nPróximos pasos:")
-    print(f"1. Editar el archivo para completar el contenido")
-    print(f"2. Crear enlaces bidireccionales con otras notas")
-    print(f"3. Ejecutar: python scripts/zettelkasten/update_catalog.py")
-    print(f"4. Ejecutar: python scripts/zettelkasten/validate_zettelkasten.py")
+        # Si no hay template, crear un front matter básico y el título
+        front_matter = yaml.dump(info, allow_unicode=True, sort_keys=False)
+        final_content = f"---\n{front_matter}---\n\n# {info['titulo']}\n\n"
 
+    filepath = save_note(args.type, info, final_content)
+    print(f"Nota creada exitosamente: {filepath}")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 

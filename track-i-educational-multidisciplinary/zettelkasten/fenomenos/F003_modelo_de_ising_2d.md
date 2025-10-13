@@ -168,7 +168,36 @@ M(T) = [1 - sinh⁻⁴(2J/k_B T)]^(1/8)
 
 ## Conexiones
 
-### Categoría Estructural
+#- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+- [[F003]] - Conexión inversa con Fenómeno.
+## Categoría Estructural
 - [[C001]] - Redes de Interacción (grid 2D es un grafo)
 - [[C004]] - Sistemas Dinámicos (evolución temporal hacia equilibrio)
 
@@ -177,7 +206,8 @@ M(T) = [1 - sinh⁻⁴(2J/k_B T)]^(1/8)
 - [[C004]] - Sistemas Dinámicos (instancia)
 
 
-### Isomorfismos
+#- [[F003]] - Conexión inversa con Fenómeno.
+## Isomorfismos
 - [[I001]] - Modelo de Ising ≅ Redes Sociales - Formación de opiniones
 - **Redes neuronales de Hopfield:** Espines = neuronas, alineación = memoria
 - **Percolación:** Transición de fase análoga
@@ -389,4 +419,16 @@ La conexión con **CSP** es también notable: encontrar el estado fundamental es
 
 **Última actualización:** 2025-10-12  
 **Responsable:** Agente Autónomo de Análisis
-
+- [[F004]]
+- [[F008]]
+- [[F009]]
+- [[F010]]
+- [[I003]]
+- [[I004]]
+- [[I005]]
+- [[I006]]
+- [[I008]]
+- [[T003]]
+- [[K005]]
+- [[K007]]
+- [[K010]]

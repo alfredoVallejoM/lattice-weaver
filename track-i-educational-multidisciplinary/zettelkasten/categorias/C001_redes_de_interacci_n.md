@@ -283,8 +283,46 @@ Esta conexión permite aplicar técnicas de CSP (constraint propagation, backtra
 
 Las Redes de Interacción son paradigmáticas de **emergencia**: propiedades globales (sincronización, formación de comunidades, transiciones de fase) que no están presentes en nodos individuales pero emergen de las interacciones. Entender cómo la topología influye en la emergencia es un problema central en ciencia de redes.
 
+
+## Conexiones
+
+-- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+- [[C001]] - Conexión inversa con Categoría.
+ [[C001]] - Conexión inversa.
 ---
 
 **Última actualización:** 2025-10-12  
 **Responsable:** Agente Autónomo de Análisis
-
+- [[I003]]
+- [[I004]]
+- [[I005]]
+- [[I006]]
+- [[I008]]
+- [[T001]]
+- [[T002]]
+- [[T007]]
+- [[K001]]
+- [[K002]]
+- [[K006]]
+- [[K009]]

@@ -206,8 +206,14 @@ El Dilema del Prisionero es un modelo increíblemente versátil que revela una t
 
 La conexión con [[C003]] (Optimización con Restricciones) es clara: el equilibrio de Nash es una solución de optimización bajo la restricción de que cada jugador actúa racionalmente. La "solución" al dilema (pasar de (P,P) a (R,R)) a menudo implica cambiar las restricciones o la estructura del juego.
 
+
+## Conexiones
+
+-- [[I002]] - Conexión inversa con Isomorfismo.
+ [[I002]] - Conexión inversa.
 ---
 
 **Última actualización:** 2025-10-12  
 **Responsable:** Agente Autónomo de Análisis  
 **Validación:** Isomorfismo validado por la ubicuidad del concepto en teoría de juegos.
+- [[I006]]
