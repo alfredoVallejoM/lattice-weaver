@@ -1,8 +1,8 @@
 # Catálogo Maestro - Track I Zettelkasten
 
 **Última actualización:** 2025-10-13  
-**Total de notas:** 66  
-**Conexiones totales:** 698
+**Total de notas:** 98  
+**Conexiones totales:** 961
 
 ---
 
@@ -12,19 +12,19 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### Estadísticas Generales
 
-- **Fenómenos (F):** 15
+- **Fenómenos (F):** 41
 - **Categorías (C):** 8
 - **Isomorfismos (I):** 8
 - **Técnicas (T):** 7
-- **Dominios (D):** 10
+- **Dominios (D):** 16
 - **Conceptos (K):** 18
 - **Mapeos (M):** 0
 
 ### Métricas de Conectividad
 
-- **Densidad de conexiones:** 10.58 (conexiones por nota)
+- **Densidad de conexiones:** 9.81 (conexiones por nota)
 - **Notas huérfanas:** 0 (0.0%)
-- **Nodo más conectado:** [[C001]] (26 conexiones)
+- **Nodo más conectado:** [[D010]] (31 conexiones)
 
 ---
 
@@ -47,6 +47,32 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F013]] - Marcos de Argumentación Basados en Lógica (logica, inteligencia_artificial, filosofia)
 - [[F014]] - Marcos de Argumentación Basados en Valores (VAFs) (logica, inteligencia_artificial, filosofia, etica)
 - [[F015]] - Marcos de Argumentación Basados en Supuestos (ABAs) (logica, inteligencia_artificial, filosofia)
+- [[F016]] - Redes de Regulación Génica
+- [[F017]] - Plegamiento de Proteínas
+- [[F018]] - Ecosistemas y Redes Tróficas
+- [[F019]] - Evolución y Filogenia
+- [[F020]] - Sistemas Inmunológicos
+- [[F021]] - Redes Neuronales Biológicas
+- [[F022]] - Dinámica de Actividad Cerebral
+- [[F023]] - Transiciones de Fase
+- [[F024]] - Reacciones Químicas
+- [[F025]] - Sistemas Cuánticos
+- [[F026]] - Sistemas Climáticos
+- [[F027]] - Mercados y Equilibrio
+- [[F028]] - Redes de Comercio
+- [[F029]] - Sistemas Financieros
+- [[F030]] - Teoría de Juegos
+- [[F031]] - Redes Sociales
+- [[F032]] - Movilidad Social
+- [[F033]] - Movimientos Sociales
+- [[F034]] - Organizaciones e Instituciones
+- [[F035]] - Sintaxis y Gramática
+- [[F036]] - Semántica y Ontologías
+- [[F037]] - Evolución de Lenguas
+- [[F038]] - Pragmática y Discurso
+- [[F039]] - Ontología y Metafísica
+- [[F040]] - Ética y Valores
+- [[F041]] - Epistemología
 
 ### Categorías (C)
 
@@ -91,6 +117,12 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[D007]] - Matemáticas
 - [[D008]] - Informática
 - [[D010]] - Ciencias Sociales y Humanidades
+- [[D011]] - Economía
+- [[D012]] - Sociología
+- [[D013]] - Filosofía
+- [[D014]] - Lingüística
+- [[D015]] - Psicología
+- [[D016]] - Ciencia Política
 - [[D017]] - Ingeniería y Tecnología
 
 ### Conceptos (K)
@@ -488,6 +520,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[C005]] - Jerarquías y Taxonomías
 
+### #arboles_filogeneticos
+
+- [[F019]] - Evolución y Filogenia
+
 ### #argumentacion
 
 - [[C007]] - Sistemas de Razonamiento
@@ -513,10 +549,6 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[D001]] - Ciencias Naturales
 
-### #atomos
-
-- [[D004]] - Química
-
 ### #atractores
 
 - [[C004]] - Sistemas Dinámicos
@@ -537,15 +569,25 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #biofisica
 
-- [[D004]] - Química
+- [[F017]] - Plegamiento de Proteínas
 
 ### #biologia
 
 - [[D001]] - Ciencias Naturales
+- [[F016]] - Redes de Regulación Génica
+- [[F017]] - Plegamiento de Proteínas
+- [[F018]] - Ecosistemas y Redes Tróficas
+- [[F019]] - Evolución y Filogenia
+- [[F020]] - Sistemas Inmunológicos
+- [[F021]] - Redes Neuronales Biológicas
 
 ### #biologia_sistemas
 
 - [[D003]] - Biología
+
+### #bioquimica
+
+- [[F017]] - Plegamiento de Proteínas
 
 ### #boolean_networks
 
@@ -568,6 +610,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[D007]] - Matemáticas
 
+### #cambio_social
+
+- [[F033]] - Movimientos Sociales
+
 ### #caminos_cortos
 
 - [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
@@ -575,6 +621,18 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #caos
 
 - [[C004]] - Sistemas Dinámicos
+
+### #ciencia_politica
+
+- [[F034]] - Organizaciones e Instituciones
+
+### #ciencias_tierra
+
+- [[F026]] - Sistemas Climáticos
+
+### #cinetica
+
+- [[F024]] - Reacciones Químicas
 
 ### #circuitos_digitales
 
@@ -585,6 +643,20 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[C005]] - Jerarquías y Taxonomías
 - [[T007]] - Formal Concept Analysis (Análisis Formal de Conceptos)
 
+### #clima
+
+- [[F026]] - Sistemas Climáticos
+
+### #cognicion
+
+- [[D015]] - Psicología
+- [[F021]] - Redes Neuronales Biológicas
+- [[F022]] - Dinámica de Actividad Cerebral
+
+### #comercio_internacional
+
+- [[F028]] - Redes de Comercio
+
 ### #complejidad_computacional
 
 - [[I007]] - Coloreo de Grafos ≅ Satisfacibilidad Booleana (SAT)
@@ -593,6 +665,11 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #comportamiento
 
 - [[D010]] - Ciencias Sociales y Humanidades
+- [[D015]] - Psicología
+
+### #comportamiento_economico
+
+- [[D011]] - Economía
 
 ### #computacion
 
@@ -603,9 +680,18 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
 - [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
 
+### #computacion_cuantica
+
+- [[F025]] - Sistemas Cuánticos
+
 ### #computacion_evolutiva
 
 - [[T005]] - Algoritmo Genético
+
+### #comunicacion
+
+- [[F031]] - Redes Sociales
+- [[F038]] - Pragmática y Discurso
 
 ### #conceptos
 
@@ -636,6 +722,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #conocimiento
 
 - [[F013]] - Marcos de Argumentación Basados en Lógica
+- [[F041]] - Epistemología
 
 ### #consenso
 
@@ -661,6 +748,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F001]] - Teoría de Juegos Evolutiva
 - [[I002]] - Dilema del Prisionero Multidominio
 
+### #creencia
+
+- [[F041]] - Epistemología
+
 ### #criticalidad
 
 - [[F008]] - Percolación
@@ -684,6 +775,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #cultura
 
 - [[D010]] - Ciencias Sociales y Humanidades
+- [[D012]] - Sociología
 
 ### #datos
 
@@ -706,7 +798,12 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #desarrollo
 
+- [[D015]] - Psicología
 - [[D017]] - Ingeniería y Tecnología
+
+### #desigualdad
+
+- [[F032]] - Movilidad Social
 
 ### #dialogo
 
@@ -721,9 +818,17 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
 
+### #dinamica_poblaciones
+
+- [[F018]] - Ecosistemas y Redes Tróficas
+
 ### #dinamicas
 
 - [[C004]] - Sistemas Dinámicos
+
+### #discurso
+
+- [[F038]] - Pragmática y Discurso
 
 ### #diseño
 
@@ -742,6 +847,15 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[D001]] - Ciencias Naturales
 - [[D003]] - Biología
+- [[F018]] - Ecosistemas y Redes Tróficas
+- [[F026]] - Sistemas Climáticos
+
+### #economia
+
+- [[F027]] - Mercados y Equilibrio
+- [[F028]] - Redes de Comercio
+- [[F029]] - Sistemas Financieros
+- [[F030]] - Teoría de Juegos
 
 ### #ecosistemas
 
@@ -755,17 +869,23 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[D002]] - Física
 
+### #emociones
+
+- [[D015]] - Psicología
+
 ### #epistemica
 
 - [[K012]] - Lógica Modal
 
 ### #epistemologia
 
+- [[D013]] - Filosofía
 - [[F011]] - Lógica y Argumentación (Filosofía)
 
 ### #equilibrio
 
 - [[F001]] - Teoría de Juegos Evolutiva
+- [[F027]] - Mercados y Equilibrio
 - [[K001]] - Equilibrio de Nash
 
 ### #equilibrio_nash
@@ -778,6 +898,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[K002]] - Estrategia Evolutivamente Estable (ESS)
 - [[K004]] - Función de Lyapunov
 
+### #estetica
+
+- [[D013]] - Filosofía
+
 ### #estocastico
 
 - [[T003]] - Algoritmos de Monte Carlo
@@ -788,14 +912,24 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[K001]] - Equilibrio de Nash
 - [[K018]] - Lógica Dialógica y Juegos de Diálogo
 
+### #estratificacion_social
+
+- [[F032]] - Movilidad Social
+
 ### #estructura_algebraica
 
 - [[K005]] - Lattice (Teoría de Retículos)
 
+### #estructura_proteica
+
+- [[F017]] - Plegamiento de Proteínas
+
 ### #etica
 
+- [[D013]] - Filosofía
 - [[F011]] - Lógica y Argumentación (Filosofía)
 - [[F014]] - Marcos de Argumentación Basados en Valores (VAFs)
+- [[F040]] - Ética y Valores
 - [[K011]] - Valores y Preferencias
 - [[K013]] - Lógica Deóntica
 
@@ -807,6 +941,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[D003]] - Biología
 - [[F001]] - Teoría de Juegos Evolutiva
+- [[F019]] - Evolución y Filogenia
 - [[K002]] - Estrategia Evolutivamente Estable (ESS)
 - [[T005]] - Algoritmo Genético
 
@@ -823,14 +958,33 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[K005]] - Lattice (Teoría de Retículos)
 - [[T007]] - Formal Concept Analysis (Análisis Formal de Conceptos)
 
+### #filogenia
+
+- [[F037]] - Evolución de Lenguas
+
 ### #filosofia
 
 - [[F011]] - Lógica y Argumentación (Filosofía)
+- [[F039]] - Ontología y Metafísica
+- [[F040]] - Ética y Valores
+- [[F041]] - Epistemología
+
+### #filosofia_lenguaje
+
+- [[F038]] - Pragmática y Discurso
+
+### #finanzas
+
+- [[D011]] - Economía
+- [[F029]] - Sistemas Financieros
 
 ### #fisica
 
 - [[D001]] - Ciencias Naturales
 - [[F003]] - Modelo de Ising 2D
+- [[F023]] - Transiciones de Fase
+- [[F025]] - Sistemas Cuánticos
+- [[F026]] - Sistemas Climáticos
 
 ### #fisica_estadistica
 
@@ -853,10 +1007,24 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #genetica
 
 - [[D003]] - Biología
+- [[F016]] - Redes de Regulación Génica
+- [[F019]] - Evolución y Filogenia
 
 ### #geometria
 
 - [[D007]] - Matemáticas
+
+### #gestion
+
+- [[F034]] - Organizaciones e Instituciones
+
+### #globalizacion
+
+- [[F028]] - Redes de Comercio
+
+### #gobierno
+
+- [[D016]] - Ciencia Política
 
 ### #grados_de_verdad
 
@@ -868,6 +1036,11 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[C005]] - Jerarquías y Taxonomías
 - [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
 - [[F006]] - Coloreo de grafos
+
+### #gramatica
+
+- [[D014]] - Lingüística
+- [[F035]] - Sintaxis y Gramática
 
 ### #greedy
 
@@ -904,9 +1077,18 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[D006]] - Ciencias Formales
 
+### #inmunologia
+
+- [[F020]] - Sistemas Inmunológicos
+
 ### #innovacion
 
 - [[D017]] - Ingeniería y Tecnología
+
+### #instituciones
+
+- [[D012]] - Sociología
+- [[D016]] - Ciencia Política
 
 ### #integracion_numerica
 
@@ -927,6 +1109,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #interaccion_social
 
+- [[D012]] - Sociología
 - [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
 
 ### #interacciones
@@ -960,14 +1143,34 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes
 
+### #justificacion
+
+- [[F041]] - Epistemología
+
 ### #lattices
 
 - [[T007]] - Formal Concept Analysis (Análisis Formal de Conceptos)
+
+### #lenguaje
+
+- [[D014]] - Lingüística
+
+### #linguistica
+
+- [[F035]] - Sintaxis y Gramática
+- [[F036]] - Semántica y Ontologías
+- [[F037]] - Evolución de Lenguas
+- [[F038]] - Pragmática y Discurso
+
+### #linguistica_historica
+
+- [[F037]] - Evolución de Lenguas
 
 ### #logica
 
 - [[C006]] - Satisfacibilidad Lógica
 - [[D006]] - Ciencias Formales
+- [[D013]] - Filosofía
 - [[F011]] - Lógica y Argumentación (Filosofía)
 - [[F013]] - Marcos de Argumentación Basados en Lógica
 
@@ -1009,6 +1212,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[D002]] - Física
 
+### #mecanica_cuantica
+
+- [[F025]] - Sistemas Cuánticos
+
 ### #medio_ambiente
 
 - [[D005]] - Ecología
@@ -1018,14 +1225,25 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F004]] - Redes neuronales de Hopfield
 - [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
 
+### #mercados
+
+- [[D011]] - Economía
+- [[F027]] - Mercados y Equilibrio
+
 ### #metafisica
 
+- [[D013]] - Filosofía
 - [[F011]] - Lógica y Argumentación (Filosofía)
+- [[F039]] - Ontología y Metafísica
 
 ### #metaheuristica
 
 - [[T005]] - Algoritmo Genético
 - [[T006]] - Recocido Simulado (Simulated Annealing)
+
+### #microeconomia
+
+- [[F027]] - Mercados y Equilibrio
 
 ### #mineria_de_datos
 
@@ -1070,6 +1288,12 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #neurociencia
 
 - [[D003]] - Biología
+- [[F021]] - Redes Neuronales Biológicas
+- [[F022]] - Dinámica de Actividad Cerebral
+
+### #neurociencia_cognitiva
+
+- [[D015]] - Psicología
 
 ### #no_monotonica
 
@@ -1086,6 +1310,11 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #obligacion
 
 - [[K013]] - Lógica Deóntica
+
+### #ontologia
+
+- [[F036]] - Semántica y Ontologías
+- [[F039]] - Ontología y Metafísica
 
 ### #operadores_temporales
 
@@ -1114,6 +1343,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[C005]] - Jerarquías y Taxonomías
 - [[K005]] - Lattice (Teoría de Retículos)
 
+### #oscilaciones_cerebrales
+
+- [[F022]] - Dinámica de Actividad Cerebral
+
 ### #paradojas
 
 - [[K017]] - Lógica Relevante
@@ -1139,14 +1372,28 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[D005]] - Ecología
 
+### #poder
+
+- [[D016]] - Ciencia Política
+
 ### #polarizacion
 
 - [[F009]] - Modelo de votantes
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
 
+### #politica
+
+- [[D016]] - Ciencia Política
+- [[F033]] - Movimientos Sociales
+
 ### #posibilidad
 
 - [[K012]] - Lógica Modal
+
+### #pragmatica
+
+- [[D014]] - Lingüística
+- [[F038]] - Pragmática y Discurso
 
 ### #predicados
 
@@ -1165,6 +1412,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #problemas_dificiles
 
 - [[K003]] - NP-Completitud
+
+### #procesamiento_lenguaje_natural
+
+- [[F035]] - Sintaxis y Gramática
 
 ### #procesos
 
@@ -1189,6 +1440,12 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #quimica
 
 - [[D001]] - Ciencias Naturales
+- [[F023]] - Transiciones de Fase
+- [[F024]] - Reacciones Químicas
+
+### #quimica_cuantica
+
+- [[D004]] - Química
 
 ### #razonamiento
 
@@ -1213,6 +1470,15 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[C001]] - Redes de Interacción
 - [[F002]] - Redes de Regulación Génica
 - [[F003]] - Modelo de Ising 2D
+- [[F016]] - Redes de Regulación Génica
+- [[F018]] - Ecosistemas y Redes Tróficas
+- [[F020]] - Sistemas Inmunológicos
+- [[F021]] - Redes Neuronales Biológicas
+- [[F028]] - Redes de Comercio
+- [[F029]] - Sistemas Financieros
+- [[F031]] - Redes Sociales
+- [[F033]] - Movimientos Sociales
+- [[F034]] - Organizaciones e Instituciones
 - [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
 
 ### #redes_aleatorias
@@ -1228,8 +1494,13 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F004]] - Redes neuronales de Hopfield
 - [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
 
+### #redes_reaccion
+
+- [[F024]] - Reacciones Químicas
+
 ### #redes_sociales
 
+- [[D012]] - Sociología
 - [[F009]] - Modelo de votantes
 
 ### #reglas
@@ -1244,6 +1515,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
 
+### #relaciones_internacionales
+
+- [[D016]] - Ciencia Política
+
 ### #relatividad
 
 - [[D002]] - Física
@@ -1251,6 +1526,11 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #relevancia
 
 - [[K017]] - Lógica Relevante
+
+### #representacion_conocimiento
+
+- [[F036]] - Semántica y Ontologías
+- [[F039]] - Ontología y Metafísica
 
 ### #resolucion
 
@@ -1272,6 +1552,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #riesgo
 
 - [[C008]] - Toma de Decisiones
+- [[F029]] - Sistemas Financieros
 
 ### #robustez
 
@@ -1305,6 +1586,11 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[K002]] - Estrategia Evolutivamente Estable (ESS)
 
+### #semantica
+
+- [[D014]] - Lingüística
+- [[F036]] - Semántica y Ontologías
+
 ### #semanticas
 
 - [[F012]] - Marcos de Argumentación Abstractos (Dung's Framework)
@@ -1312,6 +1598,11 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #simulacion
 
 - [[T003]] - Algoritmos de Monte Carlo
+
+### #sintaxis
+
+- [[D014]] - Lingüística
+- [[F035]] - Sintaxis y Gramática
 
 ### #sistemas
 
@@ -1326,6 +1617,24 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[C001]] - Redes de Interacción
 - [[F004]] - Redes neuronales de Hopfield
 - [[F010]] - Segregación urbana (Schelling)
+- [[F016]] - Redes de Regulación Génica
+- [[F018]] - Ecosistemas y Redes Tróficas
+- [[F020]] - Sistemas Inmunológicos
+- [[F021]] - Redes Neuronales Biológicas
+- [[F022]] - Dinámica de Actividad Cerebral
+- [[F023]] - Transiciones de Fase
+- [[F026]] - Sistemas Climáticos
+- [[F027]] - Mercados y Equilibrio
+- [[F028]] - Redes de Comercio
+- [[F029]] - Sistemas Financieros
+- [[F030]] - Teoría de Juegos
+- [[F031]] - Redes Sociales
+- [[F032]] - Movilidad Social
+- [[F033]] - Movimientos Sociales
+- [[F034]] - Organizaciones e Instituciones
+- [[F037]] - Evolución de Lenguas
+- [[F040]] - Ética y Valores
+- [[F041]] - Epistemología
 - [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales
 - [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield
 - [[I005]] - Redes de Regulación Génica ≅ Circuitos Digitales
@@ -1338,10 +1647,18 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #sociedad
 
 - [[D010]] - Ciencias Sociales y Humanidades
+- [[D012]] - Sociología
 
 ### #sociofisica
 
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
+
+### #sociologia
+
+- [[F031]] - Redes Sociales
+- [[F032]] - Movilidad Social
+- [[F033]] - Movimientos Sociales
+- [[F034]] - Organizaciones e Instituciones
 
 ### #software
 
@@ -1401,6 +1718,8 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### #teoria_juegos
 
+- [[D011]] - Economía
+- [[F030]] - Teoría de Juegos
 - [[I002]] - Dilema del Prisionero Multidominio
 
 ### #teoria_numeros
@@ -1410,7 +1729,13 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #termodinamica
 
 - [[D002]] - Física
+- [[F023]] - Transiciones de Fase
+- [[F024]] - Reacciones Químicas
 - [[T006]] - Recocido Simulado (Simulated Annealing)
+
+### #termodinamica_quimica
+
+- [[D004]] - Química
 
 ### #tiempo
 
@@ -1423,6 +1748,11 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #toma_de_decisiones
 
 - [[C007]] - Sistemas de Razonamiento
+
+### #toma_decisiones
+
+- [[F030]] - Teoría de Juegos
+- [[F040]] - Ética y Valores
 
 ### #topologia
 
@@ -1451,6 +1781,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #valores
 
 - [[F014]] - Marcos de Argumentación Basados en Valores (VAFs)
+- [[F040]] - Ética y Valores
 - [[K011]] - Valores y Preferencias
 
 ### #variables
@@ -1469,6 +1800,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F008]] - Percolación
 
+### #web_semantica
+
+- [[F036]] - Semántica y Ontologías
+
 ---
 
 ## 📊 Índice por Estado
@@ -1482,11 +1817,18 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[D001]] - Ciencias Naturales
 - [[D002]] - Física
 - [[D003]] - Biología
+- [[D004]] - Química
 - [[D005]] - Ecología
 - [[D006]] - Ciencias Formales
 - [[D007]] - Matemáticas
 - [[D008]] - Informática
 - [[D010]] - Ciencias Sociales y Humanidades
+- [[D011]] - Economía
+- [[D012]] - Sociología
+- [[D013]] - Filosofía
+- [[D014]] - Lingüística
+- [[D015]] - Psicología
+- [[D016]] - Ciencia Política
 - [[D017]] - Ingeniería y Tecnología
 - [[F004]] - Redes neuronales de Hopfield
 - [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
@@ -1546,7 +1888,32 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### Borrador
 
 - [[C002]] - Asignación Óptima
-- [[D004]] - Química
+- [[F016]] - Redes de Regulación Génica
+- [[F017]] - Plegamiento de Proteínas
+- [[F018]] - Ecosistemas y Redes Tróficas
+- [[F019]] - Evolución y Filogenia
+- [[F020]] - Sistemas Inmunológicos
+- [[F021]] - Redes Neuronales Biológicas
+- [[F022]] - Dinámica de Actividad Cerebral
+- [[F023]] - Transiciones de Fase
+- [[F024]] - Reacciones Químicas
+- [[F025]] - Sistemas Cuánticos
+- [[F026]] - Sistemas Climáticos
+- [[F027]] - Mercados y Equilibrio
+- [[F028]] - Redes de Comercio
+- [[F029]] - Sistemas Financieros
+- [[F030]] - Teoría de Juegos
+- [[F031]] - Redes Sociales
+- [[F032]] - Movilidad Social
+- [[F033]] - Movimientos Sociales
+- [[F034]] - Organizaciones e Instituciones
+- [[F035]] - Sintaxis y Gramática
+- [[F036]] - Semántica y Ontologías
+- [[F037]] - Evolución de Lenguas
+- [[F038]] - Pragmática y Discurso
+- [[F039]] - Ontología y Metafísica
+- [[F040]] - Ética y Valores
+- [[F041]] - Epistemología
 
 ---
 
@@ -1554,16 +1921,16 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### Top 10 Nodos Más Conectados
 
-1. [[C001]] - Redes de Interacción (26 conexiones)
-2. [[C004]] - Sistemas Dinámicos (26 conexiones)
-3. [[T003]] - Algoritmos de Monte Carlo (23 conexiones)
-4. [[F011]] - Lógica y Argumentación (Filosofía) (21 conexiones)
-5. [[D008]] - Informática (20 conexiones)
-6. [[T005]] - Algoritmo Genético (20 conexiones)
-7. [[F001]] - Teoría de Juegos Evolutiva (19 conexiones)
-8. [[F003]] - Modelo de Ising 2D (19 conexiones)
-9. [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales (19 conexiones)
-10. [[F009]] - Modelo de votantes (18 conexiones)
+1. [[D010]] - Ciencias Sociales y Humanidades (31 conexiones)
+2. [[C001]] - Redes de Interacción (26 conexiones)
+3. [[C004]] - Sistemas Dinámicos (26 conexiones)
+4. [[D001]] - Ciencias Naturales (24 conexiones)
+5. [[T003]] - Algoritmos de Monte Carlo (23 conexiones)
+6. [[F011]] - Lógica y Argumentación (Filosofía) (21 conexiones)
+7. [[D008]] - Informática (20 conexiones)
+8. [[T005]] - Algoritmo Genético (20 conexiones)
+9. [[F001]] - Teoría de Juegos Evolutiva (19 conexiones)
+10. [[F003]] - Modelo de Ising 2D (19 conexiones)
 
 ### Notas Huérfanas
 
@@ -1591,10 +1958,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 | Estado | Fenómenos | Porcentaje |
 |--------|-----------|------------|
-| Completo | 56 | 373% |
-| En Revision | 8 | 53% |
-| Borrador | 2 | 13% |
-| **TOTAL** | **15** | **100%** |
+| Completo | 63 | 154% |
+| En Revision | 8 | 20% |
+| Borrador | 27 | 66% |
+| **TOTAL** | **41** | **100%** |
 
 ---
 
