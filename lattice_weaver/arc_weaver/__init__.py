@@ -13,25 +13,35 @@ Autor: LatticeWeaver Team
 Versión: 4.2.0
 """
 
-from .graph_structures import (
+# Los módulos han sido movidos a lattice_weaver.core.csp_engine
+# Este __init__.py ahora solo exporta los componentes del nuevo motor
+# para mantener la compatibilidad temporalmente.
+
+from ..core.csp_engine.graph import (
     ConstraintGraph,
     DynamicClusterGraph,
     Cluster,
     ConstraintEdge
 )
 
-from .clustering import (
+from ..core.csp_engine.clustering import (
     ClusterDetector,
     BoundaryManager,
     ClusteringMetrics
 )
 
-from .adaptive_consistency import (
+from ..core.csp_engine.solver import (
     AdaptiveConsistencyEngine,
     AC3Solver,
     ClusterSolver,
     SolutionStats
 )
+
+from ..core.csp_engine.tracing import (
+    SearchSpaceTracer,
+    SearchEvent
+)
+
 
 __all__ = [
     # Estructuras de grafo
@@ -50,6 +60,10 @@ __all__ = [
     'AC3Solver',
     'ClusterSolver',
     'SolutionStats',
+    
+    # Tracing
+    'SearchSpaceTracer',
+    'SearchEvent',
 ]
 
 __version__ = '4.2.0'

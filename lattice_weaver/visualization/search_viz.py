@@ -37,7 +37,7 @@ def load_trace(path: str) -> pd.DataFrame:
         >>> print(df.shape)
         (100, 8)
     """
-    from lattice_weaver.arc_weaver.tracing import load_trace as _load_trace
+    from lattice_weaver.core.csp_engine.tracing import load_trace as _load_trace
     return _load_trace(path)
 
 

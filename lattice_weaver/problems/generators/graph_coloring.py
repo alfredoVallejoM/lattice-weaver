@@ -9,6 +9,8 @@ from typing import Dict, Any, List, Tuple
 import logging
 
 from ..base import ProblemFamily
+from lattice_weaver.core.csp_engine.graph import ConstraintGraph
+from lattice_weaver.core.csp_engine.constraints import NE
 from ..utils.validators import validate_graph_coloring_solution
 from ..utils.graph_generators import (
     generate_random_graph,
@@ -203,17 +205,14 @@ class GraphColoringProblem(ProblemFamily):
         # Generar aristas del grafo
         edges = self._generate_edges(**params)
         
-        # Importar ArcEngine
-        from lattice_weaver.arc_engine import ArcEngine
-        
-        # Crear motor CSP
-        engine = ArcEngine()
+        # Crear ConstraintGraph
+        cg = ConstraintGraph()
         
         # Añadir variables (una por nodo, valor = color)
         for i in range(n_nodes):
             var_name = f'V{i}'
             domain = list(range(n_colors))  # Colores disponibles [0, n_colors-1]
-            engine.add_variable(var_name, domain)
+            cg.add_variable(var_name, set(domain)) # Convertir a set
             logger.debug(f"Añadida variable {var_name} con dominio {domain}")
         
         # Añadir restricciones (una por arista)
@@ -222,31 +221,15 @@ class GraphColoringProblem(ProblemFamily):
             var_j = f'V{j}'
             
             # Restricción: colores diferentes
-            def different_colors(color_i, color_j):
-                """
-                Restricción de coloración: nodos adyacentes deben tener colores diferentes.
-                
-                Args:
-                    color_i: Color del primer nodo
-                    color_j: Color del segundo nodo
-                    
-                Returns:
-                    bool: True si los colores son diferentes
-                """
-                return color_i != color_j
-            
-            # Dar nombre único
-            different_colors.__name__ = f'diff_color_{i}_{j}'
-            
-            engine.add_constraint(var_i, var_j, different_colors)
+            cg.add_constraint(var_i, var_j, NE())
             logger.debug(f"Añadida restricción entre {var_i} y {var_j}")
         
-        # Guardar las aristas en el engine para validación posterior
-        engine._graph_coloring_edges = edges
+        # Guardar las aristas en el ConstraintGraph para validación posterior
+        cg._graph_coloring_edges = edges
         
         logger.info(f"Problema Graph Coloring generado: {n_nodes} variables, {len(edges)} restricciones")
         
-        return engine
+        return cg
     
     def validate_solution(self, solution: Dict[str, Any], **params) -> bool:
         """

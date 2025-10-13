@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(name)s:%(messag
 from .domains import create_optimal_domain, Domain
 from .constraints import Constraint
 from .ac31 import revise_with_last_support
-from .tms import create_tms, TruthMaintenanceSystem # Importar TMS
+from ..core.csp_engine.tms import create_tms, TruthMaintenanceSystem # Importar TMS
 
 class ArcEngine:
     """

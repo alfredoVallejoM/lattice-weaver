@@ -47,20 +47,20 @@ class TestSudokuProblem:
         engine = self.family.generate(size=4, difficulty='empty')
         
         # 4x4 = 16 celdas
-        assert len(engine.variables) == 16
+        assert len(engine.get_all_variables()) == 16
         
         # Verificar nombres de variables
         for row in range(4):
             for col in range(4):
                 var_name = f'C_{row}_{col}'
-                assert var_name in engine.variables
+                assert var_name in engine.get_all_variables()
     
     def test_generate_9x9_correct_variables(self):
         """Test generación de Sudoku 9x9."""
         engine = self.family.generate(size=9, difficulty='empty')
         
         # 9x9 = 81 celdas
-        assert len(engine.variables) == 81
+        assert len(engine.get_all_variables()) == 81
     
     def test_generate_correct_domains(self):
         """Test que los dominios son correctos."""
@@ -70,7 +70,7 @@ class TestSudokuProblem:
         for row in range(size):
             for col in range(size):
                 var_name = f'C_{row}_{col}'
-                domain = list(engine.variables[var_name].get_values())
+                domain = list(engine.get_variable_domain(var_name))
                 assert domain == list(range(1, size + 1))
     
     def test_generate_with_clues(self):

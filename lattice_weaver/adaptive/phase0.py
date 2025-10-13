@@ -10,7 +10,7 @@ from collections import deque
 import sys
 sys.path.insert(0, '/home/ubuntu/latticeweaver_v4')
 
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_engine.solver import AdaptiveConsistencyEngine as ArcEngine
 from lattice_weaver.topology import TopologyAnalyzer
 
 

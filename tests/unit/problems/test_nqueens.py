@@ -4,7 +4,7 @@ Tests unitarios para NQueensProblem.
 
 import pytest
 from lattice_weaver.problems.generators.nqueens import NQueensProblem
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_engine.graph import ConstraintGraph
 
 
 class TestNQueensProblem:
@@ -37,19 +37,21 @@ class TestNQueensProblem:
     def test_generate_creates_arc_engine(self):
         """Test que generate() crea un ArcEngine."""
         engine = self.family.generate(n=4)
-        assert isinstance(engine, ArcEngine)
+        from lattice_weaver.core.csp_engine.graph import ConstraintGraph
+        assert isinstance(engine, ConstraintGraph)
+
     
     def test_generate_correct_number_of_variables(self):
         """Test que generate() crea el número correcto de variables."""
         for n in [4, 8, 16]:
             engine = self.family.generate(n=n)
-            assert len(engine.variables) == n
+            assert len(engine.get_all_variables()) == n
     
     def test_generate_correct_variable_names(self):
         """Test que las variables tienen nombres correctos."""
         engine = self.family.generate(n=4)
         expected_vars = {'Q0', 'Q1', 'Q2', 'Q3'}
-        assert set(engine.variables.keys()) == expected_vars
+        assert set(engine.get_all_variables()) == expected_vars
     
     def test_generate_correct_domains(self):
         """Test que los dominios son correctos."""
@@ -58,7 +60,7 @@ class TestNQueensProblem:
         
         for i in range(n):
             var_name = f'Q{i}'
-            domain = list(engine.variables[var_name].get_values())
+            domain = list(engine.get_variable_domain(var_name))
             assert domain == list(range(n))
     
     def test_generate_correct_number_of_constraints(self):
@@ -68,14 +70,14 @@ class TestNQueensProblem:
         
         # Número de restricciones = C(n, 2) = n*(n-1)/2
         expected_constraints = n * (n - 1) // 2
-        assert len(engine.constraints) == expected_constraints
+        assert len(engine.get_all_constraints()) == expected_constraints
     
     def test_generate_with_different_sizes(self):
         """Test que generate() funciona con diferentes tamaños."""
         for n in [4, 5, 8, 10, 16]:
             engine = self.family.generate(n=n)
-            assert len(engine.variables) == n
-            assert len(engine.constraints) == n * (n - 1) // 2
+            assert len(engine.get_all_variables()) == n
+            assert len(engine.get_all_constraints()) == n * (n - 1) // 2
     
     def test_generate_invalid_n_too_small(self):
         """Test que generate() rechaza n < 4."""

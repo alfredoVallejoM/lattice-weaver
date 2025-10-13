@@ -14,7 +14,7 @@ Fecha: 12 de Octubre de 2025
 import sys
 sys.path.insert(0, '/home/ubuntu/lattice-weaver')
 
-from lattice_weaver.arc_weaver.graph_structures import ConstraintGraph
+from lattice_weaver.core.csp_engine.graph import ConstraintGraph
 from lattice_weaver.arc_weaver.adaptive_consistency import AdaptiveConsistencyEngine
 from lattice_weaver.arc_weaver.tracing import SearchSpaceTracer
 from lattice_weaver.visualization import (

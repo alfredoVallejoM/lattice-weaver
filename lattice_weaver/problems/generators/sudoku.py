@@ -13,6 +13,8 @@ import logging
 
 from ..base import ProblemFamily
 from ..utils.validators import validate_sudoku_solution
+from lattice_weaver.core.csp_engine.graph import ConstraintGraph
+from lattice_weaver.core.csp_engine.constraints import NE
 
 logger = logging.getLogger(__name__)
 
@@ -180,20 +182,17 @@ class SudokuProblem(ProblemFamily):
         if block_size * block_size != size:
             raise ValueError(f"Tamaño de Sudoku inválido: {size} (debe ser 4, 9, 16, 25)")
         
-        # Importar ArcEngine
-        from lattice_weaver.arc_engine import ArcEngine
-        
-        # Crear motor CSP
-        engine = ArcEngine()
+        # Crear ConstraintGraph
+        cg = ConstraintGraph()
         
         # Añadir variables (una por celda)
         for row in range(size):
             for col in range(size):
                 var_name = f'C_{row}_{col}'
                 domain = list(range(1, size + 1))  # Dígitos [1, size]
-                engine.add_variable(var_name, domain)
+                cg.add_variable(var_name, set(domain)) # Convertir a set
         
-        logger.debug(f"Añadidas {size*size} variables")
+        logger.debug(f'Añadidas {size*size} variables')
         
         # Añadir restricciones de fila
         constraint_count = 0
@@ -203,15 +202,10 @@ class SudokuProblem(ProblemFamily):
                     var1 = f'C_{row}_{col1}'
                     var2 = f'C_{row}_{col2}'
                     
-                    def different(val1, val2):
-                        return val1 != val2
-                    
-                    different.__name__ = f'row_{row}_{col1}_{col2}'
-                    cid = f'row_{row}_{col1}_{col2}'
-                    engine.add_constraint(var1, var2, different, cid=cid)
+                    cg.add_constraint(var1, var2, NE())
                     constraint_count += 1
         
-        logger.debug(f"Añadidas restricciones de fila: {constraint_count}")
+        logger.debug(f'Añadidas restricciones de fila: {constraint_count}')
         
         # Añadir restricciones de columna
         for col in range(size):
@@ -220,15 +214,10 @@ class SudokuProblem(ProblemFamily):
                     var1 = f'C_{row1}_{col}'
                     var2 = f'C_{row2}_{col}'
                     
-                    def different(val1, val2):
-                        return val1 != val2
-                    
-                    different.__name__ = f'col_{col}_{row1}_{row2}'
-                    cid = f'col_{col}_{row1}_{row2}'
-                    engine.add_constraint(var1, var2, different, cid=cid)
+                    cg.add_constraint(var1, var2, NE())
                     constraint_count += 1
         
-        logger.debug(f"Total restricciones (fila+columna): {constraint_count}")
+        logger.debug(f'Total restricciones (fila+columna): {constraint_count}')
         
         # Añadir restricciones de bloque
         for block_row in range(block_size):
@@ -249,44 +238,32 @@ class SudokuProblem(ProblemFamily):
                         var1 = f'C_{row1}_{col1}'
                         var2 = f'C_{row2}_{col2}'
                         
-                        def different(val1, val2):
-                            return val1 != val2
-                        
-                        different.__name__ = f'block_{block_row}_{block_col}_{idx1}_{idx2}'
-                        cid = f'block_{block_row}_{block_col}_{idx1}_{idx2}'
-                        engine.add_constraint(var1, var2, different, cid=cid)
+                        cg.add_constraint(var1, var2, NE())
                         constraint_count += 1
         
-        logger.info(f"Total restricciones: {constraint_count}")
+        logger.info(f'Total restricciones: {constraint_count}')
         
         # Aplicar pistas (reducir dominios de celdas específicas)
-        # Nota: Para simplificar, generamos pistas aleatorias
-        # En una implementación más sofisticada, se generaría una solución válida
-        # y se eliminarían valores estratégicamente
-        
         if n_clues > 0:
-            # Seleccionar celdas aleatorias para pistas
             all_cells = [(r, c) for r in range(size) for c in range(size)]
             random.shuffle(all_cells)
             clue_cells = all_cells[:n_clues]
             
             for row, col in clue_cells:
                 var_name = f'C_{row}_{col}'
-                # Asignar un valor aleatorio del dominio
-                current_domain = engine.variables[var_name].get_values()
+                current_domain = cg.get_variable_domain(var_name)
                 if current_domain:
                     clue_value = random.choice(list(current_domain))
-                    # Reducir dominio a un solo valor
-                    engine.variables[var_name] = engine.variables[var_name].__class__([clue_value])
-                    logger.debug(f"Pista en {var_name}: {clue_value}")
+                    cg.set_variable_domain(var_name, {clue_value})
+                    logger.debug(f'Pista en {var_name}: {clue_value}')
         
-        # Guardar metadatos en el engine
-        engine._sudoku_size = size
-        engine._sudoku_n_clues = n_clues
+        # Guardar metadatos en el ConstraintGraph
+        cg._sudoku_size = size
+        cg._sudoku_n_clues = n_clues
         
-        logger.info(f"Problema Sudoku generado: {size}x{size}, {n_clues} pistas")
+        logger.info(f'Problema Sudoku generado: {size}x{size}, {n_clues} pistas')
         
-        return engine
+        return cg
     
     def validate_solution(self, solution: Dict[str, Any], **params) -> bool:
         """

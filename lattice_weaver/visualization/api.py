@@ -31,8 +31,18 @@ from .search_viz import (
 
 
 # Crear aplicación Flask
+import logging
+
 app = Flask(__name__)
 CORS(app)  # Habilitar CORS para requests desde el frontend
+
+# Configurar logging para la aplicación Flask
+app.logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+formatter = logging.Formatter("[%(asctime)s] %(levelname)s in %(module)s: %(message)s")
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
+
 
 
 @app.route('/health', methods=['GET'])
@@ -322,66 +332,67 @@ def generate_report_endpoint():
 
 @app.route('/api/v1/statistics', methods=['POST'])
 def get_statistics():
-    """
-    Obtiene estadísticas agregadas de un trace.
-    
-    Request Body:
-        {
-            "trace_path": str
-        }
-    
-    Returns:
-        JSON con las estadísticas
-    """
+    app.logger.info("Received request for /api/v1/statistics")
+    data = request.get_json()
+    trace_path = data.get("trace_path")
+
+    if not trace_path:
+        app.logger.error("trace_path is required")
+        return jsonify({"error": "trace_path es requerido"}), 400
+
     try:
-        data = request.get_json()
-        trace_path = data.get('trace_path')
-        
-        if not trace_path:
-            return jsonify({'error': 'trace_path is required'}), 400
-        
-        # Cargar trace
+        app.logger.info(f"Loading trace from: {trace_path}")
+        # Asegurarse de que el tracer se inicialice correctamente
+        # No es necesario inicializar SearchSpaceTracer aquí, load_trace ya lo hace.
         df = load_trace(trace_path)
+        app.logger.info(f"Trace loaded. DataFrame shape: {df.shape}")
         
         # Calcular estadísticas
+        # Calcular estadísticas
         total_events = len(df)
-        nodes_explored = len(df[df['event_type'] == 'variable_assigned'])
-        backtracks = len(df[df['event_type'] == 'backtrack'])
-        solutions = len(df[df['event_type'] == 'solution_found'])
-        ac3_calls = len(df[df['event_type'] == 'ac3_call'])
-        domain_prunes = len(df[df['event_type'] == 'domain_pruned'])
+        nodes_explored = len(df[df["event_type"] == "variable_assigned"])
+        backtracks = len(df[df["event_type"] == "backtrack"])
+        solutions = len(df[df["event_type"] == "solution_found"])
+        ac3_calls = len(df[df["event_type"] == "ac3_call"])
+        domain_prunes = len(df[df["event_type"] == "domain_pruned"])
         
         backtrack_rate = backtracks / nodes_explored if nodes_explored > 0 else 0
         
+        duration = 0.0
         if len(df) >= 2:
-            start_time = df['timestamp'].min()
-            end_time = df['timestamp'].max()
-            duration = end_time - start_time
-        else:
-            duration = 0
+            start_time = df["timestamp"].min()
+            end_time = df["timestamp"].max()
+            duration = float(end_time - start_time) # Convertir a float explícitamente
+        elif len(df) == 1:
+
+            # Si solo hay un evento, la duración es 0
+            duration = 0.0
         
-        max_depth = df['depth'].max() if len(df) > 0 else 0
+        max_depth = df["depth"].max() if len(df) > 0 else 0
         
+        app.logger.info(f"Calculated statistics: nodes={nodes_explored}, backtracks={backtracks}, duration={duration}")
+
         return jsonify({
-            'success': True,
-            'statistics': {
-                'total_events': int(total_events),
-                'nodes_explored': int(nodes_explored),
-                'backtracks': int(backtracks),
-                'solutions': int(solutions),
-                'ac3_calls': int(ac3_calls),
-                'domain_prunes': int(domain_prunes),
-                'backtrack_rate': float(backtrack_rate),
-                'duration': float(duration),
-                'max_depth': int(max_depth),
-                'events_per_second': float(total_events / duration) if duration > 0 else 0
+            "success": True,
+            "statistics": {
+                "total_events": int(total_events),
+                "nodes_explored": int(nodes_explored),
+                "backtracks": int(backtracks),
+                "solutions": int(solutions),
+                "ac3_calls": int(ac3_calls),
+                "domain_prunes": int(domain_prunes),
+                "backtrack_rate": float(backtrack_rate),
+                "duration": float(duration),
+                "max_depth": int(max_depth),
+                "events_per_second": float(total_events / duration) if duration > 0 else 0
             }
-        })
-    
+        }), 200
     except FileNotFoundError:
-        return jsonify({'error': 'Trace file not found'}), 404
+        app.logger.error(f"Trace file not found: {trace_path}")
+        return jsonify({"error": "Trace file not found"}), 404
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        app.logger.exception(f"Error processing statistics request: {e}")
+        return jsonify({"error": str(e)}), 500
 
 
 def run_api(host: str = '0.0.0.0', port: int = 5000, debug: bool = False):

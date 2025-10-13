@@ -1,38 +1,31 @@
-# lattice_weaver/arc_engine/__init__.py
+"""
+Módulo de compatibilidad para arc_engine (DEPRECATED).
+Este módulo se mantendrá hasta la versión 6.0 para compatibilidad.
+"""
+import warnings
 
-from .core import ArcEngine
-from .core_extended import ArcEngineExtended
-from .parallel_ac3 import ParallelAC3
-from .topological_parallel import TopologicalParallelAC3
-from .tms import TruthMaintenanceSystem, Justification, Decision, create_tms
-from .multiprocess_ac3 import MultiprocessAC3, GroupParallelAC3, create_multiprocess_ac3, create_group_parallel_ac3
-from .serializable_constraints import (
-    SerializableConstraint,
-    LessThanConstraint, LessEqualConstraint,
-    GreaterThanConstraint, GreaterEqualConstraint,
-    EqualConstraint, NotEqualConstraint,
-    AllDifferentPairConstraint, NoAttackQueensConstraint,
-    SudokuConstraint,
-    LT, LE, GT, GE, EQ, NE, AllDiff
-)
-from .optimizations import (
-    ArcRevisionCache, ArcOrderingStrategy, RedundantArcDetector,
-    PerformanceMonitor, OptimizedAC3, create_optimized_ac3
+# Importar los componentes del nuevo motor CSP
+from ..core.csp_engine.graph import ConstraintGraph
+from ..core.csp_engine.solver import AdaptiveConsistencyEngine
+from ..core.csp_engine.tracing import SearchSpaceTracer, SearchEvent
+from ..core.csp_engine.clustering import ClusterDetector
+from ..core.csp_engine.topology_utils import TopologyUtils
+
+warnings.warn(
+    "El módulo 'lattice_weaver.arc_engine' está DEPRECATED. "
+    "Use 'lattice_weaver.core.csp_engine' en su lugar.",
+    DeprecationWarning, stacklevel=2
 )
 
+# Alias para mantener la compatibilidad
+ArcEngine = AdaptiveConsistencyEngine
+
+# Exportar otros componentes que podrían haber sido usados directamente
 __all__ = [
-    "ArcEngine", "ArcEngineExtended", "ParallelAC3", "TopologicalParallelAC3",
-    "TruthMaintenanceSystem", "Justification", "Decision", "create_tms",
-    "MultiprocessAC3", "GroupParallelAC3", "create_multiprocess_ac3", "create_group_parallel_ac3",
-    "SerializableConstraint",
-    "LessThanConstraint", "LessEqualConstraint",
-    "GreaterThanConstraint", "GreaterEqualConstraint",
-    "EqualConstraint", "NotEqualConstraint",
-    "AllDifferentPairConstraint", "NoAttackQueensConstraint",
-    "SudokuConstraint",
-    "LT", "LE", "GT", "GE", "EQ", "NE", "AllDiff",
-    "ArcRevisionCache", "ArcOrderingStrategy", "RedundantArcDetector",
-    "PerformanceMonitor", "OptimizedAC3", "create_optimized_ac3"
+    "ArcEngine",
+    "ConstraintGraph",
+    "SearchSpaceTracer",
+    "ClusterDetector",
+    "TopologyUtils",
 ]
 
-from .advanced_optimizations import *

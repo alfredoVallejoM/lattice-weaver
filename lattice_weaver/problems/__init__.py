@@ -21,7 +21,7 @@ Usage:
     catalog = get_catalog()
     engine = catalog.generate_problem('nqueens', n=8)
     
-    from lattice_weaver.arc_engine import CSPSolver
+    from lattice_weaver.core.csp_engine.solver import AdaptiveConsistencyEngine as CSPSolver
     solver = CSPSolver(engine)
     solution = solver.solve()
 """
