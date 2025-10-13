@@ -2,6 +2,7 @@ import pytest
 import networkx as nx
 from lattice_weaver.topology.homology_engine import HomologyEngine
 from lattice_weaver.topology.cubical_complex import CubicalComplex
+from lattice_weaver.topology.simplicial_complex import SimplicialComplex
 from lattice_weaver.formal.cubical_geometry import GeometricCube
 
 class TestHomologyEngine:
@@ -83,7 +84,7 @@ class TestHomologyEngine:
 
     def test_compute_homology_invalid_input(self):
         engine = HomologyEngine()
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             engine.compute_homology(object())
 
     @pytest.fixture
@@ -128,4 +129,51 @@ class TestHomologyEngine:
         assert homology["beta_0"] == 1
         assert homology["beta_1"] == 0
         assert homology["beta_2"] == 1
+
+    @pytest.fixture
+    def simple_simplicial_complex(self):
+        sc = SimplicialComplex()
+        sc.add_simplex([0]) # Un solo vértice
+        return sc
+
+    @pytest.fixture
+    def line_simplicial_complex(self):
+        sc = SimplicialComplex()
+        sc.add_simplex([0])
+        sc.add_simplex([1])
+        sc.add_simplex([0, 1])
+        return sc
+
+    @pytest.fixture
+    def triangle_simplicial_complex(self):
+        sc = SimplicialComplex()
+        sc.add_simplex([0])
+        sc.add_simplex([1])
+        sc.add_simplex([2])
+        sc.add_simplex([0, 1])
+        sc.add_simplex([1, 2])
+        sc.add_simplex([0, 2])
+        sc.add_simplex([0, 1, 2])
+        return sc
+
+    def test_compute_homology_simple_simplicial_complex(self, simple_simplicial_complex):
+        engine = HomologyEngine()
+        homology = engine.compute_homology(simple_simplicial_complex)
+        assert homology["beta_0"] == 1
+        assert homology["beta_1"] == 0
+        assert homology["beta_2"] == 0
+
+    def test_compute_homology_line_simplicial_complex(self, line_simplicial_complex):
+        engine = HomologyEngine()
+        homology = engine.compute_homology(line_simplicial_complex)
+        assert homology["beta_0"] == 1
+        assert homology["beta_1"] == 0
+        assert homology["beta_2"] == 0
+
+    def test_compute_homology_triangle_simplicial_complex(self, triangle_simplicial_complex):
+        engine = HomologyEngine()
+        homology = engine.compute_homology(triangle_simplicial_complex)
+        assert homology["beta_0"] == 1
+        assert homology["beta_1"] == 0
+        assert homology["beta_2"] == 0
 

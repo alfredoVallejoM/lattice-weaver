@@ -19,6 +19,9 @@ class SimplicialComplex:
         """
         if not all(isinstance(v, int) for v in simplex):
             raise ValueError("Los vértices del simplex deben ser enteros.")
+        # GUDHI SimplexTree automáticamente añade las caras de un simplex.
+        # Para asegurar que los vértices se consideren, basta con añadir el simplex.
+        # La filtración por defecto 0.0 es adecuada para la mayoría de los casos.
         self.simplex_tree.insert(simplex, filtration=filtration)
         self._built = True
 
