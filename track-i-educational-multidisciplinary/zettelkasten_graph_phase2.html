@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Grafo del Zettelkasten - Track I</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style type="text/css">
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        #controls {
+            background-color: #ecf0f1;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        #mynetwork {
+            width: 100%;
+            height: 800px;
+            border: 1px solid lightgray;
+        }
+        #info {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .stat-label {
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>Grafo del Zettelkasten - Track I</h1>
+        <p>Visualización interactiva de notas y conexiones</p>
+    </div>
+    
+    <div id="controls">
+        <button onclick="network.fit()">Ajustar Vista</button>
+        <button onclick="togglePhysics()">Toggle Física</button>
+        <button onclick="exportImage()">Exportar Imagen</button>
+    </div>
+    
+    <div id="mynetwork"></div>
+    
+    <div id="info">
+        <h2>Estadísticas</h2>
+        <div id="stats">
+            <div class="stat-card">
+                <div class="stat-value">18</div>
+                <div class="stat-label">Total de Notas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">36</div>
+                <div class="stat-label">Conexiones</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2.00</div>
+                <div class="stat-label">Densidad</div>
+            </div>
+        </div>
+        
+        <h3>Leyenda</h3>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #4CAF50"></div>
+                <span>Fenómeno</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #2196F3"></div>
+                <span>Categoría</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #FF9800"></div>
+                <span>Isomorfismo</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #9C27B0"></div>
+                <span>Técnica</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #00BCD4"></div>
+                <span>Concepto</span>
+            </div>
+        </div>
+        
+        <h3>Instrucciones</h3>
+        <ul>
+            <li>Haz clic y arrastra para mover el grafo</li>
+            <li>Usa la rueda del ratón para hacer zoom</li>
+            <li>Haz clic en un nodo para ver sus detalles</li>
+            <li>Haz doble clic en un nodo para centrarlo</li>
+        </ul>
+    </div>
+    
+    <script type="text/javascript">
+        // Datos del grafo
+        var nodes = new vis.DataSet([{"id": "C001", "label": "C001\nRedes de Interacci\u00f3n", "title": "C001: Redes de Interacci\u00f3n\nTipo: categoria\nEstado: en_revision\nConexiones: 13", "color": "#2196F3", "size": 36, "shape": "square"}, {"id": "C002", "label": "C002\nAsignaci\u00f3n \u00d3ptima", "title": "C002: Asignaci\u00f3n \u00d3ptima\nTipo: categoria\nEstado: borrador\nConexiones: 1", "color": "#2196F3", "size": 12, "shape": "dot"}, {"id": "C003", "label": "C003\nOptimizaci\u00f3n con Restricciones", "title": "C003: Optimizaci\u00f3n con Restricciones\nTipo: categoria\nEstado: en_revision\nConexiones: 7", "color": "#2196F3", "size": 24, "shape": "square"}, {"id": "C004", "label": "C004\nSistemas Din\u00e1micos", "title": "C004: Sistemas Din\u00e1micos\nTipo: categoria\nEstado: en_revision\nConexiones: 12", "color": "#2196F3", "size": 34, "shape": "square"}, {"id": "C005", "label": "C005\nJerarqu\u00edas y Taxonom\u00edas", "title": "C005: Jerarqu\u00edas y Taxonom\u00edas\nTipo: categoria\nEstado: borrador\nConexiones: 1", "color": "#2196F3", "size": 12, "shape": "dot"}, {"id": "C006", "label": "C006\nSatisfacibilidad L\u00f3gica", "title": "C006: Satisfacibilidad L\u00f3gica\nTipo: categoria\nEstado: en_revision\nConexiones: 2", "color": "#2196F3", "size": 14, "shape": "square"}, {"id": "F001", "label": "F001\nTeor\u00eda de Juegos Evolutiva", "title": "F001: Teor\u00eda de Juegos Evolutiva\nTipo: fenomeno\nEstado: en_revision\nConexiones: 6", "color": "#4CAF50", "size": 22, "shape": "square"}, {"id": "F002", "label": "F002\nRedes de Regulaci\u00f3n G\u00e9nica", "title": "F002: Redes de Regulaci\u00f3n G\u00e9nica\nTipo: fenomeno\nEstado: en_revision\nConexiones: 4", "color": "#4CAF50", "size": 18, "shape": "square"}, {"id": "F003", "label": "F003\nModelo de Ising 2D", "title": "F003: Modelo de Ising 2D\nTipo: fenomeno\nEstado: en_revision\nConexiones: 5", "color": "#4CAF50", "size": 20, "shape": "square"}, {"id": "F004", "label": "F004\nRedes neuronales de Hopfield", "title": "F004: Redes neuronales de Hopfield\nTipo: fenomeno\nEstado: borrador\nConexiones: 2", "color": "#4CAF50", "size": 14, "shape": "dot"}, {"id": "F005", "label": "F005\nAlgoritmo de Dijkstra / Camino", "title": "F005: Algoritmo de Dijkstra / Caminos m\u00ednimos\nTipo: fenomeno\nEstado: borrador\nConexiones: 2", "color": "#4CAF50", "size": 14, "shape": "dot"}, {"id": "F006", "label": "F006\nColoreo de grafos", "title": "F006: Coloreo de grafos\nTipo: fenomeno\nEstado: borrador\nConexiones: 2", "color": "#4CAF50", "size": 14, "shape": "dot"}, {"id": "F007", "label": "F007\nSatisfacibilidad booleana (SAT", "title": "F007: Satisfacibilidad booleana (SAT)\nTipo: fenomeno\nEstado: borrador\nConexiones: 2", "color": "#4CAF50", "size": 14, "shape": "dot"}, {"id": "F008", "label": "F008\nPercolaci\u00f3n", "title": "F008: Percolaci\u00f3n\nTipo: fenomeno\nEstado: borrador\nConexiones: 2", "color": "#4CAF50", "size": 14, "shape": "dot"}, {"id": "F009", "label": "F009\nModelo de votantes", "title": "F009: Modelo de votantes\nTipo: fenomeno\nEstado: borrador\nConexiones: 2", "color": "#4CAF50", "size": 14, "shape": "dot"}, {"id": "F010", "label": "F010\nSegregaci\u00f3n urbana (Schelling)", "title": "F010: Segregaci\u00f3n urbana (Schelling)\nTipo: fenomeno\nEstado: borrador\nConexiones: 2", "color": "#4CAF50", "size": 14, "shape": "dot"}, {"id": "I001", "label": "I001\nModelo de Ising \u2245 Redes Social", "title": "I001: Modelo de Ising \u2245 Redes Sociales (Formaci\u00f3n de Opiniones)\nTipo: isomorfismo\nEstado: en_revision\nConexiones: 4", "color": "#FF9800", "size": 18, "shape": "square"}, {"id": "I002", "label": "I002\nDilema del Prisionero Multidom", "title": "I002: Dilema del Prisionero Multidominio\nTipo: isomorfismo\nEstado: en_revision\nConexiones: 3", "color": "#FF9800", "size": 16, "shape": "square"}]);
+        var edges = new vis.DataSet([{"id": 0, "from": "C001", "to": "F005", "arrows": "to"}, {"id": 1, "from": "C001", "to": "F010", "arrows": "to"}, {"id": 2, "from": "C001", "to": "F004", "arrows": "to"}, {"id": 3, "from": "C001", "to": "C004", "arrows": "to"}, {"id": 4, "from": "C001", "to": "F008", "arrows": "to"}, {"id": 5, "from": "C001", "to": "I001", "arrows": "to"}, {"id": 6, "from": "C001", "to": "F002", "arrows": "to"}, {"id": 7, "from": "C001", "to": "F001", "arrows": "to"}, {"id": 8, "from": "C001", "to": "C003", "arrows": "to"}, {"id": 9, "from": "C001", "to": "F006", "arrows": "to"}, {"id": 10, "from": "C001", "to": "F009", "arrows": "to"}, {"id": 11, "from": "C001", "to": "F003", "arrows": "to"}, {"id": 12, "from": "C001", "to": "C005", "arrows": "to"}, {"id": 13, "from": "C002", "to": "C004", "arrows": "to"}, {"id": 14, "from": "C003", "to": "F005", "arrows": "to"}, {"id": 15, "from": "C003", "to": "C006", "arrows": "to"}, {"id": 16, "from": "C003", "to": "C004", "arrows": "to"}, {"id": 17, "from": "C003", "to": "I002", "arrows": "to"}, {"id": 18, "from": "C003", "to": "F007", "arrows": "to"}, {"id": 19, "from": "C003", "to": "F006", "arrows": "to"}, {"id": 20, "from": "C004", "to": "F010", "arrows": "to"}, {"id": 21, "from": "C004", "to": "F004", "arrows": "to"}, {"id": 22, "from": "C004", "to": "I001", "arrows": "to"}, {"id": 23, "from": "C004", "to": "F008", "arrows": "to"}, {"id": 24, "from": "C004", "to": "I002", "arrows": "to"}, {"id": 25, "from": "C004", "to": "F002", "arrows": "to"}, {"id": 26, "from": "C004", "to": "F001", "arrows": "to"}, {"id": 27, "from": "C004", "to": "F009", "arrows": "to"}, {"id": 28, "from": "C004", "to": "F003", "arrows": "to"}, {"id": 29, "from": "C006", "to": "F007", "arrows": "to"}, {"id": 30, "from": "F001", "to": "I001", "arrows": "to"}, {"id": 31, "from": "F001", "to": "I002", "arrows": "to"}, {"id": 32, "from": "F001", "to": "F002", "arrows": "to"}, {"id": 33, "from": "F001", "to": "F003", "arrows": "to"}, {"id": 34, "from": "F002", "to": "F003", "arrows": "to"}, {"id": 35, "from": "F003", "to": "I001", "arrows": "to"}]);
+        
+        // Crear red
+        var container = document.getElementById('mynetwork');
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        var options = {
+            nodes: {
+                font: {
+                    size: 12,
+                    face: 'Arial'
+                },
+                borderWidth: 2,
+                borderWidthSelected: 4
+            },
+            edges: {
+                width: 2,
+                color: {
+                    color: '#848484',
+                    highlight: '#3498db',
+                    hover: '#3498db'
+                },
+                smooth: {
+                    type: 'continuous'
+                }
+            },
+            physics: {
+                stabilization: false,
+                barnesHut: {
+                    gravitationalConstant: -8000,
+                    springConstant: 0.04,
+                    springLength: 95
+                }
+            },
+            interaction: {
+                hover: true,
+                tooltipDelay: 200,
+                navigationButtons: true,
+                keyboard: true
+            }
+        };
+        
+        var network = new vis.Network(container, data, options);
+        
+        // Event listeners
+        network.on("click", function(params) {
+            if (params.nodes.length > 0) {
+                var nodeId = params.nodes[0];
+                var node = nodes.get(nodeId);
+                console.log("Nodo seleccionado:", node);
+            }
+        });
+        
+        // Funciones de control
+        var physicsEnabled = true;
+        function togglePhysics() {
+            physicsEnabled = !physicsEnabled;
+            network.setOptions({physics: {enabled: physicsEnabled}});
+        }
+        
+        function exportImage() {
+            var canvas = container.getElementsByTagName('canvas')[0];
+            var dataURL = canvas.toDataURL('image/png');
+            var link = document.createElement('a');
+            link.download = 'zettelkasten_graph.png';
+            link.href = dataURL;
+            link.click();
+        }
+    </script>
+</body>
+</html>

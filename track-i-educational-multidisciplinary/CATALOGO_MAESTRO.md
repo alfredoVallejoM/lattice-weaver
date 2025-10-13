@@ -1,8 +1,8 @@
 # Catálogo Maestro - Track I Zettelkasten
 
 **Última actualización:** 2025-10-12  
-**Total de notas:** 11  
-**Conexiones totales:** 22
+**Total de notas:** 18  
+**Conexiones totales:** 72
 
 ---
 
@@ -12,7 +12,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### Estadísticas Generales
 
-- **Fenómenos (F):** 3
+- **Fenómenos (F):** 10
 - **Categorías (C):** 6
 - **Isomorfismos (I):** 2
 - **Técnicas (T):** 0
@@ -22,9 +22,9 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### Métricas de Conectividad
 
-- **Densidad de conexiones:** 2.00 (conexiones por nota)
-- **Notas huérfanas:** 6 (54.5%)
-- **Nodo más conectado:** [[F003]] (5 conexiones)
+- **Densidad de conexiones:** 4.00 (conexiones por nota)
+- **Notas huérfanas:** 0 (0.0%)
+- **Nodo más conectado:** [[C001]] (13 conexiones)
 
 ---
 
@@ -35,6 +35,13 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F001]] - Teoría de Juegos Evolutiva (economia, biologia, sociologia)
 - [[F002]] - Redes de Regulación Génica (biologia, bioinformatica, biologia_sistemas)
 - [[F003]] - Modelo de Ising 2D (fisica_estadistica, ciencia_computacional, sociologia)
+- [[F004]] - Redes neuronales de Hopfield (inteligencia_artificial, neurociencia, fisica_estadistica)
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos (informatica, matematicas, logistica, transporte)
+- [[F006]] - Coloreo de grafos (matematicas, informatica, logistica, planificacion)
+- [[F007]] - Satisfacibilidad booleana (SAT) (informatica, matematicas, logica, inteligencia_artificial)
+- [[F008]] - Percolación (fisica_estadistica, ciencia_materiales, ecologia, epidemiologia)
+- [[F009]] - Modelo de votantes (sociologia, fisica_estadistica, opinion_dinamica)
+- [[F010]] - Segregación urbana (Schelling) (sociologia, economia, urbanismo)
 
 ### Categorías (C)
 
@@ -48,7 +55,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### Isomorfismos (I)
 
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones) (fisica_estadistica, sociologia)
-- [[I002]] - Dilema del Prisionero Multidominio (dominio1, dominio2)
+- [[I002]] - Dilema del Prisionero Multidominio (economia, biologia, sociologia, ciencia_politica)
 
 ### Técnicas (T)
 
@@ -74,10 +81,13 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F001]] - Teoría de Juegos Evolutiva
 - [[F002]] - Redes de Regulación Génica
+- [[I002]] - Dilema del Prisionero Multidominio
 
 ### Economia
 
 - [[F001]] - Teoría de Juegos Evolutiva
+- [[F010]] - Segregación urbana (Schelling)
+- [[I002]] - Dilema del Prisionero Multidominio
 
 ### Fisica
 
@@ -87,15 +97,22 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F001]] - Teoría de Juegos Evolutiva
 - [[F003]] - Modelo de Ising 2D
+- [[F009]] - Modelo de votantes
+- [[F010]] - Segregación urbana (Schelling)
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
+- [[I002]] - Dilema del Prisionero Multidominio
 
 ### Informatica
 
-*No hay notas en este dominio aún.*
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+- [[F006]] - Coloreo de grafos
+- [[F007]] - Satisfacibilidad booleana (SAT)
 
 ### Matematicas
 
-*No hay notas en este dominio aún.*
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+- [[F006]] - Coloreo de grafos
+- [[F007]] - Satisfacibilidad booleana (SAT)
 
 ### Linguistica
 
@@ -103,7 +120,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### Neurociencia
 
-*No hay notas en este dominio aún.*
+- [[F004]] - Redes neuronales de Hopfield
 
 ### Medicina
 
@@ -115,7 +132,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### Ciencia Politica
 
-*No hay notas en este dominio aún.*
+- [[I002]] - Dilema del Prisionero Multidominio
 
 ### Otros
 
@@ -128,15 +145,44 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 **Ciencia Computacional:**
 - [[F003]] - Modelo de Ising 2D
 
-**Dominio1:**
-- [[I002]] - Dilema del Prisionero Multidominio
+**Ciencia Materiales:**
+- [[F008]] - Percolación
 
-**Dominio2:**
-- [[I002]] - Dilema del Prisionero Multidominio
+**Ecologia:**
+- [[F008]] - Percolación
+
+**Epidemiologia:**
+- [[F008]] - Percolación
 
 **Fisica Estadistica:**
 - [[F003]] - Modelo de Ising 2D
+- [[F004]] - Redes neuronales de Hopfield
+- [[F008]] - Percolación
+- [[F009]] - Modelo de votantes
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
+
+**Inteligencia Artificial:**
+- [[F004]] - Redes neuronales de Hopfield
+- [[F007]] - Satisfacibilidad booleana (SAT)
+
+**Logica:**
+- [[F007]] - Satisfacibilidad booleana (SAT)
+
+**Logistica:**
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+- [[F006]] - Coloreo de grafos
+
+**Opinion Dinamica:**
+- [[F009]] - Modelo de votantes
+
+**Planificacion:**
+- [[F006]] - Coloreo de grafos
+
+**Transporte:**
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+
+**Urbanismo:**
+- [[F010]] - Segregación urbana (Schelling)
 
 ---
 
@@ -146,6 +192,12 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F002]] - Redes de Regulación Génica
 - [[F003]] - Modelo de Ising 2D
+- [[F004]] - Redes neuronales de Hopfield
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+- [[F006]] - Coloreo de grafos
+- [[F008]] - Percolación
+- [[F009]] - Modelo de votantes
+- [[F010]] - Segregación urbana (Schelling)
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
 
 ### C002 - Asignación Óptima
@@ -154,13 +206,21 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### C003 - Optimización con Restricciones
 
-*No hay fenómenos en esta categoría aún.*
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+- [[F006]] - Coloreo de grafos
+- [[F007]] - Satisfacibilidad booleana (SAT)
+- [[I002]] - Dilema del Prisionero Multidominio
 
 ### C004 - Sistemas Dinámicos
 
 - [[F001]] - Teoría de Juegos Evolutiva
 - [[F003]] - Modelo de Ising 2D
+- [[F004]] - Redes neuronales de Hopfield
+- [[F008]] - Percolación
+- [[F009]] - Modelo de votantes
+- [[F010]] - Segregación urbana (Schelling)
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
+- [[I002]] - Dilema del Prisionero Multidominio
 
 ### C005 - Jerarquías y Taxonomías
 
@@ -168,15 +228,61 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### C006 - Satisfacibilidad Lógica
 
-*No hay fenómenos en esta categoría aún.*
+- [[F007]] - Satisfacibilidad booleana (SAT)
 
 ---
 
 ## 🏷️ Índice por Tags
 
+### #NP_completo
+
+- [[F006]] - Coloreo de grafos
+- [[F007]] - Satisfacibilidad booleana (SAT)
+
+### #algoritmos
+
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+
+### #aprendizaje_maquina
+
+- [[F004]] - Redes neuronales de Hopfield
+
+### #asignacion
+
+- [[F006]] - Coloreo de grafos
+
+### #atractores
+
+- [[C004]] - Sistemas Dinámicos
+- [[F004]] - Redes neuronales de Hopfield
+
+### #autoorganizacion
+
+- [[F010]] - Segregación urbana (Schelling)
+
 ### #boolean_networks
 
 - [[F002]] - Redes de Regulación Génica
+
+### #caminos_cortos
+
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+
+### #caos
+
+- [[C004]] - Sistemas Dinámicos
+
+### #complejidad
+
+- [[C006]] - Satisfacibilidad Lógica
+
+### #conectividad
+
+- [[F008]] - Percolación
+
+### #conflicto
+
+- [[I002]] - Dilema del Prisionero Multidominio
 
 ### #consenso
 
@@ -185,10 +291,35 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #cooperacion
 
 - [[F001]] - Teoría de Juegos Evolutiva
+- [[I002]] - Dilema del Prisionero Multidominio
+
+### #criticalidad
+
+- [[F008]] - Percolación
+
+### #csp
+
+- [[C003]] - Optimización con Restricciones
+
+### #dinamica_de_opiniones
+
+- [[F009]] - Modelo de votantes
+
+### #dinamicas
+
+- [[C004]] - Sistemas Dinámicos
 
 ### #equilibrio
 
 - [[F001]] - Teoría de Juegos Evolutiva
+
+### #equilibrio_nash
+
+- [[I002]] - Dilema del Prisionero Multidominio
+
+### #estabilidad
+
+- [[C004]] - Sistemas Dinámicos
 
 ### #estrategia
 
@@ -197,6 +328,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #evolucion
 
 - [[F001]] - Teoría de Juegos Evolutiva
+
+### #evolucion_temporal
+
+- [[C004]] - Sistemas Dinámicos
 
 ### #fisica
 
@@ -209,6 +344,8 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #grafos
 
 - [[C001]] - Redes de Interacción
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+- [[F006]] - Coloreo de grafos
 
 ### #interacciones
 
@@ -222,9 +359,29 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[F001]] - Teoría de Juegos Evolutiva
 
+### #logica
+
+- [[C006]] - Satisfacibilidad Lógica
+
+### #logica_proposicional
+
+- [[F007]] - Satisfacibilidad booleana (SAT)
+
 ### #magnetismo
 
 - [[F003]] - Modelo de Ising 2D
+
+### #memoria_asociativa
+
+- [[F004]] - Redes neuronales de Hopfield
+
+### #modelos_basados_en_agentes
+
+- [[F010]] - Segregación urbana (Schelling)
+
+### #modelos_estocasticos
+
+- [[F009]] - Modelo de votantes
 
 ### #monte_carlo
 
@@ -234,9 +391,24 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
 
+### #optimizacion
+
+- [[C003]] - Optimización con Restricciones
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+- [[F006]] - Coloreo de grafos
+- [[I002]] - Dilema del Prisionero Multidominio
+
+### #planificacion
+
+- [[F006]] - Coloreo de grafos
+
 ### #polarizacion
 
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
+
+### #programacion_matematica
+
+- [[C003]] - Optimización con Restricciones
 
 ### #redes
 
@@ -244,9 +416,35 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F002]] - Redes de Regulación Génica
 - [[F003]] - Modelo de Ising 2D
 
+### #redes_aleatorias
+
+- [[F008]] - Percolación
+
+### #redes_neuronales
+
+- [[F004]] - Redes neuronales de Hopfield
+
 ### #regulacion
 
 - [[F002]] - Redes de Regulación Génica
+
+### #resolucion_problemas
+
+- [[F007]] - Satisfacibilidad booleana (SAT)
+
+### #restricciones
+
+- [[C003]] - Optimización con Restricciones
+
+### #satisfacibilidad
+
+- [[C003]] - Optimización con Restricciones
+- [[C006]] - Satisfacibilidad Lógica
+- [[F007]] - Satisfacibilidad booleana (SAT)
+
+### #segregacion
+
+- [[F010]] - Segregación urbana (Schelling)
 
 ### #sistemas_biologicos
 
@@ -263,33 +461,34 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #tag1
 
 - [[C002]] - Asignación Óptima
-- [[C003]] - Optimización con Restricciones
-- [[C004]] - Sistemas Dinámicos
 - [[C005]] - Jerarquías y Taxonomías
-- [[C006]] - Satisfacibilidad Lógica
-- [[I002]] - Dilema del Prisionero Multidominio
 
 ### #tag2
 
 - [[C002]] - Asignación Óptima
-- [[C003]] - Optimización con Restricciones
-- [[C004]] - Sistemas Dinámicos
 - [[C005]] - Jerarquías y Taxonomías
-- [[C006]] - Satisfacibilidad Lógica
-- [[I002]] - Dilema del Prisionero Multidominio
 
 ### #tag3
 
 - [[C002]] - Asignación Óptima
-- [[C003]] - Optimización con Restricciones
-- [[C004]] - Sistemas Dinámicos
 - [[C005]] - Jerarquías y Taxonomías
+
+### #teoria_de_la_computacion
+
 - [[C006]] - Satisfacibilidad Lógica
+
+### #teoria_juegos
+
 - [[I002]] - Dilema del Prisionero Multidominio
 
 ### #topologia
 
 - [[C001]] - Redes de Interacción
+
+### #transiciones_de_fase
+
+- [[F008]] - Percolación
+- [[F009]] - Modelo de votantes
 
 ### #transiciones_fase
 
@@ -306,19 +505,26 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### En Revision
 
 - [[C001]] - Redes de Interacción
+- [[C003]] - Optimización con Restricciones
+- [[C004]] - Sistemas Dinámicos
+- [[C006]] - Satisfacibilidad Lógica
 - [[F001]] - Teoría de Juegos Evolutiva
 - [[F002]] - Redes de Regulación Génica
 - [[F003]] - Modelo de Ising 2D
 - [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones)
+- [[I002]] - Dilema del Prisionero Multidominio
 
 ### Borrador
 
 - [[C002]] - Asignación Óptima
-- [[C003]] - Optimización con Restricciones
-- [[C004]] - Sistemas Dinámicos
 - [[C005]] - Jerarquías y Taxonomías
-- [[C006]] - Satisfacibilidad Lógica
-- [[I002]] - Dilema del Prisionero Multidominio
+- [[F004]] - Redes neuronales de Hopfield
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos
+- [[F006]] - Coloreo de grafos
+- [[F007]] - Satisfacibilidad booleana (SAT)
+- [[F008]] - Percolación
+- [[F009]] - Modelo de votantes
+- [[F010]] - Segregación urbana (Schelling)
 
 ---
 
@@ -326,27 +532,20 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### Top 10 Nodos Más Conectados
 
-1. [[F003]] - Modelo de Ising 2D (5 conexiones)
-2. [[C001]] - Redes de Interacción (5 conexiones)
-3. [[F001]] - Teoría de Juegos Evolutiva (4 conexiones)
-4. [[F002]] - Redes de Regulación Génica (4 conexiones)
-5. [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones) (4 conexiones)
-6. [[C002]] - Asignación Óptima (0 conexiones)
-7. [[C003]] - Optimización con Restricciones (0 conexiones)
-8. [[C004]] - Sistemas Dinámicos (0 conexiones)
-9. [[C005]] - Jerarquías y Taxonomías (0 conexiones)
-10. [[C006]] - Satisfacibilidad Lógica (0 conexiones)
+1. [[C001]] - Redes de Interacción (13 conexiones)
+2. [[C004]] - Sistemas Dinámicos (12 conexiones)
+3. [[C003]] - Optimización con Restricciones (7 conexiones)
+4. [[F001]] - Teoría de Juegos Evolutiva (6 conexiones)
+5. [[F003]] - Modelo de Ising 2D (5 conexiones)
+6. [[F002]] - Redes de Regulación Génica (4 conexiones)
+7. [[I001]] - Modelo de Ising ≅ Redes Sociales (Formación de Opiniones) (4 conexiones)
+8. [[I002]] - Dilema del Prisionero Multidominio (3 conexiones)
+9. [[C006]] - Satisfacibilidad Lógica (2 conexiones)
+10. [[F004]] - Redes neuronales de Hopfield (2 conexiones)
 
 ### Notas Huérfanas
 
-*Notas sin conexiones (considerar agregar enlaces):*
-
-- [[C002]] - Asignación Óptima
-- [[C003]] - Optimización con Restricciones
-- [[C004]] - Sistemas Dinámicos
-- [[C005]] - Jerarquías y Taxonomías
-- [[C006]] - Satisfacibilidad Lógica
-- [[I002]] - Dilema del Prisionero Multidominio
+*No hay notas huérfanas. ¡Excelente conectividad!*
 
 ---
 
@@ -356,24 +555,24 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 | Dominio | Fenómenos | Objetivo Año 1 | Progreso |
 |---------|-----------|----------------|----------|
-| Biologia | 2 | 3 | 67% |
-| Economia | 1 | 2 | 50% |
+| Biologia | 3 | 3 | 100% |
+| Economia | 3 | 2 | 150% |
 | Fisica | 0 | 3 | 0% |
-| Matematicas | 0 | 2 | 0% |
-| Sociologia | 3 | 2 | 150% |
+| Matematicas | 3 | 2 | 150% |
+| Sociologia | 6 | 2 | 300% |
 | Linguistica | 0 | 1 | 0% |
-| Informatica | 0 | 1 | 0% |
-| Neurociencia | 0 | 1 | 0% |
-| **TOTAL** | **6** | **15** | **40%** |
+| Informatica | 3 | 1 | 300% |
+| Neurociencia | 1 | 1 | 100% |
+| **TOTAL** | **19** | **15** | **127%** |
 
 ### Estado de Implementación
 
 | Estado | Fenómenos | Porcentaje |
 |--------|-----------|------------|
 | Completo | 0 | 0% |
-| En Revision | 5 | 167% |
-| Borrador | 6 | 200% |
-| **TOTAL** | **3** | **100%** |
+| En Revision | 9 | 90% |
+| Borrador | 9 | 90% |
+| **TOTAL** | **10** | **100%** |
 
 ---
 

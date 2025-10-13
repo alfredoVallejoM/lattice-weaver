@@ -2,335 +2,186 @@
 id: C006
 tipo: categoria
 titulo: Satisfacibilidad Lógica
-fenomenos_count: 0
-dominios_count: 0
-tags: [tag1, tag2, tag3]
+fenomenos_count: 1
+dominios_count: 4
+tags: [logica, satisfacibilidad, teoria_de_la_computacion, complejidad]
 fecha_creacion: 2025-10-12
 fecha_modificacion: 2025-10-12
-estado: borrador  # borrador | en_revision | completo
+estado: en_revision
 ---
 
 # Categoría: Satisfacibilidad Lógica
 
 ## Descripción
 
-[Descripción concisa de la categoría estructural. Explicar qué característica matemática o computacional común define esta categoría.]
+La categoría de **Satisfacibilidad Lógica** agrupa fenómenos que pueden ser modelados como la pregunta de si existe una asignación de valores (generalmente booleanos) a un conjunto de variables que satisfaga una fórmula o un conjunto de sentencias lógicas. Es una de las estructuras más fundamentales en la intersección de las matemáticas, la informática y la inteligencia artificial, y su problema canónico, la Satisfacibilidad Booleana (SAT), fue el primer problema demostrado ser NP-completo.
+
+El núcleo de esta categoría es la búsqueda de una "testigo" o "prueba" (una asignación de variables) que haga que una expresión lógica compleja sea verdadera. Esto tiene aplicaciones directas en la verificación de hardware y software, la planificación en IA, la bioinformática y muchos otros campos donde los problemas pueden ser codificados en términos de restricciones lógicas.
 
 ## Estructura Matemática Abstracta
 
 ### Componentes Esenciales
 
-1. **[Componente 1]:** [Descripción abstracta]
-2. **[Componente 2]:** [Descripción abstracta]
-3. **[Componente N]:** [Descripción abstracta]
+1.  **Variables (V):** Un conjunto de variables, típicamente booleanas (pueden ser generalizadas a otros dominios).
+2.  **Fórmula Lógica (Φ):** Una expresión construida a partir de las variables y operadores lógicos (AND, OR, NOT). A menudo, la fórmula se presenta en una forma normalizada, como la Forma Normal Conjuntiva (CNF), que es una conjunción de cláusulas, donde cada cláusula es una disyunción de literales (una variable o su negación).
 
 ### Relaciones Esenciales
 
-1. **[Relación 1]:** [Descripción abstracta]
-2. **[Relación 2]:** [Descripción abstracta]
+1.  **Satisfacción:** Una asignación de valores de verdad a las variables satisface la fórmula si la fórmula se evalúa como verdadera bajo esa asignación.
 
 ### Propiedades Definitorias
 
-[Lista de propiedades que DEBEN cumplirse para que un fenómeno pertenezca a esta categoría]
-
-1. **[Propiedad 1]:** [Descripción formal]
-2. **[Propiedad 2]:** [Descripción formal]
-3. **[Propiedad N]:** [Descripción formal]
+1.  **Formulación Lógica:** El problema puede ser expresado como la pregunta de si una fórmula lógica tiene una asignación satisfactoria.
+2.  **Espacio de Búsqueda Discreto:** El conjunto de posibles soluciones es discreto y finito (para variables booleanas, es de tamaño 2ⁿ para n variables).
 
 ## Formalismo Matemático
 
 ### Definición Formal
 
-[Definición matemática rigurosa de la estructura]
+Dado un conjunto de variables booleanas V = {v₁, ..., vₙ} y una fórmula booleana Φ en Forma Normal Conjuntiva (CNF) sobre estas variables, el problema de **Satisfacibilidad Booleana (SAT)** es determinar si existe una función de asignación de verdad τ: V → {Verdadero, Falso} tal que Φ se evalúa como Verdadera.
 
-```
-[Notación matemática formal]
-```
+Φ = C₁ ∧ C₂ ∧ ... ∧ Cₘ
+
+donde cada cláusula Cⱼ es de la forma:
+
+Cⱼ = l₁ ∨ l₂ ∨ ... ∨ lₖ
+
+y cada literal lᵢ es una variable vₖ o su negación ¬vₖ.
 
 ### Teoría Subyacente
 
-[Área de las matemáticas que estudia esta estructura: teoría de grafos, álgebra, topología, etc.]
+-   **Lógica Proposicional:** El fundamento matemático para la formulación de problemas SAT.
+-   **Teoría de la Complejidad Computacional:** Proporciona el marco para entender la dificultad de los problemas de satisfacibilidad.
 
 ### Teoremas Fundamentales
 
-1. **[Nombre del Teorema]:** [Enunciado y relevancia para la categoría]
-2. **[Repetir]**
+1.  **Teorema de Cook-Levin (1971):** El problema SAT es NP-completo. Esto significa que cualquier problema en la clase de complejidad NP puede ser reducido a SAT en tiempo polinomial.
 
-## Instancias en Diferentes Dominios
+## Fenómenos Instanciados
 
-### Biología
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción de cómo instancia la categoría]
-- [[F###]] - [Repetir]
+### En este Zettelkasten
 
-### Economía
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción]
-- [[F###]] - [Repetir]
+- [[F007]] - Satisfacibilidad booleana (SAT): El problema SAT es el problema canónico de satisfacibilidad lógica.
 
-### Física
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción]
-- [[F###]] - [Repetir]
+### Otros Ejemplos Interdisciplinares
 
-### Sociología
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción]
-- [[F###]] - [Repetir]
+**Verificación de Hardware y Software:**
+-   **Verificación de Modelos (Model Checking):** La pregunta de si un sistema de hardware o software cumple con una especificación puede ser codificada como un problema SAT.
 
-### Informática
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción]
-- [[F###]] - [Repetir]
+**Inteligencia Artificial:**
+-   **Planificación:** Encontrar una secuencia de acciones para alcanzar un objetivo puede ser formulado como un problema SAT, donde las variables representan acciones en diferentes momentos.
 
-### [Otros Dominios]
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción]
-- [[F###]] - [Repetir]
+**Bioinformática:**
+-   **Inferencia de redes reguladoras:** Determinar si un conjunto de datos de expresión génica es consistente con una topología de red propuesta puede ser modelado como un problema SAT.
 
 ## Mapeo a Formalismos Computacionales
 
 ### CSP (Constraint Satisfaction Problem)
 
 **Mapeo general:**
-- **Variables:** [Descripción abstracta de qué representan las variables]
-- **Dominios:** [Descripción abstracta de los dominios]
-- **Restricciones:** [Descripción abstracta de las restricciones]
-
-**Características comunes:**
-- [Característica 1 del CSP para esta categoría]
-- [Característica 2]
-
-### FCA (Formal Concept Analysis) - Si aplica
-
-**Mapeo general:**
-- **Objetos:** [Descripción abstracta]
-- **Atributos:** [Descripción abstracta]
-- **Conceptos:** [Qué representan]
-
-### TDA (Topological Data Analysis) - Si aplica
-
-**Mapeo general:**
-- **Espacio:** [Descripción abstracta]
-- **Filtración:** [Descripción abstracta]
-- **Características topológicas:** [Qué se busca]
-
-### Otros Formalismos
-
-[Cualquier otro formalismo relevante para esta categoría]
+-   **Variables:** Las variables booleanas de la fórmula SAT.
+-   **Dominios:** {Verdadero, Falso} para cada variable.
+-   **Restricciones:** Cada cláusula de la fórmula CNF se convierte en una restricción.
 
 ## Técnicas y Algoritmos Comunes
 
-### Técnicas Universalmente Aplicables
-
-[Técnicas que funcionan para TODOS los fenómenos de esta categoría]
-
-1. [[T###]] - [Nombre de la técnica]
-   - **Por qué funciona:** [Explicación]
-   - **Complejidad:** [Análisis de complejidad]
-   
-2. [[T###]] - [Repetir]
-
-### Técnicas Frecuentemente Aplicables
-
-[Técnicas que funcionan para MUCHOS fenómenos de esta categoría]
-
-1. [[T###]] - [Nombre de la técnica]
-   - **Aplicable a:** [Lista de fenómenos]
-   - **Limitaciones:** [Cuándo no funciona]
-
-2. [[T###]] - [Repetir]
+1.  **Algoritmo DPLL (Davis-Putnam-Logemann-Loveland):** Un algoritmo de backtracking completo y eficiente para resolver SAT.
+2.  **Búsqueda Local Estocástica (WalkSAT):** Algoritmos incompletos que pueden encontrar soluciones para problemas SAT muy grandes.
 
 ## Propiedades Computacionales
 
 ### Complejidad Típica
 
-[Análisis de la complejidad computacional típica de problemas en esta categoría]
-
-- **Decisión:** [P | NP-completo | ...]
-- **Optimización:** [Complejidad típica]
-- **Aproximación:** [Posibilidad de aproximación]
-
-### Heurísticas Efectivas
-
-[Heurísticas que tienden a funcionar bien para esta categoría]
-
-1. **[Heurística 1]:** [Descripción y por qué funciona]
-2. **[Heurística 2]:** [Repetir]
+-   **Decisión:** NP-completo.
 
 ## Visualización
 
 ### Paradigmas de Visualización Comunes
 
-[Tipos de visualización que son naturales para fenómenos de esta categoría]
+1.  **Grafo de Implicación:** Un grafo dirigido donde los nodos son literales y una arista de l₁ a l₂ significa que l₁ implica l₂.
 
-1. **[Tipo de visualización 1]:** [Descripción y qué revela]
-2. **[Tipo de visualización 2]:** [Repetir]
+## Conexiones con Otras Categorías
 
-### Componentes Reutilizables
+- [[C003]] - Optimización con Restricciones: SAT es un caso especial de CSP.
 
-[Componentes de visualización que pueden compartirse entre fenómenos de esta categoría]
-
-- **[Componente 1]:** `lattice_weaver/visualization/[categoria]/[componente]/`
-- **[Componente 2]:** [Repetir]
+### Conexiones Inversas
+- [[C003]] - Optimización con Restricciones (conexión)
 
 ## Isomorfismos Dentro de la Categoría
 
-### Isomorfismos Documentados
-
-[Lista de isomorfismos entre fenómenos de esta categoría]
-
-1. [[I###]] - [Fenómeno A] ≅ [Fenómeno B]
-2. [[I###]] - [Repetir]
-
 ### Patrones de Isomorfismo
 
-[Descripción de patrones comunes de isomorfismo dentro de la categoría]
+-   Muchos problemas NP-completos, como el coloreo de grafos o el problema del clique, pueden ser reducidos a SAT, demostrando un isomorfismo en términos de su estructura de dificultad computacional.
 
 ## Conceptos Fundamentales
 
 ### Conceptos Prerequisito
 
-[Conceptos que deben entenderse para comprender esta categoría]
-
-- [[K###]] - [Nombre del concepto]
-- [[K###]] - [Repetir]
+-   [[K###]] - Lógica Proposicional
 
 ### Conceptos Emergentes
 
-[Conceptos que emergen al estudiar esta categoría]
-
-- [[K###]] - [Nombre del concepto]
-- [[K###]] - [Repetir]
+-   [[K###]] - NP-Completitud
 
 ## Valor Educativo e Interdisciplinar
 
-### Por Qué Esta Categoría Es Importante
-
-[Explicación del valor de reconocer esta categoría estructural]
-
-### Insights Interdisciplinares
-
-[Qué comprensiones profundas emergen al ver múltiples fenómenos como instancias de esta categoría]
-
-### Aplicaciones en Enseñanza
-
-1. **[Aplicación 1]:** [Descripción]
-2. **[Aplicación 2]:** [Repetir]
-
-## Ejemplos Comparativos
-
-### Ejemplo Unificador
-
-[Un ejemplo que muestra cómo 2-3 fenómenos de diferentes dominios son instancias de la misma estructura]
-
-**Fenómeno 1 ([Dominio 1]):**
-[Descripción del problema específico]
-
-**Fenómeno 2 ([Dominio 2]):**
-[Descripción del problema isomorfo]
-
-**Fenómeno 3 ([Dominio 3]):**
-[Descripción del problema isomorfo]
-
-**Estructura común:**
-[Explicación explícita de la estructura compartida]
+La satisfacibilidad lógica es una herramienta poderosa para modelar problemas de decisión en una amplia gama de dominios. Enseña a los estudiantes cómo traducir problemas complejos a un lenguaje formal y cómo la dificultad computacional puede ser caracterizada rigurosamente.
 
 ## Literatura Clave
 
-### Trabajos Fundacionales
-
-[Papers o libros que establecen o estudian esta categoría estructural]
-
-1. [Autor(es)]. ([Año]). *[Título]*. [Journal/Editorial].
-2. [Repetir]
-
-### Surveys y Reviews
-
-[Artículos de revisión que cubren múltiples instancias de esta categoría]
-
-1. [Referencia]
-2. [Repetir]
+1.  Biere, A., Heule, M., & van Maaren, H. (Eds.). (2009). *Handbook of Satisfiability*. IOS Press.
 
 ## Implementación en LatticeWeaver
 
 ### Arquitectura de Código
 
-**Módulo base:** `lattice_weaver/categories/[nombre_categoria]/`
+**Módulo base:** `lattice_weaver/categories/satisfiability/`
 
 **Componentes:**
-- `base.py` - Clase base abstracta para fenómenos de esta categoría
-- `algorithms.py` - Algoritmos comunes
-- `visualization.py` - Componentes de visualización compartidos
-- `utils.py` - Utilidades
+-   `base.py` - Clase base para problemas de satisfacibilidad.
+-   `solvers.py` - Implementaciones de solvers SAT (DPLL, WalkSAT).
 
 ### Clase Base Abstracta
 
 ```python
-class [NombreCategoria]Phenomenon(BasePhenomenon):
+from abc import ABC, abstractmethod
+from typing import List
+
+class SatisfiabilityProblem(ABC):
     """
-    Clase base para fenómenos de la categoría [Nombre].
-    
-    Todos los fenómenos de esta categoría deben heredar de esta clase
-    e implementar los métodos abstractos.
+    Clase base para problemas de satisfacibilidad lógica.
     """
     
     @abstractmethod
-    def get_variables(self) -> List[Variable]:
-        """Retorna las variables del fenómeno."""
+    def to_cnf(self) -> str:
+        """Convierte el problema a formato CNF (DIMACS)."""
         pass
     
-    @abstractmethod
-    def get_constraints(self) -> List[Constraint]:
-        """Retorna las restricciones del fenómeno."""
-        pass
-    
-    # Métodos comunes implementados
-    def solve(self, **kwargs):
-        """Implementación genérica de resolución."""
+    def solve(self, solver: str = "dpll", **kwargs) -> dict:
+        """Resuelve el problema usando un solver SAT."""
         pass
 ```
-
-### Tests Comunes
-
-[Descripción de tests que deben pasar todos los fenómenos de esta categoría]
 
 ## Métricas y Estadísticas
 
 ### Cobertura Actual
 
-- **Fenómenos implementados:** [N]
-- **Dominios cubiertos:** [N]
-- **Isomorfismos documentados:** [N]
+-   **Fenómenos implementados:** 1
+-   **Dominios cubiertos:** 4
 
 ### Objetivos
 
-- **Fenómenos (Año 1):** [N]
-- **Dominios (Año 1):** [N]
-- **Isomorfismos (Año 1):** [N]
+-   **Fenómenos (Año 1):** 3
 
 ## Estado de Desarrollo
 
-- [ ] Estructura matemática formalizada
-- [ ] Al menos 3 instancias documentadas
-- [ ] Técnicas comunes identificadas
-- [ ] Clase base implementada
-- [ ] Componentes de visualización compartidos
-- [ ] Documentación completa
-- [ ] Validación con expertos
-
-## Notas Adicionales
-
-### Ideas para Expansión
-
-- [Idea 1]
-- [Idea 2]
-
-### Preguntas Abiertas
-
-- [Pregunta 1]
-- [Pregunta 2]
-
-### Observaciones
-
-[Cualquier observación relevante]
+-   [x] Estructura matemática formalizada
+-   [x] Al menos 1 instancia documentada
+-   [ ] Técnicas comunes identificadas
+-   [ ] Clase base implementada
 
 ---
 
-**Última actualización:** 2025-10-12  
-**Responsable:** [Nombre del agente/persona]
+**Última actualización:** 2025-10-12
+**Responsable:** Agente Autónomo de Análisis
 

@@ -243,6 +243,10 @@ Este isomorfismo es fundacional para el campo de la **sociofísica**, que aplica
 - [[C001]] - Redes de Interacción (categoría compartida)
 - [[C004]] - Sistemas Dinámicos (categoría compartida)
 
+### Conexiones Inversas
+- [[C004]] - Sistemas Dinámicos (isomorfismo)
+
+
 ## Referencias Clave
 
 1. Castellano, C., Fortunato, S., & Loreto, V. (2009). "Statistical physics of social dynamics". *Reviews of Modern Physics*, 81(2), 591-646.

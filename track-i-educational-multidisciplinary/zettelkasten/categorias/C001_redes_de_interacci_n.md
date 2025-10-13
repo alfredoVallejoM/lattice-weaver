@@ -113,8 +113,15 @@ Las Redes de Interacción pueden mapearse a CSP de múltiples formas dependiendo
 
 ### En este Zettelkasten
 
-- [[F002]] - Redes de Regulación Génica: Genes como nodos, regulación como aristas
-- [[F003]] - Modelo de Ising 2D: Espines en grid 2D, interacciones de vecinos
+- [[F001]] - Teoría de Juegos Evolutiva: Los modelos de replicador describen la dinámica de interacción entre estrategias.
+- [[F002]] - Redes de Regulación Génica: Las interacciones entre genes forman una red compleja.
+- [[F003]] - Modelo de Ising 2D: Las interacciones entre espines vecinos definen la dinámica del sistema.
+- [[F004]] - Redes neuronales de Hopfield: Las conexiones sinápticas forman una red de interacción que almacena patrones.
+- [[F005]] - Algoritmo de Dijkstra / Caminos mínimos: Los grafos representan redes de interacción donde se buscan caminos óptimos.
+- [[F006]] - Coloreo de grafos: Los grafos representan redes con restricciones de interacción entre nodos adyacentes.
+- [[F008]] - Percolación: La formación de clusters conectados en una red es un fenómeno de interacción.
+- [[F009]] - Modelo de votantes: La influencia entre votantes forma una red de interacción que determina la opinión colectiva.
+- [[F010]] - Segregación urbana (Schelling): Las interacciones entre agentes definen patrones de segregación en una red espacial.
 
 ### Otros Ejemplos Interdisciplinares
 
@@ -219,17 +226,17 @@ lattice_weaver/
 
 ## Conexiones con Otras Categorías
 
-- [[C004]] - Sistemas Dinámicos: Las redes son sistemas dinámicos con estructura espacial
-- [[C003]] - Optimización con Restricciones: Inferencia de redes es un problema de optimización
-- [[C005]] - Jerarquías y Taxonomías: Redes pueden tener estructura jerárquica
+- [[C004]] - Sistemas Dinámicos: Las redes son sistemas dinámicos con estructura espacial.
+- [[C003]] - Optimización con Restricciones: Inferencia de redes es un problema de optimización.
+- [[C005]] - Jerarquías y Taxonomías: Redes pueden tener estructura jerárquica.
 
 ## Isomorfismos Clave
 
 Los siguientes isomorfismos conectan fenómenos de esta categoría:
 
+- [[I001]] - Modelo de Ising ≅ Redes Sociales: Isomorfismo entre espines magnéticos y opiniones binarias.
 - **Activación génica ≅ Activación neuronal:** Ambos son nodos binarios con umbrales
 - **Regulación génica ≅ Influencia social:** Ambos son propagación de estados en red
-- **Espines de Ising ≅ Opiniones binarias:** Ambos son estados binarios con preferencia por alineación local
 - **Redes metabólicas ≅ Redes de producción:** Ambos son flujos de recursos en grafo dirigido
 
 ## Literatura Clave

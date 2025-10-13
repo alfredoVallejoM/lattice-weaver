@@ -164,6 +164,12 @@ El modelado de GRNs permite capturar la lógica regulatoria subyacente a proceso
 
 ### Categoría Estructural
 - [[C001]] - Redes de Interacción
+- [[C004]] - Sistemas Dinámicos: Las redes de regulación génica son un tipo de sistema dinámico discreto.
+
+### Conexiones Inversas
+- [[C001]] - Redes de Interacción (instancia)
+- [[C004]] - Sistemas Dinámicos (instancia)
+
 
 ### Isomorfismos
 - **Redes neuronales artificiales:** Nodos con activación binaria, propagación de señales

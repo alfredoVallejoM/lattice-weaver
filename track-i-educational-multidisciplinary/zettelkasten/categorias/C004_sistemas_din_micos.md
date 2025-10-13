@@ -2,335 +2,348 @@
 id: C004
 tipo: categoria
 titulo: Sistemas Dinámicos
-fenomenos_count: 0
-dominios_count: 0
-tags: [tag1, tag2, tag3]
+fenomenos_count: 2
+dominios_count: 5
+tags: [dinamicas, evolucion_temporal, atractores, estabilidad, caos]
 fecha_creacion: 2025-10-12
 fecha_modificacion: 2025-10-12
-estado: borrador  # borrador | en_revision | completo
+estado: en_revision
 ---
 
 # Categoría: Sistemas Dinámicos
 
 ## Descripción
 
-[Descripción concisa de la categoría estructural. Explicar qué característica matemática o computacional común define esta categoría.]
+Los **Sistemas Dinámicos** constituyen una categoría estructural fundamental que engloba fenómenos donde el estado de un sistema evoluciona en el tiempo según reglas deterministas o estocásticas. Esta estructura aparece ubicuamente en ciencias naturales, sociales y formales: desde la evolución de poblaciones biológicas y dinámicas químicas, hasta la evolución de estrategias económicas y la propagación de opiniones sociales.
+
+La característica definitoria es la existencia de un **espacio de estados** y una **regla de evolución** que determina cómo el estado en un instante determina el estado en instantes futuros. El formalismo matemático subyacente puede ser ecuaciones diferenciales (tiempo continuo), mapas iterados (tiempo discreto), o autómatas (estados discretos). Esta categoría es especialmente poderosa porque permite aplicar un arsenal de técnicas matemáticas (análisis de estabilidad, teoría de bifurcaciones, teoría ergódica) a fenómenos de dominios completamente diferentes.
 
 ## Estructura Matemática Abstracta
 
 ### Componentes Esenciales
 
-1. **[Componente 1]:** [Descripción abstracta]
-2. **[Componente 2]:** [Descripción abstracta]
-3. **[Componente N]:** [Descripción abstracta]
+La estructura abstracta de un Sistema Dinámico consiste en:
+
+1. **Espacio de estados (X):** Conjunto de todos los estados posibles del sistema. Puede ser continuo (ℝⁿ, variedades diferenciables) o discreto (grafo de estados, conjunto finito). Cada punto en X representa una configuración completa del sistema.
+
+2. **Tiempo (T):** Dominio temporal sobre el cual evoluciona el sistema. Puede ser continuo (T = ℝ o ℝ⁺) o discreto (T = ℤ o ℕ). La elección depende de si el sistema evoluciona continuamente o en pasos discretos.
+
+3. **Regla de evolución (Φ):** Función o familia de funciones que determina cómo el sistema transita de un estado a otro. En tiempo continuo, típicamente especificada por ecuaciones diferenciales dx/dt = f(x). En tiempo discreto, por mapas x_{t+1} = f(x_t).
+
+4. **Parámetros (μ):** Valores que caracterizan el sistema pero no evolucionan en el tiempo. Cambios en parámetros pueden causar cambios cualitativos en la dinámica (bifurcaciones).
 
 ### Relaciones Esenciales
 
-1. **[Relación 1]:** [Descripción abstracta]
-2. **[Relación 2]:** [Descripción abstracta]
+Las relaciones que definen la dinámica de un Sistema Dinámico son:
+
+1. **Causalidad:** El estado futuro está determinado por el estado presente (y posiblemente pasado). No hay "saltos" arbitrarios. Formalmente: x(t₂) = Φ(x(t₁), t₂-t₁) para t₂ > t₁.
+
+2. **Composición temporal:** La evolución de t₁ a t₃ es equivalente a evolucionar de t₁ a t₂ y luego de t₂ a t₃. Formalmente: Φ(x, t₁+t₂) = Φ(Φ(x, t₁), t₂). Esto define un semigrupo.
+
+3. **Convergencia asintótica:** Muchos sistemas convergen a conjuntos invariantes (atractores) que capturan el comportamiento a largo plazo, independientemente de condiciones iniciales en una cuenca de atracción.
 
 ### Propiedades Definitorias
 
-[Lista de propiedades que DEBEN cumplirse para que un fenómeno pertenezca a esta categoría]
+Para que un fenómeno pertenezca a la categoría de Sistemas Dinámicos, debe cumplir:
 
-1. **[Propiedad 1]:** [Descripción formal]
-2. **[Propiedad 2]:** [Descripción formal]
-3. **[Propiedad N]:** [Descripción formal]
+1. **Espacio de estados bien definido:** Existe un conjunto X tal que todo estado posible del sistema puede ser representado como un punto en X.
+
+2. **Regla de evolución determinista o estocástica:** Existe una regla que, dado el estado actual (y posiblemente historia), determina (probabilísticamente o determinísticamente) el estado futuro.
+
+3. **Evolución temporal:** El sistema cambia en el tiempo. No es estático. Existe una noción de "antes" y "después".
+
+4. **Autonomía o semi-autonomía:** La regla de evolución depende principalmente del estado interno, no de inputs externos arbitrarios (aunque puede haber parámetros fijos o inputs deterministas).
 
 ## Formalismo Matemático
 
 ### Definición Formal
 
-[Definición matemática rigurosa de la estructura]
+Un **Sistema Dinámico** es una tupla S = (X, T, Φ) donde:
 
-```
-[Notación matemática formal]
-```
+- **X:** Espacio de estados (espacio métrico, variedad, grafo, etc.)
+- **T:** Semigrupo temporal (ℝ⁺, ℕ, etc.)
+- **Φ: X × T → X:** Flujo o mapa de evolución satisfaciendo:
+  - Φ(x, 0) = x (identidad)
+  - Φ(Φ(x, t₁), t₂) = Φ(x, t₁+t₂) (propiedad de semigrupo)
+
+**Clasificación por tipo:**
+
+**1. Sistemas continuos (EDOs):**
+- Espacio: X ⊆ ℝⁿ
+- Tiempo: T = ℝ⁺
+- Evolución: dx/dt = f(x, μ) donde f: X × ℝᵖ → ℝⁿ
+- Solución: x(t) = Φ(x₀, t) satisface la EDO con x(0) = x₀
+
+**2. Sistemas discretos (Mapas):**
+- Espacio: X ⊆ ℝⁿ o conjunto discreto
+- Tiempo: T = ℕ
+- Evolución: x_{n+1} = f(x_n, μ)
+- Órbita: {x₀, x₁, x₂, ...} donde x_n = f^n(x₀)
+
+**3. Sistemas estocásticos:**
+- Evolución probabilística: P(x_{t+dt} ∈ A | x_t = x) especificada
+- Ejemplos: Cadenas de Markov, procesos de difusión
 
 ### Teoría Subyacente
 
-[Área de las matemáticas que estudia esta estructura: teoría de grafos, álgebra, topología, etc.]
+**Análisis Cualitativo:** Estudia propiedades globales sin resolver explícitamente las ecuaciones.
 
-### Teoremas Fundamentales
+**Conceptos clave:**
+- **Punto fijo:** x* tal que f(x*) = x* (discreto) o f(x*) = 0 (continuo)
+- **Órbita periódica:** x(t+T) = x(t) para algún T > 0
+- **Atractor:** Conjunto invariante A tal que órbitas cercanas convergen a A
+- **Cuenca de atracción:** Conjunto de condiciones iniciales que convergen a un atractor
+- **Estabilidad:** Perturbaciones pequeñas decaen (estable) o crecen (inestable)
 
-1. **[Nombre del Teorema]:** [Enunciado y relevancia para la categoría]
-2. **[Repetir]**
+**Teoría de Bifurcaciones:** Estudia cambios cualitativos en la dinámica al variar parámetros.
 
-## Instancias en Diferentes Dominios
+**Tipos de bifurcaciones:**
+- Saddle-node: Creación/aniquilación de puntos fijos
+- Hopf: Nacimiento de ciclo límite desde punto fijo
+- Period-doubling: Duplicación de período
+- Transcrítica, Pitchfork: Intercambio de estabilidad
 
-### Biología
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción de cómo instancia la categoría]
-- [[F###]] - [Repetir]
+**Teoría del Caos:** Estudia sistemas deterministas con comportamiento aparentemente aleatorio.
 
-### Economía
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción]
-- [[F###]] - [Repetir]
+**Características del caos:**
+- Sensibilidad a condiciones iniciales (efecto mariposa)
+- Mixing topológico
+- Órbitas periódicas densas
+- Exponentes de Lyapunov positivos
 
-### Física
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción]
-- [[F###]] - [Repetir]
+## Mapeo a CSP
 
-### Sociología
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción]
-- [[F###]] - [Repetir]
+Los Sistemas Dinámicos pueden mapearse a CSP de múltiples formas:
 
-### Informática
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción]
-- [[F###]] - [Repetir]
+**1. Encontrar puntos fijos:**
+- **Variables:** Estado x = (x₁, ..., x_n)
+- **Dominios:** X (espacio de estados)
+- **Restricciones:** f(x) = x (discreto) o f(x) = 0 (continuo)
+- **Tipo:** Satisfacción (encontrar cualquier punto fijo) u Optimización (encontrar punto fijo con propiedades específicas)
 
-### [Otros Dominios]
-- [[F###]] - [Nombre del fenómeno] - [Breve descripción]
-- [[F###]] - [Repetir]
+**2. Alcanzabilidad:**
+- **Variables:** Secuencia de estados x₀, x₁, ..., x_T
+- **Dominios:** X para cada variable
+- **Restricciones:** x_{t+1} = f(x_t) y x_T ∈ Target
+- **Pregunta:** ¿Es alcanzable el conjunto Target desde x₀?
 
-## Mapeo a Formalismos Computacionales
+**3. Control óptimo:**
+- **Variables:** Controles u₀, u₁, ..., u_{T-1}
+- **Dominios:** Conjunto de controles admisibles U
+- **Restricciones:** x_{t+1} = f(x_t, u_t) y restricciones sobre trayectoria
+- **Objetivo:** Minimizar costo J = Σ_t c(x_t, u_t)
 
-### CSP (Constraint Satisfaction Problem)
+## Fenómenos Instanciados
 
-**Mapeo general:**
-- **Variables:** [Descripción abstracta de qué representan las variables]
-- **Dominios:** [Descripción abstracta de los dominios]
-- **Restricciones:** [Descripción abstracta de las restricciones]
+### En este Zettelkasten
 
-**Características comunes:**
-- [Característica 1 del CSP para esta categoría]
-- [Característica 2]
+- [[F001]] - Teoría de Juegos Evolutiva: Replicator dynamics es un sistema dinámico continuo
+- [[F003]] - Modelo de Ising 2D: Dinámica de Monte Carlo es un sistema estocástico discreto
+- [[F002]] - Redes de Regulación Génica: Las GRN son un tipo de sistema dinámico discreto.
+- [[F008]] - Percolación: Las transiciones de fase en percolación son fenómenos dinámicos.
+- [[F004]] - Redes neuronales de Hopfield: Las redes de Hopfield son sistemas dinámicos discretos con atractores.
+- [[F009]] - Modelo de votantes: La dinámica de opinión es un sistema dinámico estocástico.
+- [[F010]] - Segregación urbana (Schelling): Modelos basados en agentes que exhiben dinámicas espaciales.
 
-### FCA (Formal Concept Analysis) - Si aplica
+### Otros Ejemplos Interdisciplinares
 
-**Mapeo general:**
-- **Objetos:** [Descripción abstracta]
-- **Atributos:** [Descripción abstracta]
-- **Conceptos:** [Qué representan]
+**Física:**
+- Mecánica clásica: Ecuaciones de Newton, Hamilton
+- Mecánica cuántica: Ecuación de Schrödinger
+- Termodinámica: Ecuaciones de balance
+- Fluidos: Ecuaciones de Navier-Stokes
 
-### TDA (Topological Data Analysis) - Si aplica
+**Biología:**
+- Dinámicas poblacionales: Lotka-Volterra (predador-presa)
+- Epidemiología: Modelos SIR, SEIR
+- Ecología: Competencia, mutualismo
+- Neurociencia: Modelos de neuronas (Hodgkin-Huxley, FitzHugh-Nagumo)
 
-**Mapeo general:**
-- **Espacio:** [Descripción abstracta]
-- **Filtración:** [Descripción abstracta]
-- **Características topológicas:** [Qué se busca]
+**Economía:**
+- Dinámicas de mercado: Ajuste de precios
+- Crecimiento económico: Modelos de Solow, Ramsey
+- Ciclos económicos: Modelos de Kaldor, Goodwin
 
-### Otros Formalismos
+**Ingeniería:**
+- Sistemas de control: Feedback loops
+- Circuitos eléctricos: Ecuaciones de Kirchhoff
+- Robótica: Dinámicas de manipuladores
 
-[Cualquier otro formalismo relevante para esta categoría]
+**Ciencias Sociales:**
+- Dinámicas de opinión: Modelos de votantes, Sznajd
+- Difusión de innovaciones: Modelos de Bass
+- Conflictos: Modelos de Richardson
 
-## Técnicas y Algoritmos Comunes
+## Técnicas Compartidas
 
-### Técnicas Universalmente Aplicables
+Las siguientes técnicas son aplicables a todos los fenómenos de esta categoría:
 
-[Técnicas que funcionan para TODOS los fenómenos de esta categoría]
+**Análisis de Estabilidad:**
+- Linearización alrededor de puntos fijos
+- Análisis de valores propios (eigenvalues)
+- Funciones de Lyapunov (estabilidad global)
+- Criterios de Routh-Hurwitz
 
-1. [[T###]] - [Nombre de la técnica]
-   - **Por qué funciona:** [Explicación]
-   - **Complejidad:** [Análisis de complejidad]
-   
-2. [[T###]] - [Repetir]
+**Simulación Numérica:**
+- Métodos de Euler, Runge-Kutta (EDOs)
+- Integración simplética (sistemas Hamiltonianos)
+- Métodos de Monte Carlo (sistemas estocásticos)
+- Visualización de retratos de fase
 
-### Técnicas Frecuentemente Aplicables
+**Análisis de Bifurcaciones:**
+- Diagramas de bifurcación
+- Continuación numérica (AUTO, MATCONT)
+- Formas normales
+- Teoría de catástrofes
 
-[Técnicas que funcionan para MUCHOS fenómenos de esta categoría]
+**Análisis de Caos:**
+- Exponentes de Lyapunov
+- Dimensión fractal
+- Mapas de Poincaré
+- Análisis de series temporales
 
-1. [[T###]] - [Nombre de la técnica]
-   - **Aplicable a:** [Lista de fenómenos]
-   - **Limitaciones:** [Cuándo no funciona]
-
-2. [[T###]] - [Repetir]
-
-## Propiedades Computacionales
-
-### Complejidad Típica
-
-[Análisis de la complejidad computacional típica de problemas en esta categoría]
-
-- **Decisión:** [P | NP-completo | ...]
-- **Optimización:** [Complejidad típica]
-- **Aproximación:** [Posibilidad de aproximación]
-
-### Heurísticas Efectivas
-
-[Heurísticas que tienden a funcionar bien para esta categoría]
-
-1. **[Heurística 1]:** [Descripción y por qué funciona]
-2. **[Heurística 2]:** [Repetir]
+**Reducción de Dimensionalidad:**
+- Teoría de variedades invariantes
+- Center manifold reduction
+- Averaging, homogenización
+- Análisis de escalas múltiples
 
 ## Visualización
 
-### Paradigmas de Visualización Comunes
-
-[Tipos de visualización que son naturales para fenómenos de esta categoría]
-
-1. **[Tipo de visualización 1]:** [Descripción y qué revela]
-2. **[Tipo de visualización 2]:** [Repetir]
-
 ### Componentes Reutilizables
 
-[Componentes de visualización que pueden compartirse entre fenómenos de esta categoría]
+**1. Retrato de fase 2D/3D:**
+- Ejes: Variables de estado
+- Curvas: Trayectorias del sistema
+- Puntos: Puntos fijos (coloreados por estabilidad)
+- Flechas: Campo vectorial (dirección de evolución)
+- Regiones: Cuencas de atracción (coloreadas)
 
-- **[Componente 1]:** `lattice_weaver/visualization/[categoria]/[componente]/`
-- **[Componente 2]:** [Repetir]
+**2. Serie temporal:**
+- Eje x: Tiempo
+- Eje y: Variable(s) de estado
+- Múltiples variables en mismo gráfico
+- Permite ver convergencia, oscilaciones, caos
 
-## Isomorfismos Dentro de la Categoría
+**3. Diagrama de bifurcación:**
+- Eje x: Parámetro μ
+- Eje y: Valores asintóticos de variable (atractores)
+- Muestra cómo atractores cambian con parámetro
+- Revela cascadas de bifurcaciones
 
-### Isomorfismos Documentados
+**4. Mapa de Poincaré:**
+- Para sistemas continuos con órbitas periódicas
+- Sección transversal del espacio de fases
+- Reduce dimensionalidad (n → n-1)
 
-[Lista de isomorfismos entre fenómenos de esta categoría]
+**5. Espacio de parámetros:**
+- Ejes: Dos parámetros
+- Color: Tipo de comportamiento (fijo, periódico, caótico)
+- Revela estructura global de bifurcaciones
 
-1. [[I###]] - [Fenómeno A] ≅ [Fenómeno B]
-2. [[I###]] - [Repetir]
+## Arquitectura de Código Compartida
 
-### Patrones de Isomorfismo
+```
+lattice_weaver/
+  core/
+    dynamical_systems/
+      system.py              # Clase DynamicalSystem base
+      continuous.py          # Sistemas continuos (EDOs)
+      discrete.py            # Sistemas discretos (mapas)
+      stochastic.py          # Sistemas estocásticos
+      analysis/
+        stability.py         # Análisis de estabilidad
+        bifurcation.py       # Análisis de bifurcaciones
+        chaos.py             # Análisis de caos
+      integration/
+        euler.py             # Método de Euler
+        runge_kutta.py       # Métodos RK
+        adaptive.py          # Paso adaptativo
+      visualization/
+        phase_portrait.py    # Retratos de fase
+        time_series.py       # Series temporales
+        bifurcation_diagram.py  # Diagramas de bifurcación
+      
+  phenomena/
+    evolutionary_games/
+      replicator.py          # Hereda de ContinuousSystem
+      
+    ising_model/
+      dynamics.py            # Hereda de StochasticSystem
+```
 
-[Descripción de patrones comunes de isomorfismo dentro de la categoría]
+## Conexiones con Otras Categorías
 
-## Conceptos Fundamentales
+- [[C001]] - Redes de Interacción: Dinámicas sobre redes son sistemas dinámicos con estructura espacial
+- [[C003]] - Optimización con Restricciones: Gradiente descendente es un sistema dinámico
+- [[C002]] - Asignación Óptima: Algoritmos iterativos son sistemas dinámicos discretos
 
-### Conceptos Prerequisito
+### Conexiones Inversas
+- [[C003]] - Optimización con Restricciones (conexión)
 
-[Conceptos que deben entenderse para comprender esta categoría]
 
-- [[K###]] - [Nombre del concepto]
-- [[K###]] - [Repetir]
+## Isomorfismos Clave
 
-### Conceptos Emergentes
+Los siguientes isomorfismos conectan fenómenos de esta categoría:
 
-[Conceptos que emergen al estudiar esta categoría]
-
-- [[K###]] - [Nombre del concepto]
-- [[K###]] - [Repetir]
-
-## Valor Educativo e Interdisciplinar
-
-### Por Qué Esta Categoría Es Importante
-
-[Explicación del valor de reconocer esta categoría estructural]
-
-### Insights Interdisciplinares
-
-[Qué comprensiones profundas emergen al ver múltiples fenómenos como instancias de esta categoría]
-
-### Aplicaciones en Enseñanza
-
-1. **[Aplicación 1]:** [Descripción]
-2. **[Aplicación 2]:** [Repetir]
-
-## Ejemplos Comparativos
-
-### Ejemplo Unificador
-
-[Un ejemplo que muestra cómo 2-3 fenómenos de diferentes dominios son instancias de la misma estructura]
-
-**Fenómeno 1 ([Dominio 1]):**
-[Descripción del problema específico]
-
-**Fenómeno 2 ([Dominio 2]):**
-[Descripción del problema isomorfo]
-
-**Fenómeno 3 ([Dominio 3]):**
-[Descripción del problema isomorfo]
-
-**Estructura común:**
-[Explicación explícita de la estructura compartida]
+- [[I001]] - Modelo de Ising ≅ Redes Sociales: La dinámica de espines es isomorfa a la dinámica de opiniones.
+- [[I002]] - Dilema del Prisionero Multidominio: La dinámica de estrategias en juegos es un sistema dinámico.
+- **Replicator dynamics ≅ Gradiente de fitness:** Ambos son flujos en simplex
+- **Metropolis Monte Carlo ≅ Simulated annealing:** Ambos son procesos de Markov con balance detallado
+- **Opiniones sociales ≅ Espines magnéticos:** Ambos son dinámicas de alineación local
+- **Epidemias ≅ Reacciones químicas:** Ambos son procesos de nacimiento-muerte
 
 ## Literatura Clave
 
-### Trabajos Fundacionales
+1. Strogatz, S. H. (2015). *Nonlinear Dynamics and Chaos* (2nd ed.). Westview Press.
+   - Introducción accesible y rigurosa a sistemas dinámicos
 
-[Papers o libros que establecen o estudian esta categoría estructural]
+2. Hirsch, M. W., Smale, S., & Devaney, R. L. (2013). *Differential Equations, Dynamical Systems, and an Introduction to Chaos* (3rd ed.). Academic Press.
+   - Tratado matemático riguroso
 
-1. [Autor(es)]. ([Año]). *[Título]*. [Journal/Editorial].
-2. [Repetir]
+3. Guckenheimer, J., & Holmes, P. (1983). *Nonlinear Oscillations, Dynamical Systems, and Bifurcations of Vector Fields*. Springer.
+   - Teoría de bifurcaciones en profundidad
 
-### Surveys y Reviews
+4. Kuznetsov, Y. A. (2004). *Elements of Applied Bifurcation Theory* (3rd ed.). Springer.
+   - Métodos numéricos y aplicaciones
 
-[Artículos de revisión que cubren múltiples instancias de esta categoría]
+5. Ott, E. (2002). *Chaos in Dynamical Systems* (2nd ed.). Cambridge University Press.
+   - Teoría del caos con aplicaciones
 
-1. [Referencia]
-2. [Repetir]
+## Herramientas Compartidas
 
-## Implementación en LatticeWeaver
-
-### Arquitectura de Código
-
-**Módulo base:** `lattice_weaver/categories/[nombre_categoria]/`
-
-**Componentes:**
-- `base.py` - Clase base abstracta para fenómenos de esta categoría
-- `algorithms.py` - Algoritmos comunes
-- `visualization.py` - Componentes de visualización compartidos
-- `utils.py` - Utilidades
-
-### Clase Base Abstracta
-
-```python
-class [NombreCategoria]Phenomenon(BasePhenomenon):
-    """
-    Clase base para fenómenos de la categoría [Nombre].
-    
-    Todos los fenómenos de esta categoría deben heredar de esta clase
-    e implementar los métodos abstractos.
-    """
-    
-    @abstractmethod
-    def get_variables(self) -> List[Variable]:
-        """Retorna las variables del fenómeno."""
-        pass
-    
-    @abstractmethod
-    def get_constraints(self) -> List[Constraint]:
-        """Retorna las restricciones del fenómeno."""
-        pass
-    
-    # Métodos comunes implementados
-    def solve(self, **kwargs):
-        """Implementación genérica de resolución."""
-        pass
-```
-
-### Tests Comunes
-
-[Descripción de tests que deben pasar todos los fenómenos de esta categoría]
-
-## Métricas y Estadísticas
-
-### Cobertura Actual
-
-- **Fenómenos implementados:** [N]
-- **Dominios cubiertos:** [N]
-- **Isomorfismos documentados:** [N]
-
-### Objetivos
-
-- **Fenómenos (Año 1):** [N]
-- **Dominios (Año 1):** [N]
-- **Isomorfismos (Año 1):** [N]
-
-## Estado de Desarrollo
-
-- [ ] Estructura matemática formalizada
-- [ ] Al menos 3 instancias documentadas
-- [ ] Técnicas comunes identificadas
-- [ ] Clase base implementada
-- [ ] Componentes de visualización compartidos
-- [ ] Documentación completa
-- [ ] Validación con expertos
+- **MATLAB/Simulink:** Suite estándar para simulación de sistemas dinámicos
+- **Python (SciPy):** `scipy.integrate.odeint`, `scipy.integrate.solve_ivp`
+- **AUTO:** Software para continuación y bifurcaciones
+- **XPPAUT:** Simulación y análisis de EDOs
+- **PyDSTool:** Python library para sistemas dinámicos
+- **JiTCODE:** Just-in-time compilation para EDOs grandes
 
 ## Notas Adicionales
 
-### Ideas para Expansión
+### Universalidad de la Estructura
 
-- [Idea 1]
-- [Idea 2]
+Los Sistemas Dinámicos son ubicuos porque capturan la esencia del cambio temporal, que es fundamental en ciencia. La razón profunda es que las leyes de la naturaleza típicamente especifican cómo las cosas cambian (derivadas, tasas), no los estados absolutos. Esto lleva naturalmente a formulaciones como sistemas dinámicos.
 
-### Preguntas Abiertas
+### Relación con CSP
 
-- [Pregunta 1]
-- [Pregunta 2]
+Muchos problemas en sistemas dinámicos pueden formularse como CSP:
+- **Encontrar equilibrios:** Satisfacer f(x) = x
+- **Alcanzabilidad:** Encontrar trayectoria que conecte estados
+- **Control:** Encontrar inputs que lleven a estado deseado
 
-### Observaciones
+Esta conexión permite aplicar técnicas de CSP (constraint propagation, SAT solvers) a problemas de dinámica.
 
-[Cualquier observación relevante]
+### Emergencia y Complejidad
+
+Los Sistemas Dinámicos son paradigmáticos de **emergencia**: comportamiento complejo (caos, patrones, sincronización) emerge de reglas simples. Entender cómo la complejidad emerge de simplicidad es un problema central en ciencia de la complejidad.
+
+### Predictibilidad y Caos
+
+El caos determinista muestra que incluso sistemas completamente deterministas pueden ser impredecibles a largo plazo debido a sensibilidad a condiciones iniciales. Esto tiene implicaciones filosóficas sobre los límites de la predictibilidad científica.
 
 ---
 
 **Última actualización:** 2025-10-12  
-**Responsable:** [Nombre del agente/persona]
+**Responsable:** Agente Autónomo de Análisis
 

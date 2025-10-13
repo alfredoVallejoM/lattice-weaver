@@ -147,10 +147,17 @@ Donde:
 ## Conexiones
 
 ### Categoría Estructural
+- [[C001]] - Redes de Interacción
 - [[C004]] - Sistemas Dinámicos
+
+### Conexiones Inversas
+- [[C001]] - Redes de Interacción (instancia)
+- [[C004]] - Sistemas Dinámicos (instancia)
+
 
 ### Isomorfismos
 - [[I002]] - Dilema del Prisionero Multidominio - Aparece en biología, economía y sociología
+- [[I001]] - Modelo de Ising ≅ Redes Sociales: Isomorfismo entre espines magnéticos y opiniones binarias.
 
 ### Instancias en Otros Dominios
 - [[F003]] - Modelo de Ising 2D - Dinámicas de opinión análogas a espines magnéticos

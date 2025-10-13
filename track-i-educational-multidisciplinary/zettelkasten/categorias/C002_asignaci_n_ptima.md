@@ -16,6 +16,10 @@ estado: borrador  # borrador | en_revision | completo
 
 [Descripción concisa de la categoría estructural. Explicar qué característica matemática o computacional común define esta categoría.]
 
+## Conexiones con Otras Categorías
+
+- [[C004]] - Sistemas Dinámicos: Problemas de asignación óptima pueden ser formulados como problemas de control óptimo en sistemas dinámicos.
+
 ## Estructura Matemática Abstracta
 
 ### Componentes Esenciales

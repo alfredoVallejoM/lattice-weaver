@@ -172,6 +172,11 @@ M(T) = [1 - sinh⁻⁴(2J/k_B T)]^(1/8)
 - [[C001]] - Redes de Interacción (grid 2D es un grafo)
 - [[C004]] - Sistemas Dinámicos (evolución temporal hacia equilibrio)
 
+### Conexiones Inversas
+- [[C001]] - Redes de Interacción (instancia)
+- [[C004]] - Sistemas Dinámicos (instancia)
+
+
 ### Isomorfismos
 - [[I001]] - Modelo de Ising ≅ Redes Sociales - Formación de opiniones
 - **Redes neuronales de Hopfield:** Espines = neuronas, alineación = memoria

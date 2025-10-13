@@ -1,7 +1,7 @@
 ---
 id: C005
 tipo: categoria
-titulo: Jerarquías y Taxonomías
+titulo: "Jerarquías y Taxonomías"
 fenomenos_count: 0
 dominios_count: 0
 tags: [tag1, tag2, tag3]
@@ -15,6 +15,10 @@ estado: borrador  # borrador | en_revision | completo
 ## Descripción
 
 [Descripción concisa de la categoría estructural. Explicar qué característica matemática o computacional común define esta categoría.]
+
+## Conexiones con Otras Categorías
+
+- [[C001]] - Redes de Interacción: Las redes pueden tener una estructura jerárquica o taxonómica.
 
 ## Estructura Matemática Abstracta
 
