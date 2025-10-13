@@ -1,8 +1,8 @@
 # Catálogo Maestro - Track I Zettelkasten
 
 **Última actualización:** 2025-10-13  
-**Total de notas:** 41  
-**Conexiones totales:** 408
+**Total de notas:** 65  
+**Conexiones totales:** 643
 
 ---
 
@@ -16,15 +16,15 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - **Categorías (C):** 6
 - **Isomorfismos (I):** 8
 - **Técnicas (T):** 7
-- **Dominios (D):** 0
+- **Dominios (D):** 24
 - **Conceptos (K):** 10
 - **Mapeos (M):** 0
 
 ### Métricas de Conectividad
 
-- **Densidad de conexiones:** 9.95 (conexiones por nota)
-- **Notas huérfanas:** 0 (0.0%)
-- **Nodo más conectado:** [[K010]] (19 conexiones)
+- **Densidad de conexiones:** 9.89 (conexiones por nota)
+- **Notas huérfanas:** 17 (26.2%)
+- **Nodo más conectado:** [[C001]] (26 conexiones)
 
 ---
 
@@ -75,7 +75,30 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### Dominios (D)
 
-*No hay notas de tipo dominio aún.*
+- [[D001]] - Bioinformatica
+- [[D002]] - Biologia
+- [[D003]] - Biologia Sistemas
+- [[D004]] - Ciencia Computacional
+- [[D005]] - Ciencia De Materiales
+- [[D006]] - Ciencia De Materiales
+- [[D007]] - Ciencia Politica
+- [[D008]] - Ecologia
+- [[D009]] - Economia
+- [[D010]] - Epidemiologia
+- [[D011]] - Fisica Estadistica
+- [[D012]] - Ingenieria Electronica
+- [[D013]] - Inteligencia Artificial
+- [[D014]] - Logica
+- [[D015]] - Logistica
+- [[D016]] - Matematicas
+- [[D017]] - Modelos Basados En Agentes
+- [[D018]] - Neurociencia
+- [[D019]] - Opinion Dinamica
+- [[D020]] - Planificacion
+- [[D021]] - Redes
+- [[D022]] - Sociologia
+- [[D023]] - Transporte
+- [[D024]] - Urbanismo
 
 ### Conceptos (K)
 
@@ -495,6 +518,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 - [[F001]] - Teoría de Juegos Evolutiva
 - [[K001]] - Equilibrio de Nash
 
+### #estructura
+
+- [[D006]] - Ciencia De Materiales
+
 ### #estructuras_discretas
 
 - [[K006]] - Teoría de Grafos
@@ -547,6 +574,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #holismo
 
 - [[K010]] - Emergencia
+
+### #ingenieria
+
+- [[D006]] - Ciencia De Materiales
 
 ### #integracion_numerica
 
@@ -612,6 +643,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #magnetismo
 
 - [[F003]] - Modelo de Ising 2D
+
+### #materiales
+
+- [[D006]] - Ciencia De Materiales
 
 ### #memoria_asociativa
 
@@ -707,6 +742,10 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 ### #programacion_matematica
 
 - [[C003]] - Optimización con Restricciones
+
+### #propiedades
+
+- [[D006]] - Ciencia De Materiales
 
 ### #propiedades_colectivas
 
@@ -955,6 +994,30 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 - [[C002]] - Asignación Óptima
 - [[C005]] - Jerarquías y Taxonomías
+- [[D001]] - Bioinformatica
+- [[D002]] - Biologia
+- [[D003]] - Biologia Sistemas
+- [[D004]] - Ciencia Computacional
+- [[D005]] - Ciencia De Materiales
+- [[D006]] - Ciencia De Materiales
+- [[D007]] - Ciencia Politica
+- [[D008]] - Ecologia
+- [[D009]] - Economia
+- [[D010]] - Epidemiologia
+- [[D011]] - Fisica Estadistica
+- [[D012]] - Ingenieria Electronica
+- [[D013]] - Inteligencia Artificial
+- [[D014]] - Logica
+- [[D015]] - Logistica
+- [[D016]] - Matematicas
+- [[D017]] - Modelos Basados En Agentes
+- [[D018]] - Neurociencia
+- [[D019]] - Opinion Dinamica
+- [[D020]] - Planificacion
+- [[D021]] - Redes
+- [[D022]] - Sociologia
+- [[D023]] - Transporte
+- [[D024]] - Urbanismo
 
 ---
 
@@ -962,20 +1025,38 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 
 ### Top 10 Nodos Más Conectados
 
-1. [[K010]] - Emergencia (19 conexiones)
-2. [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales (18 conexiones)
-3. [[I006]] - Teoría de Juegos Evolutiva ≅ Modelo de Votantes (17 conexiones)
-4. [[K005]] - Atractores (17 conexiones)
-5. [[K009]] - Autoorganización (17 conexiones)
-6. [[I004]] - Modelo de Ising ≅ Redes Neuronales de Hopfield (15 conexiones)
-7. [[K008]] - Complejidad Computacional (15 conexiones)
-8. [[C001]] - Redes de Interacción (14 conexiones)
-9. [[F001]] - Teoría de Juegos Evolutiva (14 conexiones)
-10. [[K006]] - Teoría de Grafos (14 conexiones)
+1. [[C001]] - Redes de Interacción (26 conexiones)
+2. [[C004]] - Sistemas Dinámicos (26 conexiones)
+3. [[K010]] - Emergencia (25 conexiones)
+4. [[T003]] - Algoritmos de Monte Carlo (23 conexiones)
+5. [[K009]] - Autoorganización (23 conexiones)
+6. [[T005]] - Algoritmo Genético (20 conexiones)
+7. [[F001]] - Teoría de Juegos Evolutiva (19 conexiones)
+8. [[F003]] - Modelo de Ising 2D (19 conexiones)
+9. [[I003]] - Redes de Regulación Génica ≅ Redes Neuronales (19 conexiones)
+10. [[K005]] - Atractores (19 conexiones)
 
 ### Notas Huérfanas
 
-*No hay notas huérfanas. ¡Excelente conectividad!*
+*Notas sin conexiones (considerar agregar enlaces):*
+
+- [[D006]] - Ciencia De Materiales
+- [[D009]] - Economia
+- [[D010]] - Epidemiologia
+- [[D011]] - Fisica Estadistica
+- [[D012]] - Ingenieria Electronica
+- [[D013]] - Inteligencia Artificial
+- [[D014]] - Logica
+- [[D015]] - Logistica
+- [[D016]] - Matematicas
+- [[D017]] - Modelos Basados En Agentes
+- [[D018]] - Neurociencia
+- [[D019]] - Opinion Dinamica
+- [[D020]] - Planificacion
+- [[D021]] - Redes
+- [[D022]] - Sociologia
+- [[D023]] - Transporte
+- [[D024]] - Urbanismo
 
 ---
 
@@ -1001,7 +1082,7 @@ Este catálogo es el **índice maestro** del Zettelkasten del Track I. Proporcio
 |--------|-----------|------------|
 | Completo | 30 | 300% |
 | En Revision | 9 | 90% |
-| Borrador | 2 | 20% |
+| Borrador | 26 | 260% |
 | **TOTAL** | **10** | **100%** |
 
 ---
