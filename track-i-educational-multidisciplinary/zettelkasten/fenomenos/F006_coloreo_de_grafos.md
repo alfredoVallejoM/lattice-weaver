@@ -93,52 +93,42 @@ La relevancia del coloreo de grafos trasciende las matemáticas puras, encontran
 
 ## Conexiones
 
-#- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-- [[F006]] - Conexión inversa con Fenómeno.
-## Categoría Estructural
+### Categoría Estructural
 -   [[C001]] - Redes de Interacción: El coloreo de grafos es una operación fundamental sobre estructuras de red.
 -   [[C003]] - Optimización con Restricciones: El problema busca una asignación óptima (mínimo de colores) bajo restricciones de adyacencia.
 
-### Conexiones Inversas
--   [[C001]] - Redes de Interacción (instancia)
--   [[C003]] - Optimización con Restricciones (instancia)
-
-#- [[F006]] - Conexión inversa con Fenómeno.
-## Isomorfismos
--   [[I###]] - Coloreo de grafos ≅ Problema de Clique (el número cromático es igual al tamaño del clique máximo en el grafo complemento).
--   [[I###]] - Coloreo de grafos ≅ Problema de Satisfacibilidad Booleana (SAT) (como se mencionó en el mapeo a formalismos).
+### Isomorfismos
+-   [[I007]] - Coloreo de grafos ≅ Problema de Clique (el número cromático es igual al tamaño del clique máximo en el grafo complemento).
+-   [[I007]] - Coloreo de grafos ≅ Problema de Satisfacibilidad Booleana (SAT) (como se mencionó en el mapeo a formalismos).
 
 ### Instancias en Otros Dominios
 -   [[F005]] - Algoritmo de Dijkstra / Caminos mínimos (otro problema de optimización en grafos).
 -   [[F007]] - Satisfacibilidad booleana (SAT) (problema NP-completo relacionado).
+-   [[F011]] - Lógica y Argumentación (Filosofía)
 
 ### Técnicas Aplicables
--   [[T###]] - Algoritmos de Backtracking (para búsqueda exacta).
--   [[T###]] - Algoritmos Greedy (para soluciones aproximadas, ej. Welsh-Powell).
--   [[T###]] - Algoritmos de Búsqueda Local (para mejorar soluciones aproximadas).
+-   [[T002]] - Algoritmos de Backtracking (para búsqueda exacta).
+-   [[T001]] - Algoritmos Greedy (para soluciones aproximadas, ej. Welsh-Powell).
+-   [[T006]] - Algoritmos de Búsqueda Local (para mejorar soluciones aproximadas).
 
 ### Conceptos Fundamentales
--   [[K###]] - Grafos
--   [[K###]] - Número Cromático
--   [[K###]] - NP-Completitud
--   [[K###]] - Heurísticas
+-   [[K003]] - Grafos
+-   [[K004]] - Número Cromático
+-   [[K008]] - NP-Completitud
+-   [[K009]] - Heurísticas
 
 ### Prerequisitos
--   [[K###]] - Teoría de Grafos Básica
--   [[K###]] - Conceptos de Complejidad Computacional
+-   [[K003]] - Teoría de Grafos Básica
+-   [[K008]] - Conceptos de Complejidad Computacional
+
+### Conexiones Inversas
+- [[C001]] - Redes de Interacción
+- [[C003]] - Optimización con Restricciones
+- [[F007]] - Satisfacibilidad Booleana (SAT)
+- [[F011]] - Lógica y Argumentación (Filosofía)
+- [[I007]] - Coloreo de grafos ≅ Problema de Clique
+- [[T002]] - Backtracking
+- [[T001]] - Constraint Propagation
 
 ## Propiedades Matemáticas
 
@@ -250,13 +240,4 @@ La relevancia del coloreo de grafos trasciende las matemáticas puras, encontran
 
 **Última actualización:** 2025-10-13
 **Responsable:** Agente Autónomo de Análisis
-- [[C001]]
-- [[C003]]
-- [[F005]]
-- [[F007]]
-- [[I007]]
-- [[T002]]
-- [[T004]]
-- [[K003]]
-- [[K006]]
-- [[K008]]
+

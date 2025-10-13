@@ -89,53 +89,42 @@ A pesar de su complejidad teórica, los avances en los "solvers SAT" (programas 
 
 ## Conexiones
 
-#- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-- [[F007]] - Conexión inversa con Fenómeno.
-## Categoría Estructural
+### Categoría Estructural
 -   [[C003]] - Optimización con Restricciones: SAT es un caso particular de problema de satisfacción de restricciones, donde las variables son booleanas y las restricciones son cláusulas.
 -   [[C006]] - Satisfacibilidad Lógica: SAT es el problema canónico de satisfacibilidad en lógica proposicional.
 
-### Conexiones Inversas
--   [[C003]] - Optimización con Restricciones (instancia)
--   [[C006]] - Satisfacibilidad Lógica (instancia)
-
-#- [[F007]] - Conexión inversa con Fenómeno.
-## Isomorfismos
--   [[I###]] - SAT ≅ 3-SAT (Teorema de Cook-Levin, 3-SAT es también NP-completo y cualquier instancia SAT puede reducirse a 3-SAT).
--   [[I###]] - SAT ≅ Coloreo de Grafos (como se vio en [[F006]], el coloreo de grafos puede reducirse a SAT).
--   [[I###]] - SAT ≅ Problema de la Mochila (Knapsack Problem) (muchos problemas NP-completos son inter-reducibles).
+### Isomorfismos
+-   [[I005]] - SAT ≅ 3-SAT (Teorema de Cook-Levin, 3-SAT es también NP-completo y cualquier instancia SAT puede reducirse a 3-SAT).
+-   [[I007]] - SAT ≅ Coloreo de Grafos (como se vio en [[F006]], el coloreo de grafos puede reducirse a SAT).
+-   [[I008]] - SAT ≅ Problema de la Mochila (Knapsack Problem) (muchos problemas NP-completos son inter-reducibles).
 
 ### Instancias en Otros Dominios
 -   [[F006]] - Coloreo de grafos: Puede ser formulado como SAT.
 -   [[F002]] - Redes de Regulación Génica: Las redes booleanas son un caso especial de SAT.
+-   [[F011]] - Lógica y Argumentación (Filosofía)
 
 ### Técnicas Aplicables
--   [[T###]] - Algoritmos DPLL (Davis-Putnam-Logemann-Loveland): Base de la mayoría de los solvers SAT modernos.
--   [[T###]] - Búsqueda Local (WalkSAT, GSAT): Algoritmos heurísticos para encontrar soluciones satisfacibles.
--   [[T###]] - Resolución de Cláusulas (Clause Learning): Técnica clave para mejorar la eficiencia de los solvers DPLL.
+-   [[T004]] - Algoritmos DPLL (Davis-Putnam-Logemann-Loveland): Base de la mayoría de los solvers SAT modernos.
+-   [[T006]] - Búsqueda Local (WalkSAT, GSAT): Algoritmos heurísticos para encontrar soluciones satisfacibles.
+-   [[T003]] - Resolución de Cláusulas (Clause Learning): Técnica clave para mejorar la eficiencia de los solvers DPLL.
 
 ### Conceptos Fundamentales
--   [[K###]] - NP-Completitud
--   [[K###]] - Lógica Proposicional
--   [[K###]] - Forma Normal Conjuntiva (FNC/CNF)
--   [[K###]] - Reducción (entre problemas)
+-   [[K003]] - NP-Completitud
+-   [[K006]] - Lógica Proposicional
+-   [[K007]] - Forma Normal Conjuntiva (FNC/CNF)
+-   [[K008]] - Reducción (entre problemas)
 
 ### Prerequisitos
--   [[K###]] - Lógica Booleana Básica
--   [[K###]] - Conceptos de Complejidad Computacional
+-   [[K006]] - Lógica Booleana Básica
+-   [[K003]] - Conceptos de Complejidad Computacional
+
+### Conexiones Inversas
+- [[C003]] - Optimización con Restricciones
+- [[C006]] - Satisfacibilidad Lógica
+- [[F006]] - Coloreo de grafos
+- [[F011]] - Lógica y Argumentación (Filosofía)
+- [[I007]] - Coloreo de grafos ≅ Problema de Satisfacibilidad Booleana (SAT)
+- [[T004]] - DPLL
 
 ## Propiedades Matemáticas
 
@@ -244,13 +233,4 @@ A pesar de su complejidad teórica, los avances en los "solvers SAT" (programas 
 
 **Última actualización:** 2025-10-13
 **Responsable:** Agente Autónomo de Análisis
-- [[C003]]
-- [[C006]]
-- [[F005]]
-- [[F006]]
-- [[I005]]
-- [[I007]]
-- [[T004]]
-- [[K003]]
-- [[K008]]
-- [[F002]]
+
