@@ -210,3 +210,8 @@ prioridad: alta  # maxima | alta | media | baja
 **Última actualización:** 2025-10-12  
 **Responsable:** [Nombre del agente/persona]
 
+
+
+### Instancia de
+- [[F011]] - Lógica y Argumentación (Filosofía)
+
