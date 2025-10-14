@@ -305,6 +305,14 @@ class Level3(AbstractionLevel):
         for structure in structures:
             for pattern_id in structure.patterns:
                 self.pattern_to_structure[pattern_id] = structure.structure_id
+        
+        # Guardar información original para refinamiento desde L4
+        if 'original_structures' not in self.config:
+            self.config['original_structures'] = structures
+        if 'original_isolated_patterns' not in self.config:
+            self.config['original_isolated_patterns'] = isolated_patterns
+        if 'original_isolated_blocks' not in self.config:
+            self.config['original_isolated_blocks'] = isolated_blocks
 
     def refine_to_lower(self) -> Level2:
         """

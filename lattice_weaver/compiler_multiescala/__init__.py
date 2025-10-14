@@ -10,6 +10,7 @@ from .level_0 import Level0
 from .level_1 import Level1, ConstraintBlock
 from .level_2 import Level2, LocalPattern, PatternSignature
 from .level_3 import Level3, CompositeStructure, CompositeSignature
+from .level_4 import Level4, DomainConcept, DomainConceptSignature
 
 __all__ = [
     'AbstractionLevel',
@@ -17,10 +18,13 @@ __all__ = [
     'Level1',
     'Level2',
     'Level3',
+    'Level4',
     'ConstraintBlock',
     'LocalPattern',
     'PatternSignature',
     'CompositeStructure',
     'CompositeSignature',
+    'DomainConcept',
+    'DomainConceptSignature',
 ]
 
