@@ -14,9 +14,10 @@ class HacificationResult:
     has_hard_violation: bool
 
 class HacificationEngine:
-    def __init__(self, hierarchy: ConstraintHierarchy, landscape: EnergyLandscapeOptimized):
+    def __init__(self, hierarchy: ConstraintHierarchy, landscape: EnergyLandscapeOptimized, variables_domains: Dict[str, List[Any]]):
         self.hierarchy = hierarchy
         self.landscape = landscape
+        self.variables_domains = variables_domains
         self.energy_thresholds = {
             ConstraintLevel.LOCAL: 0.0,
             ConstraintLevel.PATTERN: 0.0,
@@ -65,7 +66,7 @@ class HacificationEngine:
         # Un AC-3 completo operaría sobre todas las variables no asignadas.
         
         # Crear un dominio temporal para la variable actual
-        temp_domains = {v: list(self.hierarchy.variables[v].domain) for v in self.hierarchy.variables}
+        temp_domains = {v: list(self.variables_domains[v]) for v in self.variables_domains}
         temp_domains[variable] = list(domain)
 
         # Inicializar la cola de arcos para AC-3. Aquí, nos centramos en los arcos que involucran a 'variable'
@@ -74,10 +75,8 @@ class HacificationEngine:
         for const in self.hierarchy.get_constraints_at_level(ConstraintLevel.LOCAL) + \
                      self.hierarchy.get_constraints_at_level(ConstraintLevel.PATTERN) + \
                      self.hierarchy.get_constraints_at_level(ConstraintLevel.GLOBAL):
-            if const.hardness == Hardness.HARD:
-                scope_vars = const.scope
-                if variable in scope_vars:
-                    for other_var in scope_vars:
+                if const.hardness == Hardness.HARD and variable in const.variables:
+                    for other_var in const.variables:
                         if other_var != variable and other_var not in base_assignment:
                             queue.append((variable, other_var, const))
                             queue.append((other_var, variable, const))
@@ -92,10 +91,10 @@ class HacificationEngine:
                 for const_k in self.hierarchy.get_constraints_at_level(ConstraintLevel.LOCAL) + \
                                self.hierarchy.get_constraints_at_level(ConstraintLevel.PATTERN) + \
                                self.hierarchy.get_constraints_at_level(ConstraintLevel.GLOBAL):
-                    if const_k.hardness == Hardness.HARD and var_i in const_k.scope:
-                        for var_k in const_k.scope:
-                            if var_k != var_i and var_k not in base_assignment:
-                                queue.append((var_k, var_i, const_k)) # Añadir (var_k, var_i) a la cola
+                        if const_k.hardness == Hardness.HARD and var_i in const_k.variables:
+                            for var_k in const_k.variables:
+                                if var_k != var_i and var_k not in base_assignment:
+                                    queue.append((var_k, var_i, const_k)) # Añadir (var_k, var_i) a la cola
 
         # Después de la poda con AC-3, verificar la coherencia de las extensiones con los dominios podados
         coherent_values = []

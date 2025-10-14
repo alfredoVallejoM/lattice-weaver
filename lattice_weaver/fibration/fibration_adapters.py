@@ -43,16 +43,12 @@ class CubicalEngineAdapter(FibrationAdapter):
         # Las equivalencias (e.g., a = b : A) también serían HARD.
         # Las preferencias (e.g., buscar el término más simple) serían SOFT.
 
-        # Suponiendo que cubical_problem contiene 'rules' y 'preferences'
-        for rule in cubical_problem.get('rules', []):
-            # Lógica para convertir 'rule' en una expresión de restricción
-            constraint_expression = f"CubicalRule({rule})"
-            self.constraint_hierarchy.add_hard_constraint(constraint_expression, level="GLOBAL")
+           # Suponiendo que cubical_problem contiene 'hard_rules' y 'soft_preferences'
+        for variables, predicate in cubical_problem.get('hard_rules', []):
+            self.constraint_hierarchy.add_hard_constraint((variables, predicate), level="GLOBAL")
 
-        for preference in cubical_problem.get('preferences', []):
-            # Lógica para convertir 'preference' en una expresión de restricción SOFT
-            constraint_expression = f"CubicalPreference({preference})"
-            self.constraint_hierarchy.add_soft_constraint(constraint_expression, weight=1.0, level="GLOBAL")
+        for variables, predicate, weight in cubical_problem.get('soft_preferences', []):
+            self.constraint_hierarchy.add_soft_constraint((variables, predicate), weight=weight, level="GLOBAL")
         print("Problema de tipos cúbicos traducido.")
 
     def translate_solution_from_constraints(self, fibration_solution: Dict[str, Any]) -> Dict[str, Any]:
