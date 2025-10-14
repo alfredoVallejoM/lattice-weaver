@@ -17,7 +17,7 @@ Este protocolo tiene como objetivo guiar a los agentes en un ciclo de desarrollo
 ### Fase 1: Planificación y Diseño en Profundidad
 
 1.  **Planificación Detallada de la Tarea**: Antes de escribir cualquier código, el agente debe realizar una planificación en profundidad de la tarea, descomponiéndola en subtareas manejables y estimando el esfuerzo requerido.
-2.  **Diseño Acorde a Principios**: El agente debe diseñar una solución que se alinee con los **Meta-Principios de Diseño de LatticeWeaver** (`LatticeWeaver_Meta_Principios_Diseño.md`). Esto incluye la creación de un documento de diseño que justifique las decisiones tomadas y cómo se respetan los principios de eficiencia, modularidad, no redundancia, etc.
+2.  **Diseño Acorde a Principios**: El agente debe diseñar una solución que se alinee con los **Meta-Principios de Diseño de LatticeWeaver** (descritos en el `README.md` del repositorio). Esto incluye la creación de un documento de diseño que justifique las decisiones tomadas y cómo se respetan los principios de eficiencia, modularidad, no redundancia, etc., asegurando la creación de código fiable y robusto desde el principio.
 
 ### Fase 2: Implementación y Pruebas
 
@@ -26,13 +26,13 @@ Este protocolo tiene como objetivo guiar a los agentes en un ciclo de desarrollo
 
 ### Fase 3: Análisis de Errores y Refinamiento
 
-1.  **Análisis en Profundidad de Errores**: Si surgen errores durante las pruebas, y después de 2-3 intentos de corrección, el agente debe detenerse y realizar un análisis en profundidad de la causa raíz del problema. Se debe evitar cambiar el código arbitrariamente solo para que los tests pasen, ya que esto puede introducir problemas de dependencias.
-2.  **Refinamiento del Código**: Una vez que el código es funcional y pasa los tests, se debe realizar un análisis de los algoritmos para asegurar su eficiencia y proponer mejoras. Se debe evaluar cómo se podría integrar con el resto de la estructura existente de la manera más óptima.
+1.  **Análisis en Profundidad de Errores**: Si surgen errores durante las pruebas, y después de 2-3 intentos de corrección, el agente debe detenerse y realizar un análisis en profundidad de la causa raíz del problema. Se debe evitar cambiar el código arbitrariamente solo para que los tests pasen, ya que esto puede introducir problemas de dependencias y comprometer la integridad del sistema.
+2.  **Refinamiento del Código**: Una vez que el código es funcional y pasa los tests, se debe realizar un análisis de los algoritmos para asegurar su eficiencia y proponer mejoras. Se debe evaluar cómo se podría integrar con el resto de la estructura existente de la manera más óptima, buscando sinergias y evitando duplicidades.
 
 ### Fase 4: Documentación y Actualización del Repositorio
 
 1.  **Documentación Exhaustiva**: El código funcional debe ser debidamente documentado, incluyendo docstrings, comentarios y cualquier otra información relevante para su comprensión y mantenimiento.
-2.  **Actualización del Repositorio Principal**: El agente debe actualizar el repositorio principal, asegurando que no se creen problemas de compatibilidad. Esto incluye la actualización de toda la documentación relevante (READMEs, guías, etc.) que se vea afectada por los cambios.
+2.  **Actualización del Repositorio Principal**: El agente debe actualizar el repositorio principal, asegurando que no se creen problemas de compatibilidad. Esto incluye la actualización de toda la documentación relevante (READMEs, guías, etc.) que se vea afectada por los cambios, así como la actualización de todo lo relevante en el desarrollo de la tarea.
 
 ---
 
