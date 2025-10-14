@@ -193,6 +193,12 @@ class Level4(AbstractionLevel):
         for concept in concepts:
             for structure_id in concept.structures:
                 self.structure_to_concept[structure_id] = concept.concept_id
+        
+        # Guardar información original para refinamiento desde L5
+        if 'original_concepts' not in self.config:
+            self.config['original_concepts'] = concepts
+        if 'original_isolated_structures' not in self.config:
+            self.config['original_isolated_structures'] = isolated_structures
 
     def refine_to_lower(self) -> Level3:
         """
