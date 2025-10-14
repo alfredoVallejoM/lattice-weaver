@@ -69,7 +69,7 @@ class VariablePartitioner:
         
         Útil para testing y baseline.
         """
-        variables = list(csp.variables)
+        variables = sorted(list(csp.variables))
         n = len(variables)
         
         if n == 0:
@@ -133,6 +133,37 @@ class VariablePartitioner:
         
         # Si aún no hay suficientes componentes, usar partición simple
         return self._partition_simple(csp, k)
+
+    def _detect_symmetry_groups(self, csp) -> List[Set[str]]:
+        """
+        Detecta grupos de variables simétricas basándose en una firma heurística.
+        """
+        signatures = defaultdict(list)
+        constraint_graph = self._build_constraint_graph(csp)
+
+        
+        for var in sorted(list(csp.variables)):
+            domain_size = len(csp.domains[var])
+            degree = constraint_graph.degree(var)
+            
+            # Crear una firma para las restricciones de la variable
+            neighbor_signatures = []
+            # Ordenar los vecinos para asegurar una firma determinista
+            for neighbor in sorted(list(constraint_graph.neighbors(var))):
+                # Firma del vecino (simplificada)
+                neighbor_sig = (len(csp.domains[neighbor]), constraint_graph.degree(neighbor))
+                neighbor_signatures.append(neighbor_sig)
+            
+            # Usar un frozenset para que el orden no importe
+            constraints_signature = frozenset(neighbor_signatures)
+            
+            # Firma completa de la variable
+            signature = (domain_size, degree, constraints_signature)
+            signatures[signature].append(var)
+            
+        # Devolver los grupos de variables con la misma firma
+        print(f"DEBUG (partition.py): Final signatures dict: {dict(signatures)}")
+        return [set(group) for group in signatures.values()]
     
     def _partition_symmetry(self, csp, k: int) -> List[Set[str]]:
         """
@@ -145,32 +176,20 @@ class VariablePartitioner:
         # Detectar grupos de simetría
         symmetry_groups = self._detect_symmetry_groups(csp)
         
-        if len(symmetry_groups) >= k:
-            # Ya hay suficientes grupos
+        # Si no se encuentran grupos de simetría o no hay suficientes, recurrir a _partition_simple
+        # Si todos los grupos de simetría son singletons, la detección no fue efectiva.
+        # En este caso, es mejor usar una partición simple.
+        all_singletons = all(len(g) == 1 for g in symmetry_groups)
+
+        if not symmetry_groups or len(symmetry_groups) < k or all_singletons:
+            return self._partition_simple(csp, k)
+
+        # Si hay suficientes grupos de simetría, usarlos
+        # Tomar los k grupos más grandes si hay más de k
+        if len(symmetry_groups) > k:
             symmetry_groups = sorted(symmetry_groups, key=len, reverse=True)[:k]
-            return symmetry_groups
         
-        # Fusionar grupos pequeños
-        partition = list(symmetry_groups)
-        while len(partition) < k:
-            # Dividir grupo más grande
-            largest = max(partition, key=len)
-            partition.remove(largest)
-            
-            # Dividir en dos
-            half = len(largest) // 2
-            partition.append(set(list(largest)[:half]))
-            partition.append(set(list(largest)[half:]))
-        
-        # Si hay demasiados grupos, fusionar los más pequeños
-        while len(partition) > k:
-            smallest1 = min(partition, key=len)
-            partition.remove(smallest1)
-            smallest2 = min(partition, key=len)
-            partition.remove(smallest2)
-            partition.append(smallest1.union(smallest2))
-        
-        return partition
+        return list(symmetry_groups)
     
     def _partition_adaptive(self, csp, k: int) -> List[Set[str]]:
         """
@@ -332,7 +351,7 @@ class VariablePartitioner:
         difficulty_map: Dict[str, float] = {}
         G = self._build_constraint_graph(csp)
 
-        for var in csp.variables:
+        for var in sorted(list(csp.variables)):
             degree = G.degree(var) if G.has_node(var) else 0
             domain_size = len(csp.domains.get(var, []))
             
