@@ -116,10 +116,40 @@ def get_degree(graph: nx.Graph, variable: str) -> int:
     """Obtiene el grado de una variable en el grafo de restricciones."""
     return graph.degree(variable)
 
+# Importar clases desde arc_engine si existen
+try:
+    from lattice_weaver.arc_engine.graph_structure import (
+        DynamicClusterGraph as _DynamicClusterGraph,
+        Cluster as _Cluster,
+        ConstraintEdge as _ConstraintEdge
+    )
+    DynamicClusterGraph = _DynamicClusterGraph
+    Cluster = _Cluster
+    ConstraintEdge = _ConstraintEdge
+except ImportError:
+    # Si no existen, crear stubs
+    class DynamicClusterGraph:
+        """Stub para DynamicClusterGraph."""
+        def __init__(self, *args, **kwargs):
+            raise NotImplementedError("DynamicClusterGraph not implemented")
+    
+    class Cluster:
+        """Stub para Cluster."""
+        def __init__(self, *args, **kwargs):
+            raise NotImplementedError("Cluster not implemented")
+    
+    class ConstraintEdge:
+        """Stub para ConstraintEdge."""
+        def __init__(self, *args, **kwargs):
+            raise NotImplementedError("ConstraintEdge not implemented")
+
 __all__ = [
     'ConstraintGraph',
     'build_constraint_graph',
     'get_neighbors',
-    'get_degree'
+    'get_degree',
+    'DynamicClusterGraph',
+    'Cluster',
+    'ConstraintEdge'
 ]
 

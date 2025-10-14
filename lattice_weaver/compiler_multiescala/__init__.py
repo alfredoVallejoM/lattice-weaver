@@ -12,6 +12,7 @@ from .level_2 import Level2, LocalPattern, PatternSignature
 from .level_3 import Level3, CompositeStructure, CompositeSignature
 from .level_4 import Level4, DomainConcept, DomainConceptSignature
 from .level_5 import Level5, MetaPattern, MetaPatternSignature
+from .level_6 import Level6, ProblemDescription
 
 __all__ = [
     'AbstractionLevel',
@@ -21,6 +22,7 @@ __all__ = [
     'Level3',
     'Level4',
     'Level5',
+    'Level6',
     'ConstraintBlock',
     'LocalPattern',
     'PatternSignature',
@@ -30,5 +32,6 @@ __all__ = [
     'DomainConceptSignature',
     'MetaPattern',
     'MetaPatternSignature',
+    'ProblemDescription',
 ]
 
