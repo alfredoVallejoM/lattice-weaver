@@ -12,6 +12,7 @@ Parte de la implementación del Flujo de Fibración (Propuesta 2) - Fase 1 Optim
 
 import numpy as np
 from typing import Dict, List, Tuple, Optional, Any, Set
+from collections import OrderedDict
 from dataclasses import dataclass
 from .constraint_hierarchy import ConstraintHierarchy, Constraint, ConstraintLevel
 
@@ -67,7 +68,8 @@ class EnergyLandscapeOptimized:
         }
         
         # Cache de energías calculadas
-        self._energy_cache: Dict[str, EnergyComponents] = {}
+        self._energy_cache: OrderedDict[str, EnergyComponents] = OrderedDict()
+        self.cache_max_size = 100000  # Tamaño máximo del caché LRU
         
         # Índice: variable -> restricciones que la involucran
         self._var_to_constraints: Dict[str, List[Constraint]] = {}
@@ -106,6 +108,11 @@ class EnergyLandscapeOptimized:
             EnergyComponents con desglose de energía
         """
         cache_key = self._assignment_to_key(assignment)
+        
+        # Optimización: Si la asignación es parcial, la clave puede ser una tupla de (variable, valor)
+        # para evitar la serialización completa de asignaciones grandes.
+        # Sin embargo, para la coherencia del caché, mantendremos la serialización completa por ahora.
+        # La optimización de la clave se puede explorar más a fondo si la serialización se convierte en un cuello de botella.
         
         if use_cache and cache_key in self._energy_cache:
             self.cache_hits += 1

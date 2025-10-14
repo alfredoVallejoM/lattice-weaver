@@ -1,0 +1,458 @@
+[
+    {
+        "test_case_name": "N-Queens N=8",
+        "solvers": {
+            "python_constraint": {
+                "time_seconds": 2.654959201812744,
+                "found_solution": true,
+                "solution_count": 48042,
+                "valid_hard_solutions_count": 48042,
+                "first_solution": {
+                    "Q0": 7,
+                    "Q1": 7,
+                    "Q2": 7,
+                    "Q3": 7,
+                    "Q4": 7,
+                    "Q5": 7,
+                    "Q6": 7,
+                    "Q7": 7
+                }
+            },
+            "fibration_flow": {
+                "time_seconds": 0.03362154960632324,
+                "found_solution": true,
+                "solution": {
+                    "Q6": 0,
+                    "Q3": 0,
+                    "Q4": 0,
+                    "Q7": 0,
+                    "Q2": 0,
+                    "Q1": 0,
+                    "Q0": 0,
+                    "Q5": 0
+                },
+                "objective_value": 0,
+                "hard_violations_count": 0
+            },
+            "ortools_cpsat": {
+                "time_seconds": 0.0724339485168457,
+                "found_solution": true,
+                "solution": {
+                    "Q0": 0,
+                    "Q1": 0,
+                    "Q2": 0,
+                    "Q3": 0,
+                    "Q4": 0,
+                    "Q5": 0,
+                    "Q6": 0,
+                    "Q7": 0
+                },
+                "objective_value": 0
+            },
+            "pymoo": {
+                "time_seconds": 120.01228904724121,
+                "found_solution": true,
+                "solutions_count": 100,
+                "first_solution": {
+                    "Q0": 3.568741774699424,
+                    "Q1": 2.4801498809316223,
+                    "Q2": 3.076407141316047,
+                    "Q3": 5.059888412366685,
+                    "Q4": 6.450520066244023,
+                    "Q5": 1.4174090177697,
+                    "Q6": 1.843228334457993,
+                    "Q7": 3.6388391251063847
+                },
+                "first_solution_objectives": [
+                    0.0
+                ],
+                "first_solution_hard_constraints_violation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    },
+    {
+        "test_case_name": "N-Queens N=8_soft",
+        "solvers": {
+            "python_constraint": {
+                "time_seconds": 2.6254868507385254,
+                "found_solution": true,
+                "solution_count": 48042,
+                "valid_hard_solutions_count": 48042,
+                "first_solution": {
+                    "Q0": 7,
+                    "Q1": 7,
+                    "Q2": 7,
+                    "Q3": 7,
+                    "Q4": 7,
+                    "Q5": 7,
+                    "Q6": 7,
+                    "Q7": 7
+                }
+            },
+            "fibration_flow": {
+                "time_seconds": 0.03708028793334961,
+                "found_solution": true,
+                "solution": {
+                    "Q6": 0,
+                    "Q5": 0,
+                    "Q4": 0,
+                    "Q3": 0,
+                    "Q7": 0,
+                    "Q2": 0,
+                    "Q1": 0,
+                    "Q0": 0
+                },
+                "objective_value": 8,
+                "hard_violations_count": 0
+            },
+            "ortools_cpsat": {
+                "time_seconds": 0.016106843948364258,
+                "found_solution": true,
+                "solution": {
+                    "Q0": 0,
+                    "Q1": 0,
+                    "Q2": 0,
+                    "Q3": 0,
+                    "Q4": 0,
+                    "Q5": 0,
+                    "Q6": 0,
+                    "Q7": 0
+                },
+                "objective_value": 0
+            },
+            "pymoo": {
+                "time_seconds": 120.01077246665955,
+                "found_solution": true,
+                "solutions_count": 100,
+                "first_solution": {
+                    "Q0": 6.189306660096216,
+                    "Q1": 2.7094939549454597,
+                    "Q2": 2.1863761333433778,
+                    "Q3": 6.637825270701015,
+                    "Q4": 5.674610449112464,
+                    "Q5": 0.8030902016332188,
+                    "Q6": 1.002523221533611,
+                    "Q7": 4.605782959621361
+                },
+                "first_solution_objectives": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "first_solution_hard_constraints_violation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    },
+    {
+        "test_case_name": "N-Queens N=6",
+        "solvers": {
+            "python_constraint": {
+                "time_seconds": 0.04332137107849121,
+                "found_solution": true,
+                "solution_count": 796,
+                "valid_hard_solutions_count": 796,
+                "first_solution": {
+                    "Q0": 5,
+                    "Q1": 5,
+                    "Q2": 5,
+                    "Q3": 5,
+                    "Q4": 5,
+                    "Q5": 5
+                }
+            },
+            "fibration_flow": {
+                "time_seconds": 0.010172128677368164,
+                "found_solution": true,
+                "solution": {
+                    "Q2": 0,
+                    "Q3": 0,
+                    "Q5": 0,
+                    "Q1": 0,
+                    "Q0": 0,
+                    "Q4": 0
+                },
+                "objective_value": 0,
+                "hard_violations_count": 0
+            },
+            "ortools_cpsat": {
+                "time_seconds": 0.010843515396118164,
+                "found_solution": true,
+                "solution": {
+                    "Q0": 0,
+                    "Q1": 0,
+                    "Q2": 0,
+                    "Q3": 0,
+                    "Q4": 0,
+                    "Q5": 0
+                },
+                "objective_value": 0
+            },
+            "pymoo": {
+                "time_seconds": 2039.8912963867188,
+                "found_solution": true,
+                "solutions_count": 100,
+                "first_solution": {
+                    "Q0": 3.3102284879290744,
+                    "Q1": 1.3686775468400714,
+                    "Q2": 1.3414893976206972,
+                    "Q3": 2.942196775070815,
+                    "Q4": 0.051926135318791644,
+                    "Q5": 1.848036620997607
+                },
+                "first_solution_objectives": [
+                    0.0
+                ],
+                "first_solution_hard_constraints_violation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    },
+    {
+        "test_case_name": "N-Queens N=6_soft",
+        "solvers": {
+            "python_constraint": {
+                "time_seconds": 0.0453646183013916,
+                "found_solution": true,
+                "solution_count": 796,
+                "valid_hard_solutions_count": 796,
+                "first_solution": {
+                    "Q0": 5,
+                    "Q1": 5,
+                    "Q2": 5,
+                    "Q3": 5,
+                    "Q4": 5,
+                    "Q5": 5
+                }
+            },
+            "fibration_flow": {
+                "time_seconds": 0.01508784294128418,
+                "found_solution": true,
+                "solution": {
+                    "Q5": 0,
+                    "Q4": 0,
+                    "Q3": 0,
+                    "Q2": 0,
+                    "Q1": 0,
+                    "Q0": 0
+                },
+                "objective_value": 6,
+                "hard_violations_count": 0
+            },
+            "ortools_cpsat": {
+                "time_seconds": 0.06645822525024414,
+                "found_solution": true,
+                "solution": {
+                    "Q0": 0,
+                    "Q1": 0,
+                    "Q2": 0,
+                    "Q3": 0,
+                    "Q4": 0,
+                    "Q5": 0
+                },
+                "objective_value": 0
+            },
+            "pymoo": {
+                "time_seconds": 1800.0034084320068,
+                "found_solution": true,
+                "solutions_count": 100,
+                "first_solution": {
+                    "Q0": 0.1315626515509148,
+                    "Q1": 1.2603042416473405,
+                    "Q2": 2.7875192880548796,
+                    "Q3": 1.4475334278136016,
+                    "Q4": 1.5096913686066897,
+                    "Q5": 4.023362638016361
+                },
+                "first_solution_objectives": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "first_solution_hard_constraints_violation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    }
+]

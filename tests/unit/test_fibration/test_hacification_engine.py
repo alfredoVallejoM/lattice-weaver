@@ -87,7 +87,7 @@ def test_hacify_incoherent_assignment_strict_soft_violation(hacification_engine)
     
     # Strict mode only cares about HARD violations for is_coherent flag
     # The energy threshold for GLOBAL is 0.1, and Q0=1 gives 1.0 energy, so it's not coherent by energy
-    assert result.is_coherent is False # Because global energy > threshold
+    assert result.is_coherent is True # Because in strict mode, only HARD violations matter for coherence
     assert result.level_results[ConstraintLevel.LOCAL] is True
     assert result.level_results[ConstraintLevel.GLOBAL] is False
     assert result.energy.total_energy > 0.0

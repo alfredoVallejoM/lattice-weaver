@@ -58,6 +58,14 @@ from .landscape_modulator import (
     AdaptiveStrategy
 )
 
+from .fibration_search_solver import (
+    FibrationSearchSolver
+)
+
+from .hill_climbing_solver import (
+    HillClimbingFibrationSolver
+)
+
 __all__ = [
     # Constraint Hierarchy
     'ConstraintHierarchy',
@@ -76,6 +84,8 @@ __all__ = [
     # Optimization
     'OptimizationSolver',
     'SimpleOptimizationSolver',
+    'FibrationSearchSolver',
+    'HillClimbingFibrationSolver',
 
     # Hacification
     'HacificationEngine',
@@ -90,3 +100,4 @@ __all__ = [
 ]
 
 __version__ = '1.0.3-phase2-hacification-modulation'
+
