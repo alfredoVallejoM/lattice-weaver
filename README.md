@@ -149,6 +149,19 @@ solution = solver.solve(large_csp)
 lattice-weaver/
 ├── lattice_weaver/              # Código fuente principal
 │   ├── arc_engine/              # Motor CSP (acelerado con ML)
+│   ├── fibration/               # ⭐ NUEVO: Implementación del Flujo de Fibración
+│   │   ├── fibration_search_solver.py
+│   │   └── constraint_hierarchy.py
+│   ├── external_solvers/        # ⭐ NUEVO: Adaptadores para solvers externos
+│   │   ├── python_constraint_adapter.py
+│   │   ├── ortools_cpsat_adapter.py
+│   │   ├── pymoo_adapter.py
+│   │   └── fibration_flow_adapter.py
+│   ├── performance_tests/       # ⭐ NUEVO: Módulo de Benchmarking
+│   │   ├── test_suite_generator.py
+│   │   ├── test_cases.py
+│   │   ├── run_benchmarks.py
+│   │   └── analyze_results.py
 │   ├── topology/                # TDA (aceleración masiva 100-250x)
 │   ├── formal/                  # Cubical types, HoTT (acelerado 10-100x)
 │   ├── lattice_core/            # FCA (acelerado 30-50%)
@@ -223,6 +236,16 @@ lattice-weaver/
 
 ## 🚀 Instalación
 
+### Dependencias Específicas para Benchmarking
+
+Para ejecutar los benchmarks y utilizar los adaptadores de solvers externos, necesitarás instalar las siguientes librerías:
+
+```bash
+pip install python-constraint ortools pymoo
+```
+
+
+
 ### Requisitos
 
 - Python >= 3.11
@@ -259,6 +282,30 @@ python -c "from lattice_weaver.ml import check_ml_available; check_ml_available(
 ---
 
 ## 📚 Uso Rápido
+
+### Ejemplo 1: Ejecución de Benchmarks
+
+Para ejecutar los benchmarks comparativos de los solvers (incluyendo el Flujo de Fibración), navega a la raíz del repositorio y ejecuta:
+
+```bash
+export PYTHONPATH=$(pwd)
+python3 -m lattice_weaver.performance_tests.run_benchmarks
+```
+
+Los resultados se guardarán en `lattice_weaver/performance_tests/benchmark_results.json`.
+
+### Ejemplo 2: Análisis de Resultados de Benchmarks
+
+Para analizar los resultados de los benchmarks y generar un informe en formato Markdown, ejecuta:
+
+```bash
+export PYTHONPATH=$(pwd)
+python3 -m lattice_weaver.performance_tests.analyze_results
+```
+
+El informe se generará en `lattice_weaver/performance_tests/analysis_report.md`.
+
+
 
 ### Ejemplo 1: CSP Acelerado con ML
 
