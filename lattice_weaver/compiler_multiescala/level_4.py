@@ -148,30 +148,33 @@ class Level4(AbstractionLevel):
         if not isinstance(lower_level, Level3):
             raise TypeError("lower_level must be a Level3 instance")
         
-        # Para simplificar, asumimos que cada estructura compuesta de L3 forma un concepto de dominio
-        # En una implementación real, se usarían heurísticas o reglas de dominio para agruparlas
         concepts = []
         isolated_structures = []
         concept_id = 0
         
+        # Procesar estructuras compuestas de L3
         for structure in lower_level.structures:
-            # Asumimos que cada estructura es un concepto por ahora
-            domain_properties = {"size": len(structure.patterns) + len(structure.unique_blocks)}
+            domain_properties = {}
+            if isinstance(structure, CompositeStructure):
+                domain_properties["size"] = len(structure.patterns) + len(structure.unique_blocks)
+            elif isinstance(structure, LocalPattern):
+                domain_properties["num_variables"] = len(structure.variables)
+                domain_properties["num_constraints"] = len(structure.constraints)
+            elif isinstance(structure, ConstraintBlock):
+                domain_properties["num_variables"] = len(structure.variables)
+                domain_properties["num_constraints"] = len(structure.constraints)
             signature = self._compute_concept_signature([structure.structure_id], domain_properties)
-            
             concept = DomainConcept(
                 concept_id=concept_id,
                 signature=signature,
                 structures=[structure.structure_id],
-                internal_constraints=[], # Simplificado
+                internal_constraints=[],
                 domain_properties=domain_properties
             )
             concepts.append(concept)
             concept_id += 1
-        
-        # Las estructuras aisladas de L3 (que pueden ser patrones o bloques aislados) se convierten en estructuras aisladas en L4
-        # Para la simplificación actual, tratamos los patrones y bloques aislados de L3 como estructuras aisladas en L4.
-        # En una implementación más sofisticada, se podría intentar agruparlos en conceptos de dominio.
+
+        # Los patrones y bloques aislados de L3 se mantienen como estructuras aisladas en L4
         isolated_structures.extend(lower_level.isolated_patterns)
         isolated_structures.extend(lower_level.isolated_blocks)
         
@@ -350,8 +353,15 @@ class Level4(AbstractionLevel):
         # Para calcular la complejidad de las estructuras aisladas, necesitamos su firma
         # Esto es una simplificación, en una implementación real, se calcularía su complejidad real
         for structure in self.isolated_structures:
-            isolated_structure_complexity += (math.log(len(structure.patterns) + 1) + 
-                                              math.log(len(structure.unique_blocks) + 1))
+            if isinstance(structure, CompositeStructure):
+                isolated_structure_complexity += (math.log(len(structure.patterns) + 1) +
+                                                  math.log(len(structure.unique_blocks) + 1))
+            elif isinstance(structure, LocalPattern):
+                isolated_structure_complexity += math.log(len(structure.variables) + 1)
+            elif isinstance(structure, ConstraintBlock):
+                isolated_structure_complexity += math.log(len(structure.variables) + 1)
+            else:
+                isolated_structure_complexity += 1.0  # Default complexity for unknown types
         
         # Complejidad de las interacciones
         inter_complexity = math.log(len(self.inter_concept_constraints) + 1)
@@ -365,7 +375,7 @@ class Level4(AbstractionLevel):
         Returns:
             Un diccionario con estadísticas de L4.
         """
-        total_structures_in_concepts = sum(len(c.structures) for c in self.concepts)
+        total_structures_in_concepts = sum(len(c.structures) for c in self.concepts) #+ len(self.isolated_structures)
         total_components = (total_structures_in_concepts + len(self.isolated_structures))
         
         # Análisis de tipos de conceptos

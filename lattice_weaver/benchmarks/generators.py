@@ -123,19 +123,20 @@ def generate_graph_coloring(num_nodes: int, edge_probability: float = 0.3, num_c
     import random
     
     # Crear variables: una por cada nodo
-    variables = [f"node_{i}" for i in range(num_nodes)]
+    variables = set([f"node_{i}" for i in range(num_nodes)])
     
     # Dominios: colores disponibles
-    domains = {var: list(range(num_colors)) for var in variables}
+    domains = {var: frozenset(range(num_colors)) for var in variables}
     
     # Generar aristas aleatoriamente
     constraints = []
     for i in range(num_nodes):
         for j in range(i + 1, num_nodes):
             if random.random() < edge_probability:
-                constraints.append((
-                    (f"node_{i}", f"node_{j}"),
-                    lambda x, y: x != y
+                constraints.append(Constraint(
+                    scope=frozenset([f"node_{i}", f"node_{j}"]),
+                    relation=lambda x, y: x != y,
+                    name=f"Edge_{i}_{j}"
                 ))
     
     return CSP(variables, domains, constraints)
@@ -155,13 +156,13 @@ def generate_job_shop_scheduling(num_jobs: int, num_machines: int) -> CSP:
     import random
     
     # Crear variables: tiempo de inicio de cada operación
-    variables = []
+    variables = set()
     for job in range(num_jobs):
         for op in range(num_machines):
-            variables.append(f"job_{job}_op_{op}")
+            variables.add(f"job_{job}_op_{op}")
     
     # Dominios: tiempos de inicio posibles (0 a 100)
-    domains = {var: list(range(100)) for var in variables}
+    domains = {var: frozenset(range(100)) for var in variables}
     
     # Restricciones de precedencia: operaciones del mismo trabajo deben ser secuenciales
     constraints = []
@@ -170,9 +171,10 @@ def generate_job_shop_scheduling(num_jobs: int, num_machines: int) -> CSP:
             var1 = f"job_{job}_op_{op}"
             var2 = f"job_{job}_op_{op + 1}"
             duration = random.randint(1, 10)
-            constraints.append((
-                (var1, var2),
-                lambda x, y, d=duration: x + d <= y
+            constraints.append(Constraint(
+                scope=frozenset([var1, var2]),
+                relation=lambda x, y, d=duration: x + d <= y,
+                name=f"Precedence_job{job}_op{op}"
             ))
     
     # Restricciones de máquina: operaciones en la misma máquina no pueden solaparse
@@ -182,9 +184,10 @@ def generate_job_shop_scheduling(num_jobs: int, num_machines: int) -> CSP:
             for j in range(i + 1, len(machine_ops)):
                 duration_i = random.randint(1, 10)
                 duration_j = random.randint(1, 10)
-                constraints.append((
-                    (machine_ops[i], machine_ops[j]),
-                    lambda x, y, di=duration_i, dj=duration_j: x + di <= y or y + dj <= x
+                constraints.append(Constraint(
+                    scope=frozenset([machine_ops[i], machine_ops[j]]),
+                    relation=lambda x, y, di=duration_i, dj=duration_j: x + di <= y or y + dj <= x,
+                    name=f"Machine{machine}_NoOverlap_{i}_{j}"
                 ))
     
     return CSP(variables, domains, constraints)
@@ -205,10 +208,10 @@ def generate_simple_csp(num_variables: int, domain_size: int, constraint_density
     import random
     
     # Crear variables
-    variables = [f"var_{i}" for i in range(num_variables)]
+    variables = set([f"var_{i}" for i in range(num_variables)])
     
     # Dominios
-    domains = {var: list(range(domain_size)) for var in variables}
+    domains = {var: frozenset(range(domain_size)) for var in variables}
     
     # Generar restricciones aleatorias
     constraints = []
@@ -218,20 +221,23 @@ def generate_simple_csp(num_variables: int, domain_size: int, constraint_density
                 # Restricción aleatoria: x != y o x < y o x + y < domain_size
                 constraint_type = random.choice(['ne', 'lt', 'sum'])
                 if constraint_type == 'ne':
-                    constraints.append((
-                        (f"var_{i}", f"var_{j}"),
-                        lambda x, y: x != y
+                    constraints.append(Constraint(
+                        scope=frozenset([f"var_{i}", f"var_{j}"]),
+                        relation=lambda x, y: x != y,
+                        name=f"NE_{i}_{j}"
                     ))
                 elif constraint_type == 'lt':
-                    constraints.append((
-                        (f"var_{i}", f"var_{j}"),
-                        lambda x, y: x < y
+                    constraints.append(Constraint(
+                        scope=frozenset([f"var_{i}", f"var_{j}"]),
+                        relation=lambda x, y: x < y,
+                        name=f"LT_{i}_{j}"
                     ))
                 else:  # sum
                     threshold = random.randint(domain_size // 2, domain_size * 2)
-                    constraints.append((
-                        (f"var_{i}", f"var_{j}"),
-                        lambda x, y, t=threshold: x + y < t
+                    constraints.append(Constraint(
+                        scope=frozenset([f"var_{i}", f"var_{j}"]),
+                        relation=lambda x, y, t=threshold: x + y < t,
+                        name=f"SUM_{i}_{j}"
                     ))
     
     return CSP(variables, domains, constraints)

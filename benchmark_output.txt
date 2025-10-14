@@ -1,0 +1,1684 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/lattice-weaver-repo
+plugins: anyio-4.11.0, dash-3.2.0
+collecting ... collected 7 items
+
+tests/benchmarks/test_comprehensive_benchmarks.py::TestComprehensiveBenchmarks::test_compilation_effectiveness 
+================================================================================
+ANÁLISIS DE EFECTIVIDAD DE COMPILACIÓN
+================================================================================
+
+Evaluando: NoCompilation
+  Tiempo promedio: 0.0142s
+
+Evaluando: FixedLevel_L1
+  Tiempo promedio: 0.0215s
+  Mejora vs baseline: -51.93%
+
+Evaluando: FixedLevel_L2
+  Tiempo promedio: 0.0125s
+  Mejora vs baseline: 11.70%
+
+Evaluando: FixedLevel_L3
+  Tiempo promedio: 0.0116s
+  Mejora vs baseline: 18.21%
+
+Evaluando: FixedLevel_L4
+  Tiempo promedio: 0.0143s
+  Mejora vs baseline: -1.12%
+
+Evaluando: FixedLevel_L5
+  Tiempo promedio: 0.0116s
+  Mejora vs baseline: 18.09%
+
+Evaluando: FixedLevel_L6
+  Tiempo promedio: 0.0121s
+  Mejora vs baseline: 15.00%
+
+================================================================================
+RESUMEN DE MEJORAS
+================================================================================
+FixedLevel_L1: -51.93%
+FixedLevel_L2: +11.70%
+FixedLevel_L3: +18.21%
+FixedLevel_L4: -1.12%
+FixedLevel_L5: +18.09%
+FixedLevel_L6: +15.00%
+
+Niveles con mejora positiva: 4/6
+PASSED
+tests/benchmarks/test_comprehensive_benchmarks.py::TestComprehensiveBenchmarks::test_graph_coloring_varying_density 
+================================================================================
+Graph Coloring - Densidad de aristas: 0.2
+================================================================================
+
+--------------------------------------------------------------------------------
+Benchmarking Graph-Coloring-0.2 - Size: 10
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0009s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0009s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0024s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0010s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0024s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0009s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0023s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0009s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0023s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0009s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0024s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0009s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0024s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0009s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Graph-Coloring-0.2 - Size: 15
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0021s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0021s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0036s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0020s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0036s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0019s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0036s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.0019s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0037s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.0020s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0037s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.0020s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0040s
+  Tiempo compilación: 0.0017s
+  Tiempo resolución: 0.0020s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Graph-Coloring-0.2 - Size: 20
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 3.0146s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 3.0146s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.6191s
+  Tiempo compilación: 0.0018s
+  Tiempo resolución: 0.6168s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.6156s
+  Tiempo compilación: 0.0018s
+  Tiempo resolución: 0.6133s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.6187s
+  Tiempo compilación: 0.0018s
+  Tiempo resolución: 0.6164s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.6201s
+  Tiempo compilación: 0.0019s
+  Tiempo resolución: 0.6177s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.6207s
+  Tiempo compilación: 0.0019s
+  Tiempo resolución: 0.6184s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.6188s
+  Tiempo compilación: 0.0020s
+  Tiempo resolución: 0.6163s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+================================================================================
+Graph Coloring - Densidad de aristas: 0.3
+================================================================================
+
+--------------------------------------------------------------------------------
+Benchmarking Graph-Coloring-0.3 - Size: 10
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0011s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0011s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0026s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0010s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0024s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0010s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0024s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0010s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0024s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0011s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0025s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0011s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0025s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0011s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Graph-Coloring-0.3 - Size: 15
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0835s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0835s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0824s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.0805s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0823s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.0805s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0825s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.0806s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0824s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.0805s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0836s
+  Tiempo compilación: 0.0016s
+  Tiempo resolución: 0.0817s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0837s
+  Tiempo compilación: 0.0018s
+  Tiempo resolución: 0.0815s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Graph-Coloring-0.3 - Size: 20
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.4007s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.4007s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.3046s
+  Tiempo compilación: 0.0020s
+  Tiempo resolución: 0.3019s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.3063s
+  Tiempo compilación: 0.0020s
+  Tiempo resolución: 0.3038s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.3070s
+  Tiempo compilación: 0.0021s
+  Tiempo resolución: 0.3043s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.3062s
+  Tiempo compilación: 0.0022s
+  Tiempo resolución: 0.3035s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.3062s
+  Tiempo compilación: 0.0022s
+  Tiempo resolución: 0.3035s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.3054s
+  Tiempo compilación: 0.0023s
+  Tiempo resolución: 0.3026s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+================================================================================
+Graph Coloring - Densidad de aristas: 0.5
+================================================================================
+
+--------------------------------------------------------------------------------
+Benchmarking Graph-Coloring-0.5 - Size: 10
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0014s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0014s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0031s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.0013s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0027s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0013s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0028s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0013s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0028s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0013s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0029s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0013s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0029s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0013s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Graph-Coloring-0.5 - Size: 15
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0451s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0450s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0470s
+  Tiempo compilación: 0.0018s
+  Tiempo resolución: 0.0445s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0477s
+  Tiempo compilación: 0.0021s
+  Tiempo resolución: 0.0451s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0471s
+  Tiempo compilación: 0.0020s
+  Tiempo resolución: 0.0445s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0467s
+  Tiempo compilación: 0.0020s
+  Tiempo resolución: 0.0441s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0466s
+  Tiempo compilación: 0.0019s
+  Tiempo resolución: 0.0441s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0472s
+  Tiempo compilación: 0.0021s
+  Tiempo resolución: 0.0445s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Graph-Coloring-0.5 - Size: 20
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0791s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0791s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0851s
+  Tiempo compilación: 0.0028s
+  Tiempo resolución: 0.0813s
+  Memoria pico: 0.04 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0846s
+  Tiempo compilación: 0.0027s
+  Tiempo resolución: 0.0810s
+  Memoria pico: 0.04 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0850s
+  Tiempo compilación: 0.0027s
+  Tiempo resolución: 0.0813s
+  Memoria pico: 0.04 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0847s
+  Tiempo compilación: 0.0028s
+  Tiempo resolución: 0.0810s
+  Memoria pico: 0.04 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0847s
+  Tiempo compilación: 0.0028s
+  Tiempo resolución: 0.0809s
+  Memoria pico: 0.04 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0849s
+  Tiempo compilación: 0.0028s
+  Tiempo resolución: 0.0811s
+  Memoria pico: 0.04 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+PASSED
+tests/benchmarks/test_comprehensive_benchmarks.py::TestComprehensiveBenchmarks::test_job_shop_scheduling_scalability 
+================================================================================
+Benchmarking Job Shop Scheduling
+================================================================================
+
+--------------------------------------------------------------------------------
+Job Shop Scheduling - Jobs: 2, Machines: 2
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Benchmarking JobShop-2x2 - Size: 0
+--------------------------------------------------------------------------------
+Error generando problema: generate_job_shop_scheduling() got multiple values for argument 'num_jobs'
+
+--------------------------------------------------------------------------------
+Job Shop Scheduling - Jobs: 3, Machines: 2
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Benchmarking JobShop-3x2 - Size: 0
+--------------------------------------------------------------------------------
+Error generando problema: generate_job_shop_scheduling() got multiple values for argument 'num_jobs'
+
+--------------------------------------------------------------------------------
+Job Shop Scheduling - Jobs: 3, Machines: 3
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Benchmarking JobShop-3x3 - Size: 0
+--------------------------------------------------------------------------------
+Error generando problema: generate_job_shop_scheduling() got multiple values for argument 'num_jobs'
+FAILED
+tests/benchmarks/test_comprehensive_benchmarks.py::TestComprehensiveBenchmarks::test_nqueens_scalability 
+--------------------------------------------------------------------------------
+Benchmarking N-Queens - Size: 4
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0003s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0003s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0017s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0003s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0013s
+  Tiempo compilación: 0.0009s
+  Tiempo resolución: 0.0003s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0014s
+  Tiempo compilación: 0.0009s
+  Tiempo resolución: 0.0003s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0014s
+  Tiempo compilación: 0.0010s
+  Tiempo resolución: 0.0003s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0014s
+  Tiempo compilación: 0.0010s
+  Tiempo resolución: 0.0003s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0014s
+  Tiempo compilación: 0.0010s
+  Tiempo resolución: 0.0003s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking N-Queens - Size: 6
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0014s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0014s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0092s
+  Tiempo compilación: 0.0010s
+  Tiempo resolución: 0.0079s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0094s
+  Tiempo compilación: 0.0010s
+  Tiempo resolución: 0.0081s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0093s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0079s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0094s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0081s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0094s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0080s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0095s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0081s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking N-Queens - Size: 8
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0095s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0095s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0122s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0105s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0111s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0095s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0111s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0095s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0114s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0098s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0112s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0096s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0112s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.0095s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking N-Queens - Size: 10
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0054s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0054s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0078s
+  Tiempo compilación: 0.0016s
+  Tiempo resolución: 0.0057s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0074s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.0055s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0073s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.0053s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0073s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.0054s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0075s
+  Tiempo compilación: 0.0016s
+  Tiempo resolución: 0.0055s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0074s
+  Tiempo compilación: 0.0016s
+  Tiempo resolución: 0.0053s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking N-Queens - Size: 12
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.6594s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.6594s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.6459s
+  Tiempo compilación: 0.0020s
+  Tiempo resolución: 0.6432s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.6470s
+  Tiempo compilación: 0.0020s
+  Tiempo resolución: 0.6443s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.6486s
+  Tiempo compilación: 0.0021s
+  Tiempo resolución: 0.6459s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.6447s
+  Tiempo compilación: 0.0022s
+  Tiempo resolución: 0.6419s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.6460s
+  Tiempo compilación: 0.0021s
+  Tiempo resolución: 0.6432s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.6433s
+  Tiempo compilación: 0.0022s
+  Tiempo resolución: 0.6405s
+  Memoria pico: 0.03 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+PASSED
+tests/benchmarks/test_comprehensive_benchmarks.py::TestComprehensiveBenchmarks::test_simple_csp_scalability 
+================================================================================
+Benchmarking Simple CSP
+================================================================================
+
+--------------------------------------------------------------------------------
+Simple CSP - Variables: 5
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Benchmarking SimpleCSP-5 - Size: 0
+--------------------------------------------------------------------------------
+Error generando problema: generate_simple_csp() got multiple values for argument 'num_variables'
+
+--------------------------------------------------------------------------------
+Simple CSP - Variables: 10
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Benchmarking SimpleCSP-10 - Size: 0
+--------------------------------------------------------------------------------
+Error generando problema: generate_simple_csp() got multiple values for argument 'num_variables'
+
+--------------------------------------------------------------------------------
+Simple CSP - Variables: 15
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Benchmarking SimpleCSP-15 - Size: 0
+--------------------------------------------------------------------------------
+Error generando problema: generate_simple_csp() got multiple values for argument 'num_variables'
+FAILED
+tests/benchmarks/test_comprehensive_benchmarks.py::TestComprehensiveBenchmarks::test_simple_csp_varying_complexity 
+================================================================================
+Simple CSP - Densidad de restricciones: 0.2
+================================================================================
+
+--------------------------------------------------------------------------------
+Benchmarking Simple-CSP-0.2 - Size: 8
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0035s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0035s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0454s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0440s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0454s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0441s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0455s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0441s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0457s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0442s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0455s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.0440s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0456s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0441s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Simple-CSP-0.2 - Size: 10
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0006s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0006s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0020s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0006s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0019s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0006s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0019s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0006s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0020s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0006s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0020s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0006s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0021s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0006s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Simple-CSP-0.2 - Size: 12
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 6.2264s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 6.2264s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 6.0473s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 6.0456s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 6.0600s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 6.0583s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 6.0419s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 6.0402s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 6.1812s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 6.1795s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 6.3861s
+  Tiempo compilación: 0.0016s
+  Tiempo resolución: 6.3843s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 6.1022s
+  Tiempo compilación: 0.0016s
+  Tiempo resolución: 6.1003s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+================================================================================
+Simple CSP - Densidad de restricciones: 0.3
+================================================================================
+
+--------------------------------------------------------------------------------
+Benchmarking Simple-CSP-0.3 - Size: 8
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0009s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0009s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0032s
+  Tiempo compilación: 0.0019s
+  Tiempo resolución: 0.0009s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0042s
+  Tiempo compilación: 0.0031s
+  Tiempo resolución: 0.0008s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0030s
+  Tiempo compilación: 0.0019s
+  Tiempo resolución: 0.0008s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0030s
+  Tiempo compilación: 0.0019s
+  Tiempo resolución: 0.0008s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0032s
+  Tiempo compilación: 0.0020s
+  Tiempo resolución: 0.0009s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0033s
+  Tiempo compilación: 0.0021s
+  Tiempo resolución: 0.0008s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Simple-CSP-0.3 - Size: 10
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.5588s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.5587s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.4716s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.4700s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.4685s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.4669s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.4735s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.4719s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.4742s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.4725s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.4770s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.4752s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.4714s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.4697s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Simple-CSP-0.3 - Size: 12
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 6.4027s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 6.4027s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 6.3588s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 6.3570s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 6.3798s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 6.3780s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 6.3288s
+  Tiempo compilación: 0.0016s
+  Tiempo resolución: 6.3269s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 6.4086s
+  Tiempo compilación: 0.0016s
+  Tiempo resolución: 6.4066s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 6.3963s
+  Tiempo compilación: 0.0017s
+  Tiempo resolución: 6.3944s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 6.3981s
+  Tiempo compilación: 0.0017s
+  Tiempo resolución: 6.3961s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+================================================================================
+Simple CSP - Densidad de restricciones: 0.5
+================================================================================
+
+--------------------------------------------------------------------------------
+Benchmarking Simple-CSP-0.5 - Size: 8
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0007s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0007s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0023s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0007s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0020s
+  Tiempo compilación: 0.0010s
+  Tiempo resolución: 0.0007s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0020s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0007s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0020s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0007s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0020s
+  Tiempo compilación: 0.0011s
+  Tiempo resolución: 0.0007s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0021s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0007s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Simple-CSP-0.5 - Size: 10
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0455s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0455s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0469s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0454s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0464s
+  Tiempo compilación: 0.0012s
+  Tiempo resolución: 0.0449s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0471s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0455s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0473s
+  Tiempo compilación: 0.0013s
+  Tiempo resolución: 0.0457s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0473s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.0457s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0480s
+  Tiempo compilación: 0.0016s
+  Tiempo resolución: 0.0461s
+  Memoria pico: 0.01 MB
+  Nodos explorados: 0
+  Solución encontrada: False
+  Ratio compresión: 1.00x
+
+--------------------------------------------------------------------------------
+Benchmarking Simple-CSP-0.5 - Size: 12
+--------------------------------------------------------------------------------
+
+Estrategia: NoCompilation
+  Tiempo total: 0.0100s
+  Tiempo compilación: 0.0000s
+  Tiempo resolución: 0.0099s
+  Memoria pico: 0.00 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L1
+  Tiempo total: 0.0118s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.0099s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L2
+  Tiempo total: 0.0116s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.0098s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L3
+  Tiempo total: 0.0114s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.0096s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L4
+  Tiempo total: 0.0115s
+  Tiempo compilación: 0.0014s
+  Tiempo resolución: 0.0097s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L5
+  Tiempo total: 0.0118s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.0099s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+
+Estrategia: FixedLevel_L6
+  Tiempo total: 0.0117s
+  Tiempo compilación: 0.0015s
+  Tiempo resolución: 0.0098s
+  Memoria pico: 0.02 MB
+  Nodos explorados: 0
+  Solución encontrada: True
+  Ratio compresión: 1.00x
+PASSED
+tests/benchmarks/test_comprehensive_benchmarks.py::TestComprehensiveBenchmarks::test_sudoku_scalability 

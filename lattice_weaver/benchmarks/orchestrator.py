@@ -120,7 +120,12 @@ class FixedLevelStrategy(CompilationStrategy):
             current_level = l3
         
         if self.level >= 4:
-            l4 = Level4([], [], [], config={'original_domains': csp.domains})
+            l4 = Level4([], [], [], config={
+                'original_domains': csp.domains,
+                'original_structures': l3.structures,
+                'original_isolated_patterns': l3.isolated_patterns,
+                'original_isolated_blocks': l3.isolated_blocks
+            })
             l4.build_from_lower(l3)
             current_level = l4
         
@@ -239,8 +244,7 @@ class Orchestrator:
         except Exception as e:
             tracemalloc.stop()
             return BenchmarkMetrics(
-                error=str(e),
-                metadata={'traceback': tracemalloc.format_exc()}
+                error=str(e)
             )
     
     def run_comparison(

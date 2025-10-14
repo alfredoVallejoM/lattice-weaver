@@ -1,0 +1,136 @@
+{
+  "by_strategy": {
+    "NoCompilation": {
+      "mean_total_time": 1.0980381550996199,
+      "std_total_time": 4.2894958783194514,
+      "mean_compilation_time": 0.0,
+      "mean_solving_time": 1.0980250109796938,
+      "mean_memory": 0.0038067361582880435,
+      "success_rate": 0.7391304347826086,
+      "mean_compression_ratio": 1.0
+    },
+    "FixedLevel_L1": {
+      "mean_total_time": 0.8473620829374894,
+      "std_total_time": 3.886127667768172,
+      "mean_compilation_time": 0.001451917316602624,
+      "mean_solving_time": 0.8454597618268884,
+      "mean_memory": 0.01780211407205333,
+      "success_rate": 0.7391304347826086,
+      "mean_compression_ratio": 1.0
+    },
+    "FixedLevel_L2": {
+      "mean_total_time": 0.8638897149459176,
+      "std_total_time": 3.9659818035951644,
+      "mean_compilation_time": 0.0014308017233143682,
+      "mean_solving_time": 0.8621052659076193,
+      "mean_memory": 0.015624543894892153,
+      "success_rate": 0.7391304347826086,
+      "mean_compression_ratio": 1.0
+    },
+    "FixedLevel_L3": {
+      "mean_total_time": 0.8643943226855734,
+      "std_total_time": 3.9391391878901043,
+      "mean_compilation_time": 0.0014988443125849185,
+      "mean_solving_time": 0.8625520415928053,
+      "mean_memory": 0.015954100567361584,
+      "success_rate": 0.7391304347826086,
+      "mean_compression_ratio": 1.0
+    },
+    "FixedLevel_L4": {
+      "mean_total_time": 0.894703821702437,
+      "std_total_time": 4.007180181337572,
+      "mean_compilation_time": 0.0016058466651222923,
+      "mean_solving_time": 0.8927276567979292,
+      "mean_memory": 0.0166515437039462,
+      "success_rate": 0.7272727272727273,
+      "mean_compression_ratio": 1.0
+    },
+    "FixedLevel_L5": {
+      "mean_total_time": 0.8604019517483918,
+      "std_total_time": 3.949013119915524,
+      "mean_compilation_time": 0.00156024227971616,
+      "mean_solving_time": 0.8585052075593368,
+      "mean_memory": 0.016842137212338654,
+      "success_rate": 0.7391304347826086,
+      "mean_compression_ratio": 1.0
+    },
+    "FixedLevel_L6": {
+      "mean_total_time": 0.8543920205987018,
+      "std_total_time": 3.9201628891271767,
+      "mean_compilation_time": 0.0016326800636623216,
+      "mean_solving_time": 0.8524222270302151,
+      "mean_memory": 0.017256114793860394,
+      "success_rate": 0.7391304347826086,
+      "mean_compression_ratio": 1.0
+    }
+  },
+  "by_problem": {
+    "Graph-Coloring-0.2": {
+      "mean_total_time": 0.21839070320129395,
+      "success_rate": 0.6666666666666666,
+      "num_benchmarks": 21
+    },
+    "Graph-Coloring-0.3": {
+      "mean_total_time": 0.09546699978056408,
+      "success_rate": 0.6666666666666666,
+      "num_benchmarks": 21
+    },
+    "Graph-Coloring-0.5": {
+      "mean_total_time": 0.02598804519290016,
+      "success_rate": 0.0,
+      "num_benchmarks": 21
+    },
+    "N-Queens": {
+      "mean_total_time": 0.01511556761605399,
+      "success_rate": 1.0,
+      "num_benchmarks": 35
+    },
+    "Simple-CSP-0.2": {
+      "mean_total_time": 0.002011227607727051,
+      "success_rate": 1.0,
+      "num_benchmarks": 20
+    },
+    "Simple-CSP-0.3": {
+      "mean_total_time": 6.388493821734474,
+      "success_rate": 1.0,
+      "num_benchmarks": 21
+    },
+    "Simple-CSP-0.5": {
+      "mean_total_time": 0.08352778071448916,
+      "success_rate": 0.6666666666666666,
+      "num_benchmarks": 21
+    }
+  },
+  "compilation_overhead": {
+    "FixedLevel_L1": {
+      "mean_improvement": -0.23214093980324074,
+      "median_improvement": -2.1894529140652135,
+      "std_improvement": 53.96204595954808
+    },
+    "FixedLevel_L2": {
+      "mean_improvement": 1.7100979585126905,
+      "median_improvement": -3.306411517516699,
+      "std_improvement": 51.013423244127566
+    },
+    "FixedLevel_L3": {
+      "mean_improvement": -6.286255059481375,
+      "median_improvement": -3.0066424010329005,
+      "std_improvement": 55.753749542815605
+    },
+    "FixedLevel_L4": {
+      "mean_improvement": -4.71394986218443,
+      "median_improvement": -2.5098487922155437,
+      "std_improvement": 59.61145717732665
+    },
+    "FixedLevel_L5": {
+      "mean_improvement": 0.3527154609050574,
+      "median_improvement": -2.413525707074693,
+      "std_improvement": 53.30217493520196
+    },
+    "FixedLevel_L6": {
+      "mean_improvement": -0.5691681180019513,
+      "median_improvement": -2.3965961951408468,
+      "std_improvement": 55.25917845280643
+    }
+  }
+}
