@@ -8,11 +8,15 @@ niveles de abstracción (L0-L6) para la renormalización y optimización de CSPs
 from .base import AbstractionLevel
 from .level_0 import Level0
 from .level_1 import Level1, ConstraintBlock
+from .level_2 import Level2, LocalPattern, PatternSignature
 
 __all__ = [
     'AbstractionLevel',
     'Level0',
     'Level1',
+    'Level2',
     'ConstraintBlock',
+    'LocalPattern',
+    'PatternSignature',
 ]
 
