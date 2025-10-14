@@ -31,7 +31,7 @@ class Constraint:
         metadata: Información adicional sobre la restricción
         expression: La expresión original de la restricción (para serialización/deserialización)
     """
-    level: ConstraintLevel
+    level: ConstraintLevel | str
     variables: List[str]
     predicate: Callable
     weight: float = 1.0
@@ -59,12 +59,7 @@ class Constraint:
             return (True, 0.0)
         
         try:
-            # Si el predicado espera un diccionario de asignaciones, pasarlo directamente.
-            # Si espera argumentos individuales, esto podría necesitar un ajuste más sofisticado
-            # o una convención clara para la definición de predicados.
-            # Pasar el diccionario de asignaciones directamente al predicado.
-             # Los predicados deben estar diseñados para aceptar un único argumento de tipo diccionario.
-            # Se pasa el diccionario `assigned_vars` directamente.
+            # Estandarización: Los predicados deben aceptar un único argumento de tipo diccionario.
             result = self.predicate(assigned_vars)
             
             if isinstance(result, bool):
@@ -83,7 +78,8 @@ class Constraint:
             return (False, 1.0)
         
     def __repr__(self):
-        return (f"Constraint(level={self.level.name}, "
+        level_name = self.level.name if isinstance(self.level, ConstraintLevel) else self.level
+        return (f"Constraint(level={level_name}, "
                 f"vars={len(self.variables)}, "
                 f"weight={self.weight}, "
                 f"hardness={self.hardness.value})")
@@ -99,11 +95,20 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
     
     def __init__(self):
         """Inicializa una jerarquía vacía."""
-        self.constraints: Dict[ConstraintLevel, List[Constraint]] = {
-            ConstraintLevel.LOCAL: [],
-            ConstraintLevel.PATTERN: [],
-            ConstraintLevel.GLOBAL: []
-        }
+        self.constraints: Dict[ConstraintLevel | str, List[Constraint]] = {}
+        for level in ConstraintLevel:
+            self.constraints[level] = []
+
+    def add_level(self, level_name: str):
+        """
+        Añade un nuevo nivel de restricción dinámicamente.
+        Args:
+            level_name: Nombre del nuevo nivel.
+        """
+        if level_name not in self.constraints:
+            self.constraints[level_name] = []
+        else:
+            print(f"Warning: El nivel '{level_name}' ya existe.")
         
     def add_constraint(self, constraint: Constraint):
         """
@@ -112,9 +117,11 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
         Args:
             constraint: Restricción a añadir
         """
+        if constraint.level not in self.constraints:
+            self.add_level(constraint.level)
         self.constraints[constraint.level].append(constraint)
 
-    def add_hard_constraint(self, constraint_expression: Any, level: str = "GLOBAL") -> None:
+    def add_hard_constraint(self, constraint_expression: Any, level: ConstraintLevel | str = ConstraintLevel.GLOBAL) -> None:
         # Aquí se asume que constraint_expression es una tupla (variables, predicate, metadata)
         # o un objeto que puede ser convertido a Constraint
         if isinstance(constraint_expression, Constraint):
@@ -125,7 +132,7 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
             predicate = constraint_expression[1] if isinstance(constraint_expression, tuple) else constraint_expression
             metadata = constraint_expression[2] if isinstance(constraint_expression, tuple) and len(constraint_expression) > 2 else {}
             constraint = Constraint(
-                level=ConstraintLevel[level],
+                level=level,
                 variables=variables,
                 predicate=predicate,
                 hardness=Hardness.HARD,
@@ -134,7 +141,7 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
             )
         self.add_constraint(constraint)
 
-    def add_soft_constraint(self, constraint_expression: Any, weight: float, level: str = "GLOBAL") -> None:
+    def add_soft_constraint(self, constraint_expression: Any, weight: float, level: ConstraintLevel | str = ConstraintLevel.GLOBAL) -> None:
         # Similar a add_hard_constraint, pero con dureza SOFT y peso
         if isinstance(constraint_expression, Constraint):
             constraint = constraint_expression
@@ -145,7 +152,7 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
             predicate = constraint_expression[1] if isinstance(constraint_expression, tuple) else constraint_expression
             metadata = constraint_expression[2] if isinstance(constraint_expression, tuple) and len(constraint_expression) > 2 else {}
             constraint = Constraint(
-                level=ConstraintLevel[level],
+                level=level,
                 variables=variables,
                 predicate=predicate,
                 weight=weight,
@@ -169,29 +176,30 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
                     total_energy += violation_degree * constraint.weight
         return all_hard_satisfied, total_energy
 
-    def get_constraints_by_level(self, level: str) -> List[Any]:
-        return [c.expression for c in self.constraints[ConstraintLevel[level]]]
+    def get_constraints_by_level(self, level: ConstraintLevel | str) -> List[Any]:
+        return [c.expression for c in self.constraints.get(level, [])]
 
     def get_all_constraints(self) -> Dict[str, List[Any]]:
         all_constraints = {}
-        for level_enum in ConstraintLevel:
-            all_constraints[level_enum.value] = self.get_constraints_by_level(level_enum.value)
+        for level_enum in self.constraints.keys():
+            level_name = level_enum.value if isinstance(level_enum, ConstraintLevel) else level_enum
+            all_constraints[level_name] = self.get_constraints_by_level(level_enum)
         return all_constraints
 
     def to_json(self) -> Dict[str, Any]:
         # Implementación placeholder para serialización
         # Necesitaría un mecanismo para serializar Callables (predicates)
         serialized_constraints = {
-            level.value: [
+            (level.value if isinstance(level, ConstraintLevel) else level): [
                 {
                     "variables": c.variables,
                     "expression": str(c.expression), # Convertir callable a string, idealmente serializar de otra forma
                     "weight": c.weight,
                     "hardness": c.hardness.value,
                     "metadata": c.metadata,
-                    "level": c.level.value
+                    "level": c.level.value if isinstance(c.level, ConstraintLevel) else c.level
                 } for c in self.constraints[level]
-            ] for level in ConstraintLevel
+            ] for level in self.constraints.keys()
         }
         return serialized_constraints
 
@@ -200,10 +208,12 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
         # Reconstruir Callables a partir de strings es complejo y potencialmente inseguro (eval)
         # En una implementación real, se usaría un registro de predicados o un DSL.
         print("Deserialización placeholder: Los predicados no se reconstruyen completamente desde strings.")
-        self.constraints = {
-            ConstraintLevel[level_str]: [
+        self.constraints = {}
+        for level_str, constraints_list in json_data.items():
+            level_key = ConstraintLevel[level_str] if level_str in ConstraintLevel.__members__ else level_str
+            self.constraints[level_key] = [
                 Constraint(
-                    level=ConstraintLevel[c_data["level"]],
+                    level=level_key,
                     variables=c_data["variables"],
                     predicate=lambda x: True, # Placeholder, no se puede reconstruir de forma segura
                     weight=c_data["weight"],
@@ -211,8 +221,7 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
                     metadata=c_data["metadata"],
                     expression=c_data["expression"]
                 ) for c_data in constraints_list
-            ] for level_str, constraints_list in json_data.items()
-        }
+            ]
 
     # Métodos de conveniencia existentes, adaptados para usar la nueva API internamente
     def add_local_constraint(self, 
@@ -224,9 +233,9 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
                             metadata: Optional[Dict[str, Any]] = None):
         constraint_expression = ([var1, var2], predicate, metadata)
         if hardness == Hardness.HARD:
-            self.add_hard_constraint(constraint_expression, level=ConstraintLevel.LOCAL.value)
+            self.add_hard_constraint(constraint_expression, level=ConstraintLevel.LOCAL)
         else:
-            self.add_soft_constraint(constraint_expression, weight, level=ConstraintLevel.LOCAL.value)
+            self.add_soft_constraint(constraint_expression, weight, level=ConstraintLevel.LOCAL)
         
     def add_unary_constraint(self,
                             variable: str,
@@ -236,9 +245,9 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
                             metadata: Optional[Dict[str, Any]] = None):
         constraint_expression = ([variable], predicate, metadata)
         if hardness == Hardness.HARD:
-            self.add_hard_constraint(constraint_expression, level=ConstraintLevel.LOCAL.value)
+            self.add_hard_constraint(constraint_expression, level=ConstraintLevel.LOCAL)
         else:
-            self.add_soft_constraint(constraint_expression, weight, level=ConstraintLevel.LOCAL.value)
+            self.add_soft_constraint(constraint_expression, weight, level=ConstraintLevel.LOCAL)
         
     def add_pattern_constraint(self, 
                               variables: List[str], 
@@ -251,93 +260,36 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
         meta["pattern_type"] = pattern_type
         constraint_expression = (variables, predicate, meta)
         if hardness == Hardness.HARD:
-            self.add_hard_constraint(constraint_expression, level=ConstraintLevel.PATTERN.value)
+            self.add_hard_constraint(constraint_expression, level=ConstraintLevel.PATTERN)
         else:
-            self.add_soft_constraint(constraint_expression, weight, level=ConstraintLevel.PATTERN.value)
+            self.add_soft_constraint(constraint_expression, weight, level=ConstraintLevel.PATTERN)
         
     def add_global_constraint(self, 
                              variables: List[str], 
-                             predicate: Callable[[Dict[str, Any]], float],
-                             objective: str = "satisfy", 
-                             weight: float = 3.0,
-                             hardness: Hardness = Hardness.SOFT,
+                             predicate: Callable[[Dict[str, Any]], bool],
+                             weight: float = 5.0,
+                             hardness: Hardness = Hardness.HARD,
                              metadata: Optional[Dict[str, Any]] = None):
-        meta = metadata or {}
-        meta["objective"] = objective
-        constraint_expression = (variables, predicate, meta)
+        constraint_expression = (variables, predicate, metadata)
         if hardness == Hardness.HARD:
-            self.add_hard_constraint(constraint_expression, level=ConstraintLevel.GLOBAL.value)
+            self.add_hard_constraint(constraint_expression, level=ConstraintLevel.GLOBAL)
         else:
-            self.add_soft_constraint(constraint_expression, weight, level=ConstraintLevel.GLOBAL.value)
-        
-    def get_constraints_at_level(self, level: ConstraintLevel) -> List[Constraint]:
-        """
-        Obtiene todas las restricciones de un nivel.
-        
-        Args:
-            level: Nivel de la jerarquía
-            
-        Returns:
-            Lista de restricciones en ese nivel
-        """
-        return self.constraints[level]
-        
-    def get_constraints_involving(self, variable: str) -> List[Constraint]:
-        """
-        Obtiene todas las restricciones que involucran una variable.
-        
-        Args:
-            variable: ID de la variable
-            
-        Returns:
-            Lista de restricciones que involucran la variable
-        """
-        result = []
-        for level_constraints in self.constraints.values():
-            for constraint in level_constraints:
-                if variable in constraint.variables:
-                    result.append(constraint)
-        return result
-        
-    def classify_by_hardness(self) -> Dict[Hardness, List[Constraint]]:
-        """
-        Clasifica restricciones por dureza.
-        
-        Returns:
-            Diccionario {Hardness: [restricciones]}
-        """
-        result = {Hardness.HARD: [], Hardness.SOFT: []}
-        for level_constraints in self.constraints.values():
-            for constraint in level_constraints:
-                result[constraint.hardness].append(constraint)
-        return result
-        
-    def get_statistics(self) -> Dict[str, Any]:
-        """
-        Obtiene estadísticas sobre la jerarquía.
-        
-        Returns:
-            Diccionario con estadísticas
-        """
-        total = sum(len(constraints) for constraints in self.constraints.values())
-        by_hardness = self.classify_by_hardness()
-        
-        return {
-            "total_constraints": total,
-            "by_level": {
-                level.name: len(constraints) 
-                for level, constraints in self.constraints.items()
-            },
-            "by_hardness": {
-                hardness.value: len(constraints)
-                for hardness, constraints in by_hardness.items()
-            }
-        }
-        
-    def __repr__(self):
-        stats = self.get_statistics()
-        return (f'ConstraintHierarchy(total={stats["total_constraints"]}, '
-                f'local={stats["by_level"]["LOCAL"]}, '
-                f'pattern={stats["by_level"]["PATTERN"]}, '
-                f'global={stats["by_level"]["GLOBAL"]})')
+            self.add_soft_constraint(constraint_expression, weight, level=ConstraintLevel.GLOBAL)
+
+    def get_constraints_by_level_name(self, level_name: str) -> List[Constraint]:
+        level_key = ConstraintLevel[level_name] if level_name in ConstraintLevel.__members__ else level_name
+        return self.constraints.get(level_key, [])
+
+    def set_constraints_for_level(self, level_name: str, constraints: List[Constraint]):
+        level_key = ConstraintLevel[level_name] if level_name in ConstraintLevel.__members__ else level_name
+        self.constraints[level_key] = constraints
+
+    def get_global_constraints(self) -> List[Constraint]:
+        return self.constraints.get(ConstraintLevel.GLOBAL, [])
+
+    def get_local_constraints(self) -> List[Constraint]:
+        return self.constraints.get(ConstraintLevel.LOCAL, [])
+
+    def get_pattern_constraints(self) -> List[Constraint]:
+        return self.constraints.get(ConstraintLevel.PATTERN, [])
 
