@@ -1,0 +1,60 @@
+{
+  "simple": {
+    "success": true,
+    "time": 0.0021550655364990234,
+    "solution": {
+      "cell_2_1": 1,
+      "cell_0_0": 1,
+      "cell_1_3": 1,
+      "cell_3_2": 1,
+      "cell_0_2": 2,
+      "cell_3_0": 2,
+      "cell_1_1": 2,
+      "cell_2_3": 2,
+      "cell_3_1": 3,
+      "cell_1_2": 4,
+      "cell_0_1": 4,
+      "cell_2_0": 4,
+      "cell_3_3": 4,
+      "cell_0_3": 3,
+      "cell_2_2": 3,
+      "cell_1_0": 3
+    },
+    "timeout": false,
+    "method": "SimpleBacktracking"
+  },
+  "arc_seq": {
+    "success": true,
+    "time": 0.020245790481567383,
+    "nodes_explored": 17,
+    "solution": {
+      "cell_0_0": 1,
+      "cell_0_1": 2,
+      "cell_0_2": 3,
+      "cell_0_3": 4,
+      "cell_1_0": 3,
+      "cell_1_1": 4,
+      "cell_1_2": 1,
+      "cell_1_3": 2,
+      "cell_2_0": 2,
+      "cell_2_1": 1,
+      "cell_2_2": 4,
+      "cell_2_3": 3,
+      "cell_3_0": 4,
+      "cell_3_1": 3,
+      "cell_3_2": 2,
+      "cell_3_3": 1
+    },
+    "timeout": false,
+    "method": "ArcEngine"
+  },
+  "arc_par": {
+    "success": false,
+    "time": 0.001981973648071289,
+    "nodes_explored": 0,
+    "solution": null,
+    "error": "revise_with_last_support() missing 2 required positional arguments: 'relation_func' and 'metadata'",
+    "timeout": false,
+    "method": "ArcEngine_Parallel"
+  }
+}
