@@ -29,6 +29,14 @@ from .energy_landscape import (
     EnergyComponents
 )
 
+from .energy_landscape_optimized import (
+    EnergyLandscapeOptimized
+)
+
+from .coherence_solver_optimized import (
+    CoherenceSolverOptimized
+)
+
 __all__ = [
     # Constraint Hierarchy
     'ConstraintHierarchy',
@@ -39,6 +47,10 @@ __all__ = [
     # Energy Landscape
     'EnergyLandscape',
     'EnergyComponents',
+    
+    # Optimized Components
+    'EnergyLandscapeOptimized',
+    'CoherenceSolverOptimized',
 ]
 
-__version__ = '1.0.0-phase1'
+__version__ = '1.0.1-phase1-optimized'
