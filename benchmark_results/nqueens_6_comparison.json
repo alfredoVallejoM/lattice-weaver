@@ -1,0 +1,40 @@
+{
+  "simple": {
+    "success": true,
+    "time": 0.0014154911041259766,
+    "solution": {
+      "Q0": 1,
+      "Q3": 0,
+      "Q2": 5,
+      "Q4": 2,
+      "Q1": 3,
+      "Q5": 4
+    },
+    "timeout": false,
+    "method": "SimpleBacktracking"
+  },
+  "arc_seq": {
+    "success": true,
+    "time": 0.0036923885345458984,
+    "nodes_explored": 8,
+    "solution": {
+      "Q0": 1,
+      "Q1": 3,
+      "Q2": 5,
+      "Q3": 0,
+      "Q4": 2,
+      "Q5": 4
+    },
+    "timeout": false,
+    "method": "ArcEngine"
+  },
+  "arc_par": {
+    "success": false,
+    "time": 0.0007555484771728516,
+    "nodes_explored": 0,
+    "solution": null,
+    "error": "revise_with_last_support() missing 2 required positional arguments: 'relation_func' and 'metadata'",
+    "timeout": false,
+    "method": "ArcEngine_Parallel"
+  }
+}
