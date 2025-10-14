@@ -63,10 +63,9 @@ class Constraint:
             # Si espera argumentos individuales, esto podría necesitar un ajuste más sofisticado
             # o una convención clara para la definición de predicados.
             # Pasar el diccionario de asignaciones directamente al predicado.
-            # Los predicados deben estar diseñados para aceptar argumentos individuales
-            # que corresponden a las claves en `assigned_vars`.
-            # Se usa `**assigned_vars` para desempaquetar el diccionario en argumentos de palabra clave.
-            result = self.predicate(**assigned_vars)
+             # Los predicados deben estar diseñados para aceptar un único argumento de tipo diccionario.
+            # Se pasa el diccionario `assigned_vars` directamente.
+            result = self.predicate(assigned_vars)
             
             if isinstance(result, bool):
                 # Predicado devuelve bool: True = satisfecha, False = violada

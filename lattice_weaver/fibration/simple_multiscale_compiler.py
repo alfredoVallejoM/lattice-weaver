@@ -70,7 +70,7 @@ class SimpleMultiscaleCompiler(MultiscaleCompilerAPI):
                 
                 # Crear un nuevo predicado para la restricción optimizada
                 # Este predicado debe operar sobre las super-variables
-                def optimized_predicate(assignment_optimized: Dict[str, Any]):
+                def optimized_predicate(assigned_vars_from_solver: Dict[str, Any]):
                     original_pred = original_constraint.predicate
                     original_vars = original_constraint.variables
                     group_defs = compilation_metadata["group_definitions"]
@@ -78,8 +78,8 @@ class SimpleMultiscaleCompiler(MultiscaleCompilerAPI):
                     # Reconstruir una asignación parcial del problema original
                     # a partir de la asignación de las super-variables
                     reconstructed_assignment = {}
-                    # Las claves en `assignment_optimized` son las variables del problema compilado (super-variables o individuales)
-                    for compiled_var, compiled_val in assignment_optimized.items():
+                    # Las claves en `assigned_vars_from_solver` son las variables del problema compilado (super-variables o individuales)
+                    for compiled_var, compiled_val in assigned_vars_from_solver.items():
                         if compiled_var in group_defs: # Es una super-variable (grupo)
                             # compiled_val es una asignación consistente del grupo
                             reconstructed_assignment.update(compiled_val)
@@ -96,8 +96,23 @@ class SimpleMultiscaleCompiler(MultiscaleCompilerAPI):
                         return True, 0.0 
 
                     # Evaluar el predicado original con la asignación reconstruida
+                    # Evaluar el predicado original con la asignación reconstruida
                     # El predicado original espera un diccionario de asignaciones.
-                    return original_pred(pred_args)
+                    # Asegurarse de que el predicado original se llama con el diccionario `pred_args`.
+                    # El predicado original devuelve (bool, float) o solo bool.
+                    result = original_pred(pred_args)
+                    if isinstance(result, tuple) and len(result) == 2:
+                        return result
+                    elif isinstance(result, bool):
+                        return result, 0.0 if result else 1.0
+                    else:
+                        # Si el predicado original devuelve un valor numérico (ej. para soft constraints)
+                        try:
+                            violation = float(result)
+                            return (violation == 0.0, violation)
+                        except (ValueError, TypeError):
+                            print(f"Warning: Predicado original {original_pred.__name__} devolvió un tipo inesperado: {type(result)}")
+                            return False, 1.0 # Considerar violada en caso de tipo de retorno inesperado
 
                 # Añadir la nueva restricción a la jerarquía optimizada
                 new_constraint = Constraint(
