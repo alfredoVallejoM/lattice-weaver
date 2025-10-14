@@ -6,6 +6,7 @@ from .constraint_hierarchy import ConstraintHierarchy, ConstraintLevel, Hardness
 from .energy_landscape_optimized import EnergyLandscapeOptimized, EnergyComponents
 from .hacification_engine import HacificationEngine, HacificationResult
 from .landscape_modulator import LandscapeModulator, ModulationStrategy, AdaptiveStrategy
+from .autoperturbation_system import AutoperturbationSystem
 
 class FibrationSearchSolver:
     """
@@ -20,9 +21,10 @@ class FibrationSearchSolver:
         self.domains = domains
         self.hierarchy = hierarchy
         self.landscape = EnergyLandscapeOptimized(hierarchy)
-        self.hacification_engine = HacificationEngine(hierarchy, self.landscape)
+        self.hacification_engine = HacificationEngine(hierarchy, self.landscape, self.domains)
         self.modulator = LandscapeModulator(self.landscape)
         self.modulator.set_strategy(AdaptiveStrategy()) # Estrategia adaptativa por defecto
+        self.autoperturbation_system = AutoperturbationSystem(hierarchy, self.landscape, self.modulator, self.domains)
 
         self.best_solution: Optional[Dict[str, Any]] = None
         self.best_energy: float = float("inf")
@@ -139,8 +141,8 @@ class FibrationSearchSolver:
             for const in self.hierarchy.get_constraints_at_level(ConstraintLevel.LOCAL) + \
                          self.hierarchy.get_constraints_at_level(ConstraintLevel.PATTERN) + \
                          self.hierarchy.get_constraints_at_level(ConstraintLevel.GLOBAL):
-                if const.hardness == Hardness.HARD and var in const.scope:
-                    for other_var in const.scope:
+                if const.hardness == Hardness.HARD and var in const.variables:
+                    for other_var in const.variables:
                         if other_var != var and other_var in unassigned_vars:
                             current_degree += 1
             

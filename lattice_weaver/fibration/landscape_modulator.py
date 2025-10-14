@@ -128,3 +128,23 @@ class LandscapeModulator:
             "current_weights": {level.name: weight for level, weight in self.landscape.level_weights.items()}
         }
 
+    def adapt_to_success(self, original_assignment: Dict, perturbed_assignment: Dict, energy_change: float):
+        """
+        Adapta la modulación cuando una perturbación resulta en una mejora.
+        Por ahora, un placeholder. En el futuro, podría ajustar pesos o estrategias.
+        """
+        print(f"Modulator adaptando a éxito: energía cambió en {energy_change:.2f}")
+        # Ejemplo: Si la estrategia es adaptativa, podría ajustar sus parámetros internos.
+        # if isinstance(self.current_strategy, AdaptiveStrategy):
+        #     self.current_strategy.increase_focus_on_successful_area(original_assignment, perturbed_assignment)
+
+    def adapt_to_failure(self, original_assignment: Dict, perturbed_assignment: Dict, energy_change: float):
+        """
+        Adapta la modulación cuando una perturbación resulta en un empeoramiento.
+        Por ahora, un placeholder. En el futuro, podría ajustar pesos o estrategias.
+        """
+        print(f"Modulator adaptando a fallo: energía cambió en {energy_change:.2f}")
+        # Ejemplo: Si la estrategia es adaptativa, podría reducir el foco en el área perturbada.
+        # if isinstance(self.current_strategy, AdaptiveStrategy):
+        #     self.current_strategy.decrease_focus_on_failed_area(original_assignment, perturbed_assignment)
+
