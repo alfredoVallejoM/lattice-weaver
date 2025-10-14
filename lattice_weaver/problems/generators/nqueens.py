@@ -32,8 +32,8 @@ class NQueensProblem(ProblemFamily):
     def __init__(self):
         """Inicializa la familia N-Queens."""
         super().__init__(
-            name=\'nqueens\',
-            description=\'Problema de las N-Reinas: colocar N reinas en un tablero NxN sin que se ataquen\'
+            name='nqueens',
+            description='Problema de las N-Reinas: colocar N reinas en un tablero NxN sin que se ataquen'
         )
     
     def get_param_schema(self) -> Dict[str, Dict[str, Any]]:
@@ -44,12 +44,12 @@ class NQueensProblem(ProblemFamily):
             Dict con esquema de parámetros
         """
         return {
-            \'n\': {
-                \'type\': int,
-                \'required\': True,
-                \'min\': 4,
-                \'max\': 1000,
-                \'description\': \'Tamaño del tablero (número de reinas)\'
+            'n': {
+                'type': int,
+                'required': True,
+                'min': 4,
+                'max': 1000,
+                'description': 'Tamaño del tablero (número de reinas)'
             }
         }
     
@@ -60,7 +60,7 @@ class NQueensProblem(ProblemFamily):
         Returns:
             Dict con n=8 (problema clásico de 8 reinas)
         """
-        return {\'n\': 8}
+        return {'n': 8}
     
     def generate(self, **params):
         """
@@ -85,7 +85,7 @@ class NQueensProblem(ProblemFamily):
         # Validar parámetros
         self.validate_params(**params)
         
-        n = params[\'n\']
+        n = params['n']
         
         logger.info(f"Generando problema N-Queens con n={n}")
         
@@ -97,7 +97,7 @@ class NQueensProblem(ProblemFamily):
         
         # Añadir variables (una por fila, valor = columna)
         for i in range(n):
-            var_name = f\'Q{i}\'
+            var_name = f'Q{i}'
             domain = list(range(n))  # Columnas posibles [0, n-1]
             cg.add_variable(var_name, set(domain)) # Convertir a set
             logger.debug(f"Añadida variable {var_name} con dominio {domain}")
@@ -107,8 +107,8 @@ class NQueensProblem(ProblemFamily):
         
         for i in range(n):
             for j in range(i + 1, n):
-                var_i = f\'Q{i}\'
-                var_j = f\'Q{j}\'
+                var_i = f'Q{i}'
+                var_j = f'Q{j}'
                 
                 cg.add_constraint(var_i, var_j, NoAttackQueensConstraint(col_diff=abs(i - j)))
                 constraint_count += 1
@@ -123,21 +123,21 @@ class NQueensProblem(ProblemFamily):
         Valida si una solución es correcta para el problema N-Queens.
         
         Args:
-            solution: Diccionario {f\'Q{i}\': columna} para i en [0, n)
-            **params: Debe incluir \'n\' (tamaño del tablero)
+            solution: Diccionario {f'Q{i}': columna} para i en [0, n)
+            **params: Debe incluir 'n' (tamaño del tablero)
             
         Returns:
             bool: True si la solución es válida
             
         Example:
             >>> family = NQueensProblem()
-            >>> solution = {\'Q0\': 0, \'Q1\': 4, \'Q2\': 7, \'Q3\': 5, 
-            ...             \'Q4\': 2, \'Q5\': 6, \'Q6\': 1, \'Q7\': 3}
+            >>> solution = {'Q0': 0, 'Q1': 4, 'Q2': 7, 'Q3': 5, 
+            ...             'Q4': 2, 'Q5': 6, 'Q6': 1, 'Q7': 3}
             >>> family.validate_solution(solution, n=8)
             True
         """
         self.validate_params(**params)
-        n = params[\'n\']
+        n = params['n']
         
         return validate_nqueens_solution(solution, n)
     
@@ -146,7 +146,7 @@ class NQueensProblem(ProblemFamily):
         Obtiene metadatos del problema N-Queens.
         
         Args:
-            **params: Debe incluir \'n\' (tamaño del tablero)
+            **params: Debe incluir 'n' (tamaño del tablero)
             
         Returns:
             Dict con metadatos del problema
@@ -154,25 +154,25 @@ class NQueensProblem(ProblemFamily):
         Example:
             >>> family = NQueensProblem()
             >>> metadata = family.get_metadata(n=8)
-            >>> print(metadata[\'n_variables\'])
+            >>> print(metadata['n_variables'])
             8
         """
         self.validate_params(**params)
-        n = params[\'n\']
+        n = params['n']
         
         n_variables = n
         n_constraints = n * (n - 1) // 2  # Combinaciones de 2 reinas
         
         return {
-            \'family\': self.name,
-            \'n\': n,
-            \'n_variables\': n_variables,
-            \'n_constraints\': n_constraints,
-            \'domain_size\': n,
-            \'complexity\': \'O(n^2)\',
-            \'problem_type\': \'combinatorial\',
-            \'description\': f\'{n}-Queens problem on {n}x{n} board\',
-            \'difficulty\': self._estimate_difficulty(n)
+            'family': self.name,
+            'n': n,
+            'n_variables': n_variables,
+            'n_constraints': n_constraints,
+            'domain_size': n,
+            'complexity': 'O(n^2)',
+            'problem_type': 'combinatorial',
+            'description': f'{n}-Queens problem on {n}x{n} board',
+            'difficulty': self._estimate_difficulty(n)
         }
     
     def _estimate_difficulty(self, n: int) -> str:
@@ -183,16 +183,16 @@ class NQueensProblem(ProblemFamily):
             n: Tamaño del tablero
             
         Returns:
-            str: Nivel de dificultad (\'easy\', \'medium\', \'hard\', \'very_hard\')
+            str: Nivel de dificultad ('easy', 'medium', 'hard', 'very_hard')
         """
         if n <= 8:
-            return \'easy\'
+            return 'easy'
         elif n <= 16:
-            return \'medium\'
+            return 'medium'
         elif n <= 50:
-            return \'hard\'
+            return 'hard'
         else:
-            return \'very_hard\'
+            return 'very_hard'
 
 
 # Auto-registro en el catálogo global al importar
