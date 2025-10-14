@@ -17,6 +17,7 @@ from ..renormalization.core import renormalize_csp, refine_solution
 from ..paging.page_manager import PageManager
 from ..renormalization.partition import VariablePartitioner
 from ..core.csp_problem import CSP, Constraint, is_satisfiable, verify_solution, solve_subproblem_exhaustive, generate_nqueens, generate_random_csp
+from ..core.simple_backtracking_solver import generate_solutions_backtracking
 from .certificates import ValidationCertificate, create_certificate, CertificateRepository
 
 
@@ -261,12 +262,8 @@ class RenormalizationValidator:
         '''
         Genera un número limitado de soluciones para un CSP usando backtracking.
         '''
-        solutions = []
-        for sol in generate_solutions_backtracking(csp):
-            solutions.append(sol)
-            if len(solutions) >= num_solutions:
-                break
-        return solutions
+        # Usar la función generate_solutions_backtracking del módulo simple_backtracking_solver
+        return generate_solutions_backtracking(csp, num_solutions=num_solutions)
 
 
 class RenormalizationTestSuite:
@@ -422,38 +419,5 @@ if __name__ == "__main__":
 
 
 # Helper function to generate solutions for testing
-def generate_solutions_backtracking(csp: CSP) -> List[Dict[str, Any]]:
-    solutions = []
-    # Implementación simplificada de backtracking para generar soluciones
-    # Esto es un placeholder y debería ser reemplazado por un solver más robusto
-    # para problemas complejos.
 
-    def backtrack(assignment: Dict[str, Any]):
-        if len(assignment) == len(csp.variables):
-            if verify_solution(csp, assignment):
-                solutions.append(assignment.copy())
-            return
-
-        unassigned_vars = [v for v in csp.variables if v not in assignment]
-        if not unassigned_vars: # No more unassigned variables
-            return
-
-        # MRV (Minimum Remaining Values) heuristic
-        next_var = min(unassigned_vars, key=lambda var: len(csp.domains[var]))
-
-        for value in csp.domains[next_var]:
-            new_assignment = assignment.copy()
-            new_assignment[next_var] = value
-            # Check consistency with current constraints
-            consistent = True
-            for constraint in csp.constraints:
-                if all(v in new_assignment for v in constraint.scope):
-                    if not constraint.relation(*[new_assignment[v] for v in constraint.scope]):
-                        consistent = False
-                        break
-            if consistent:
-                backtrack(new_assignment)
-
-    backtrack({})
-    return solutions
 

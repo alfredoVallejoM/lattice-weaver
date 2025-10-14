@@ -143,7 +143,7 @@ def generate_nqueens(n: int, name: Optional[str] = None) -> CSP:
             # No en la misma diagonal
             constraints.append(Constraint(
                 scope=frozenset({qi, qj}),
-                relation=lambda val_i, val_j, diff=abs(i - j): abs(val_i - val_j) != diff,
+                relation=lambda val_i, val_j, captured_diff=abs(i - j): abs(val_i - val_j) != captured_diff,
                 name=f"diag_{qi}_{qj}"
             ))
             

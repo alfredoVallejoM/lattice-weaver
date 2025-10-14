@@ -55,11 +55,13 @@ def renormalize_csp(
     partitioner = VariablePartitioner(strategy=partition_strategy)
     partition_result = partitioner.partition(original_csp, k)
 
+
     if partition_result is None:
         return None, None # Si la partición falla, devolver None
 
     # Asegurarse de que no haya grupos vacíos
     partition = [group for group in partition_result if group]
+
     if not partition:
         return None, None # Devolver None si la partición resulta en grupos vacíos
     

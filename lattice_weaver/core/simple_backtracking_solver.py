@@ -29,15 +29,31 @@ def solve_csp_backtracking(csp: CSP) -> Optional[Dict[str, Any]]:
     
     assignment: Dict[str, Any] = {}
 
-    def select_unassigned_variable(current_assignment: Dict[str, Any]) -> Optional[str]:
+    def select_unassigned_variable(current_assignment: Dict[str, Any], csp: CSP) -> Optional[str]:
         unassigned_vars = [v for v in variables if v not in current_assignment]
         if not unassigned_vars:
             return None
         # MRV heuristic: choose the variable with the fewest legal values
-        return min(unassigned_vars, key=lambda var: len(domains[var]))
+        # Degree heuristic: as a tie-breaker, choose the variable involved in the most constraints with unassigned variables
+        
+        # Calculate degree for each unassigned variable
+        degrees = {}
+        for var in unassigned_vars:
+            degree = 0
+            for constraint in csp.constraints:
+                if var in constraint.scope:
+                    # Count how many other unassigned variables are in the same constraint
+                    for other_var in constraint.scope:
+                        if other_var != var and other_var in unassigned_vars:
+                            degree += 1
+            degrees[var] = degree
+
+        # Combine MRV and Degree heuristics
+        # Prioritize MRV, then Degree (higher degree first)
+        return min(unassigned_vars, key=lambda var: (len(domains[var]), -degrees[var]))
 
     def backtrack() -> bool:
-        current_var = select_unassigned_variable(assignment)
+        current_var = select_unassigned_variable(assignment, csp)
         if current_var is None:
             return True  # Todas las variables asignadas, solución encontrada
 
@@ -97,19 +113,35 @@ def generate_solutions_backtracking(csp: CSP, num_solutions: int = 1) -> List[Di
     
     assignment: Dict[str, Any] = {}
 
-    def select_unassigned_variable_all(current_assignment: Dict[str, Any]) -> Optional[str]:
+    def select_unassigned_variable_all(current_assignment: Dict[str, Any], csp: CSP) -> Optional[str]:
         unassigned_vars = [v for v in variables if v not in current_assignment]
         if not unassigned_vars:
             return None
         # MRV heuristic: choose the variable with the fewest legal values
-        return min(unassigned_vars, key=lambda var: len(domains[var]))
+        # Degree heuristic: as a tie-breaker, choose the variable involved in the most constraints with unassigned variables
+        
+        # Calculate degree for each unassigned variable
+        degrees = {}
+        for var in unassigned_vars:
+            degree = 0
+            for constraint in csp.constraints:
+                if var in constraint.scope:
+                    # Count how many other unassigned variables are in the same constraint
+                    for other_var in constraint.scope:
+                        if other_var != var and other_var in unassigned_vars:
+                            degree += 1
+            degrees[var] = degree
+
+        # Combine MRV and Degree heuristics
+        # Prioritize MRV, then Degree (higher degree first)
+        return min(unassigned_vars, key=lambda var: (len(domains[var]), -degrees[var]))
 
     def backtrack_all() -> None:
         nonlocal solutions
         if len(solutions) >= num_solutions:
             return
 
-        current_var = select_unassigned_variable_all(assignment)
+        current_var = select_unassigned_variable_all(assignment, csp)
         if current_var is None:
             solutions.append(assignment.copy()) # Encontró una solución
             return
