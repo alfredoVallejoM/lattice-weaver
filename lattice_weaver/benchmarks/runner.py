@@ -18,8 +18,10 @@ import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import pandas as pd
 
-from lattice_weaver.arc_weaver.adaptive_consistency import AdaptiveConsistencyEngine
-from lattice_weaver.arc_weaver.tracing import SearchSpaceTracer
+from lattice_weaver.arc_engine.csp_solver import CSPSolver
+
+from lattice_weaver.arc_engine.core import ArcEngine
+
 
 
 @dataclass
@@ -270,7 +272,7 @@ class ExperimentRunner:
                 )
             
             # Crear solver
-            engine = AdaptiveConsistencyEngine(tracer=tracer)
+            engine = ArcEngine(tracer=tracer)
             
             # Ejecutar con timeout
             start_time = time.time()

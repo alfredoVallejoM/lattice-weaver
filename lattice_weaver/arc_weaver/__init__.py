@@ -17,53 +17,24 @@ Versión: 4.2.0
 # Este __init__.py ahora solo exporta los componentes del nuevo motor
 # para mantener la compatibilidad temporalmente.
 
-from ..core.csp_engine.graph import (
-    ConstraintGraph,
-    DynamicClusterGraph,
-    Cluster,
-    ConstraintEdge
-)
+from lattice_weaver.arc_engine.csp_solver import CSPSolver, CSPProblem, CSPSolution
 
-from ..core.csp_engine.clustering import (
-    ClusterDetector,
-    BoundaryManager,
-    ClusteringMetrics
-)
 
-from ..core.csp_engine.solver import (
-    AdaptiveConsistencyEngine,
-    AC3Solver,
-    ClusterSolver,
-    SolutionStats
-)
+# from ..core.csp_engine.clustering import (
 
-from ..core.csp_engine.tracing import (
-    SearchSpaceTracer,
-    SearchEvent
-)
+
+# from ..core.csp_engine.solver import (
+
+
+# from ..core.csp_engine.tracing import (
+
 
 
 __all__ = [
     # Estructuras de grafo
-    'ConstraintGraph',
-    'DynamicClusterGraph',
-    'Cluster',
-    'ConstraintEdge',
-    
-    # Clustering
-    'ClusterDetector',
-    'BoundaryManager',
-    'ClusteringMetrics',
-    
-    # Resolución
-    'AdaptiveConsistencyEngine',
-    'AC3Solver',
-    'ClusterSolver',
-    'SolutionStats',
-    
-    # Tracing
-    'SearchSpaceTracer',
-    'SearchEvent',
+    'CSPSolver',
+    'CSPProblem',
+    'CSPSolution',
 ]
 
 __version__ = '4.2.0'

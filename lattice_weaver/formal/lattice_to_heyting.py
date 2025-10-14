@@ -16,7 +16,7 @@ Fecha: 11 de Octubre de 2025
 
 from typing import List, Tuple, FrozenSet, Dict
 from .heyting_algebra import HeytingAlgebra, HeytingElement
-from ..lattice_core.builder import LatticeBuilder
+from lattice_weaver.lattice_core.builder import LatticeBuilder
 import logging
 
 logger = logging.getLogger(__name__)

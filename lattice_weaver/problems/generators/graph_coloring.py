@@ -9,8 +9,8 @@ from typing import Dict, Any, List, Tuple
 import logging
 
 from ..base import ProblemFamily
-from lattice_weaver.core.csp_engine.graph import ConstraintGraph
-from lattice_weaver.core.csp_engine.constraints import NE
+
+from lattice_weaver.arc_engine.constraints import not_equal
 from ..utils.validators import validate_graph_coloring_solution
 from ..utils.graph_generators import (
     generate_random_graph,
@@ -205,14 +205,14 @@ class GraphColoringProblem(ProblemFamily):
         # Generar aristas del grafo
         edges = self._generate_edges(**params)
         
-        # Crear ConstraintGraph
-        cg = ConstraintGraph()
+        # Crear ArcEngine
+        engine = ArcEngine()
         
         # Añadir variables (una por nodo, valor = color)
         for i in range(n_nodes):
             var_name = f'V{i}'
             domain = list(range(n_colors))  # Colores disponibles [0, n_colors-1]
-            cg.add_variable(var_name, set(domain)) # Convertir a set
+            engine.add_variable(var_name, domain)
             logger.debug(f"Añadida variable {var_name} con dominio {domain}")
         
         # Añadir restricciones (una por arista)
@@ -221,15 +221,12 @@ class GraphColoringProblem(ProblemFamily):
             var_j = f'V{j}'
             
             # Restricción: colores diferentes
-            cg.add_constraint(var_i, var_j, NE())
+            engine.add_constraint(var_i, var_j, 'not_equal') # Usar el nombre de la relación registrada
             logger.debug(f"Añadida restricción entre {var_i} y {var_j}")
-        
-        # Guardar las aristas en el ConstraintGraph para validación posterior
-        cg._graph_coloring_edges = edges
         
         logger.info(f"Problema Graph Coloring generado: {n_nodes} variables, {len(edges)} restricciones")
         
-        return cg
+        return engine
     
     def validate_solution(self, solution: Dict[str, Any], **params) -> bool:
         """

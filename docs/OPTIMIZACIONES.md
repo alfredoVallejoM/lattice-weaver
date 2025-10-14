@@ -519,3 +519,22 @@ Estas optimizaciones complementan las otras fases implementadas (homotopía, par
 - **Caching:** "Memoization in Constraint Satisfaction" (Frost & Szpakowicz, 1992)
 - **Performance Monitoring:** "Profiling Constraint Solvers" (Schulte & Stuckey, 2008)
 
+
+
+
+---
+
+## Optimización Revertida: Técnicas de Andrews para CbO
+
+**Estado:** REVERTIDO 롤
+**Fecha:** 14 de Octubre de 2025
+
+### Intento de Optimización
+
+Se intentó implementar las **Técnicas 2 y 3 de Andrews** para optimizar el algoritmo **Close-by-One (CbO)** en `LatticeBuilder`. El objetivo era mejorar la eficiencia de la generación de conceptos mediante pruebas de canonicidad más sofisticadas.
+
+### Problema y Reversión
+
+La implementación de estas técnicas resultó en **fallos en las pruebas de canonicidad**, lo que llevaba a la generación de retículos de conceptos incorrectos o incompletos. Dada la importancia de la corrección en el análisis de conceptos formales, se tomó la decisión de **revertir estas optimizaciones** para mantener la estabilidad y fiabilidad del módulo.
+
+Para más detalles sobre los desafíos encontrados, consulte el documento [Desafíos y Limitaciones de la Implementación de las Técnicas de Andrews en CbO](./Andrews_Techniques_Challenges.md).

@@ -435,7 +435,8 @@ class MapColoringProblem(ProblemFamily):
 
 
 # Auto-registrar la familia en el catálogo global
-register_family(MapColoringProblem())
+        if not get_catalog().is_registered('map_coloring'):
+            register_family(MapColoringProblem())
 
 logger.info("Familia MapColoringProblem registrada en el catálogo global")
 

@@ -42,3 +42,10 @@ def get_relation(name: str) -> Callable[[Any, Any, Dict[str, Any]], bool]:
         raise ValueError(f"Relación \'{name}\' no encontrada en el registro.")
     return RELATION_REGISTRY[name]
 
+
+
+def not_equal(val1: Any, val2: Any, metadata: Dict[str, Any]) -> bool:
+    return val1 != val2
+
+register_relation("NE", not_equal)
+

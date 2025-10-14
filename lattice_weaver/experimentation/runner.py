@@ -4,8 +4,8 @@ import os
 import logging
 from typing import List, Dict, Any, Optional
 
-from ..arc_engine.csp_solver import CSPSolver, CSPProblem, CSPSolution
-from ..problems.catalog import get_catalog, get_family
+from lattice_weaver.arc_engine.csp_solver import CSPSolver, CSPProblem, CSPSolution
+from lattice_weaver.problems.catalog import get_catalog, get_family
 from .config import ExperimentConfig, SolverConfig, ProblemInstanceConfig
 
 logger = logging.getLogger(__name__)

@@ -16,7 +16,7 @@ from typing import FrozenSet, Any, Tuple, List, Optional, Dict, Set
 from collections import defaultdict
 import json
 
-from ..arc_engine.core import ArcEngine
+from lattice_weaver.arc_engine.core import ArcEngine
 from .rules import HomotopyRules  # 🆕 AÑADIR
 
 # Type aliases
