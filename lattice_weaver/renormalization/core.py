@@ -1,4 +1,3 @@
-'''
 # lattice_weaver/renormalization/core.py
 
 """
@@ -12,7 +11,7 @@ from typing import List, Set, Dict, Tuple, Any, Optional, Callable
 from collections import defaultdict
 
 from ..core.csp_problem import CSP, Constraint, verify_solution
-from ..core.simple_backtracking_solver import simple_backtracking_solver
+from ..core.simple_backtracking_solver import solve_csp_backtracking as simple_backtracking_solver
 from .partition import VariablePartitioner
 from .effective_domains import EffectiveDomainDeriver, LazyEffectiveDomain
 from .effective_constraints import EffectiveConstraintDeriver, LazyEffectiveConstraint
@@ -206,4 +205,4 @@ class RenormalizationSolver:
                 level_info=level_info
             )
         return current_solution
-'''
+
