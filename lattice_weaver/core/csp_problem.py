@@ -27,6 +27,7 @@ class Constraint:
     scope: FrozenSet[str]
     relation: Callable[..., bool]
     name: Optional[str] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     def __repr__(self) -> str:
         return f"Constraint(scope={self.scope}, name={self.name or 'anonymous'})"
@@ -48,6 +49,7 @@ class CSP:
     domains: Dict[str, FrozenSet[Any]]
     constraints: List[Constraint]
     name: Optional[str] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
         # Asegurar que todas las variables tienen un dominio
@@ -154,7 +156,7 @@ def generate_nqueens(n: int, name: Optional[str] = None) -> CSP:
                 name=f"row_col_{qi}_{qj}"
             ))
 
-    return CSP(variables=variables, domains=domains, constraints=constraints, name=name)
+    return CSP(variables=variables, domains=domains, constraints=constraints, name=name, metadata={'abstraction_level': 0})
 
 
 def generate_random_csp(num_vars: int, domain_size: int, num_constraints: int, name: Optional[str] = None) -> CSP:
@@ -189,7 +191,7 @@ def generate_random_csp(num_vars: int, domain_size: int, num_constraints: int, n
             name=f"neq_{v1}_{v2}"
         ))
 
-    return CSP(variables=variables, domains=domains, constraints=constraints, name=name)
+    return CSP(variables=variables, domains=domains, constraints=constraints, name=name, metadata={'abstraction_level': 0})
 
 
 def solve_subproblem_exhaustive(subproblem: Dict) -> FrozenSet[Tuple]:

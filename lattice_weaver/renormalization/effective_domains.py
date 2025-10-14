@@ -197,10 +197,14 @@ class EffectiveDomainDeriver:
         """
         # Crear un CSP temporal para usar verify_solution
         from ..core.csp_problem import CSP, verify_solution
+
         temp_csp = CSP(variables=set(assignment.keys()),
                        domains={var: frozenset([val]) for var, val in assignment.items()},
-                       constraints=constraints)
-        return verify_solution(temp_csp, assignment)
+                       constraints=constraints,
+                       name="TempSubproblemCSP")
+        result = verify_solution(temp_csp, assignment)
+
+        return result
     
     def _estimate_domain_size(self, subproblem: Dict) -> int:
         """

@@ -135,15 +135,20 @@ class EffectiveConstraintDeriver:
             for config2 in effective_domain2:
                 # Crear una asignación combinada para verificar las restricciones
                 assignment = {}
+                # print(f"DEBUG: Checking config1: {config1}, config2: {config2}")
                 for var, val in zip(sorted(list(group1)), config1):
                     assignment[var] = val
                 for var, val in zip(sorted(list(group2)), config2):
                     assignment[var] = val
                 
                 # Verificar si esta asignación combinada satisface todas las restricciones que cruzan
-                if self._is_valid_assignment(assignment, crossing_constraints):
+                is_valid = self._is_valid_assignment(assignment, crossing_constraints)
+                # if not is_valid:
+                #     print(f"DEBUG: Invalid assignment for config1: {config1}, config2: {config2}")
+                if is_valid:
                     compatible_pairs.add((config1, config2))
         
+
         return frozenset(compatible_pairs)
     
     def _is_valid_assignment(self, assignment: Dict, constraints: List) -> bool:

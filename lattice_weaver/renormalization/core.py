@@ -28,7 +28,8 @@ def renormalize_csp(
     partition_strategy: str = 'metis',
     domain_deriver: Optional[EffectiveDomainDeriver] = None,
     constraint_deriver: Optional[EffectiveConstraintDeriver] = None,
-    page_manager: Optional[PageManager] = None
+    page_manager: Optional[PageManager] = None,
+    abstraction_level: int = 1
 ) -> Tuple[Optional[CSP], Optional[List[Set[str]]]]:
     """
     Renormaliza un CSP dado, transformándolo en un CSP con menos variables
@@ -113,7 +114,8 @@ def renormalize_csp(
         variables=renormalized_variables,
         domains=renormalized_domains_concrete,
         constraints=renormalized_constraints,
-        name=f"Renormalized_{original_csp.name if original_csp.name else 'CSP'}_G{len(partition)}"
+        name=f"Renormalized_{original_csp.name if original_csp.name else 'CSP'}_G{len(partition)}",
+        metadata={'abstraction_level': abstraction_level}
     )
 
     if page_manager:
@@ -122,7 +124,7 @@ def renormalize_csp(
             id=renormalized_csp.name, # Usar el nombre como ID para fácil referencia
             content=renormalized_csp,
             page_type="renormalized_csp",
-            abstraction_level=1, # Nivel 1: Renormalización
+            abstraction_level=abstraction_level,
             metadata={
                 "original_csp_name": original_csp.name,
                 "k_factor": k,
@@ -136,7 +138,7 @@ def renormalize_csp(
             id=f"Partition_{original_csp.name if original_csp.name else 'CSP'}_G{len(partition)}",
             content=partition,
             page_type="variable_partition",
-            abstraction_level=1,
+            abstraction_level=abstraction_level,
             metadata={
                 "original_csp_name": original_csp.name,
                 "k_factor": k,
@@ -144,6 +146,7 @@ def renormalize_csp(
             }
         )
         page_manager.put_page(partition_page)
+
 
 
     return renormalized_csp, partition
@@ -175,6 +178,7 @@ def refine_solution(
     """
     final_solution: Dict[str, Any] = {}
 
+
     if partition is None:
         if page_manager and original_csp.name:
             partition_page_id = f"Partition_{original_csp.name}_G{len(renormalized_solution)}"
@@ -193,6 +197,7 @@ def refine_solution(
         for var_idx, var_name in enumerate(sorted_group_vars):
             var_to_group_info[var_name] = (group_idx, var_idx)
 
+
     # Iterar sobre las variables originales y asignar valores de la solución renormalizada
     for var_name in original_csp.variables:
         if var_name not in var_to_group_info:
@@ -208,17 +213,20 @@ def refine_solution(
             raise ValueError(f"Group {group_name} not found in renormalized solution. This indicates an issue in the renormalized CSP solution generation.")
         
         group_assignment_tuple = renormalized_solution[group_name]
+
         
         # Asegurarse de que group_assignment_tuple es una tupla y tiene suficientes elementos
         if not isinstance(group_assignment_tuple, tuple) or var_idx_in_group >= len(group_assignment_tuple):
             raise ValueError(f"Invalid group assignment tuple for {group_name}: {group_assignment_tuple}. Expected a tuple with at least {var_idx_in_group + 1} elements.")
         
         final_solution[var_name] = group_assignment_tuple[var_idx_in_group]
+
     
     # Opcional: Verificar que la solución refinada es válida para el CSP original
     # Esto es una validación adicional y puede ser costosa.
     if not verify_solution(original_csp, final_solution):
-        raise ValueError("Refined solution does not satisfy original CSP constraints.")
+
+            raise ValueError("Refined solution does not satisfy original CSP constraints.")
 
     return final_solution
 
@@ -272,24 +280,20 @@ class RenormalizationSolver:
             if not is_satisfiable(current_csp):
                 return None
             
-            # Placeholder: Generar una solución trivial si es satisfacible
-            solution = {}
-            for var, domain in current_csp.domains.items():
-                if domain:
-                    solution[var] = next(iter(domain)) # Tomar el primer valor del dominio
-                else:
-                    return None # Dominio vacío, no satisfacible
+            # Usar el solver de backtracking para encontrar una solución real
+            solution = solve_csp_backtracking(current_csp)
             return solution
 
         # Renormalizar el CSP actual
-        renormalized_csp, partition = renormalize_csp(
-            current_csp,
-            k,
-            partition_strategy,
-            self.domain_deriver,
-            self.constraint_deriver,
-            self.page_manager
-        )
+            renormalized_csp, partition = renormalize_csp(
+                current_csp,
+                k,
+                partition_strategy,
+                self.domain_deriver,
+                self.constraint_deriver,
+                self.page_manager,
+                abstraction_level=current_csp.metadata.get('abstraction_level', 0) + 1
+            )
 
         # Resolver el CSP renormalizado recursivamente
         renormalized_solution = self._solve_recursive(
