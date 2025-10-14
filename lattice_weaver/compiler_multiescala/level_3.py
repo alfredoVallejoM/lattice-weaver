@@ -313,6 +313,9 @@ class Level3(AbstractionLevel):
             self.config['original_isolated_patterns'] = isolated_patterns
         if 'original_isolated_blocks' not in self.config:
             self.config['original_isolated_blocks'] = isolated_blocks
+        
+        # Almacenar referencia al nivel inferior para roundtrip completo
+        self.lower_level = lower_level
 
     def refine_to_lower(self) -> Level2:
         """
@@ -324,6 +327,10 @@ class Level3(AbstractionLevel):
         Returns:
             Un nuevo Level2 con los patrones y bloques reconstruidos.
         """
+        # Si tenemos una referencia al nivel inferior, devolverla directamente
+        if hasattr(self, 'lower_level') and self.lower_level is not None:
+            return self.lower_level
+        
         # Recolectar todos los patrones
         all_patterns = []
         

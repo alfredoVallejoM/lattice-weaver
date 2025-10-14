@@ -122,7 +122,7 @@ class Level2(AbstractionLevel):
             La firma del bloque.
         """
         # Extraer tipos de restricciones y ordenarlos
-        constraint_types = tuple(sorted([c.name if hasattr(c, 'name') else 'unknown' 
+        constraint_types = tuple(sorted([c.name if hasattr(c, 'name') and c.name is not None else 'unknown' 
                                         for c in block.constraints]))
         
         return PatternSignature(
@@ -198,6 +198,9 @@ class Level2(AbstractionLevel):
         if 'original_unique_blocks' not in self.config:
             self.config['original_unique_blocks'] = unique_blocks
         
+        # Almacenar referencia al nivel inferior para roundtrip completo
+        self.lower_level = lower_level
+        
         # Reconstruir mapeo de bloques a patrones
         self.pattern_instances = {}
         for pattern in patterns:
@@ -214,7 +217,11 @@ class Level2(AbstractionLevel):
         Returns:
             Un nuevo Level1 con los bloques reconstruidos.
         """
-        # Reconstruir todos los bloques
+        # Si tenemos una referencia al nivel inferior, devolverla directamente
+        if hasattr(self, 'lower_level') and self.lower_level is not None:
+            return self.lower_level
+        
+        # De lo contrario, reconstruir todos los bloques
         all_blocks = []
         
         # Añadir instancias de patrones

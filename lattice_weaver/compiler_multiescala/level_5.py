@@ -197,6 +197,12 @@ class Level5(AbstractionLevel):
             'inter_meta_pattern_constraints': inter_meta_pattern_constraints
         }
         
+        # Almacenar los conceptos originales de L4 para poder refinar correctamente
+        self.config['original_concepts'] = lower_level.concepts
+        
+        # Almacenar referencia al nivel inferior para roundtrip completo
+        self.lower_level = lower_level
+        
         # Reconstruir mapeo de conceptos a meta-patrones
         self.concept_to_meta_pattern = {}
         for meta_pattern in meta_patterns:
@@ -213,6 +219,10 @@ class Level5(AbstractionLevel):
         Returns:
             Un nuevo Level4 con los conceptos de dominio reconstruidos.
         """
+        # Si tenemos una referencia al nivel inferior, devolverla directamente
+        if hasattr(self, 'lower_level') and self.lower_level is not None:
+            return self.lower_level
+        
         # Recolectar todos los conceptos
         all_concepts = []
         

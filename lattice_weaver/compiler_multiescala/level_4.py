@@ -199,6 +199,9 @@ class Level4(AbstractionLevel):
             self.config['original_concepts'] = concepts
         if 'original_isolated_structures' not in self.config:
             self.config['original_isolated_structures'] = isolated_structures
+        
+        # Almacenar referencia al nivel inferior para roundtrip completo
+        self.lower_level = lower_level
 
     def refine_to_lower(self) -> Level3:
         """
@@ -210,6 +213,10 @@ class Level4(AbstractionLevel):
         Returns:
             Un nuevo Level3 con las estructuras compuestas reconstruidas.
         """
+        # Si tenemos una referencia al nivel inferior, devolverla directamente
+        if hasattr(self, 'lower_level') and self.lower_level is not None:
+            return self.lower_level
+        
         # Recolectar todas las estructuras
         all_structures = []
         
