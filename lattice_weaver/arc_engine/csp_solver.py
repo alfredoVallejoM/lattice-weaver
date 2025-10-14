@@ -5,7 +5,7 @@ from collections import deque
 from .core import ArcEngine
 from .domains import Domain
 from .constraints import Constraint
-from ..core.csp_engine.tms import TruthMaintenanceSystem # Importar TMS
+# from ..core.csp_engine.tms import TruthMaintenanceSystem # Importar TMS
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(name)s:%(message)s")

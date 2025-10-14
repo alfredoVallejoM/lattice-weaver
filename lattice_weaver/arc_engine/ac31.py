@@ -40,12 +40,12 @@ def revise_with_last_support(engine: 'ArcEngine', xi: str, xj: str, cid: str, re
 
         # Last support is invalid, find a new one
         new_support_found = False
-        for w in list(dj.get_values()): # Convertir a lista para evitar problemas si dj cambia durante la iteración
-            logger.debug(f"      Comprobando relación para {xi}={v} y {xj}={w}. Resultado: {relation_func(v, w, metadata)}")
+        for w in dj.get_values():
+            # logger.debug(f"      Comprobando relación para {xi}={v} y {xj}={w}. Resultado: {relation_func(v, w, metadata)}")
             if relation_func(v, w, metadata):
                 engine.last_support[key] = w
                 new_support_found = True
-                logger.debug(f"    Nuevo soporte encontrado para {v} en {xj} con {w}")
+                # logger.debug(f"    Nuevo soporte encontrado para {v} en {xj} con {w}")
                 break
         
         if not new_support_found:

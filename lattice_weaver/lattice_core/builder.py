@@ -74,21 +74,13 @@ class LatticeBuilder:
         for i, obj in enumerate(objects_list):
             if i <= y or obj in extent:
                 continue
-            
             # Calcular nuevo concepto
             new_extent = extent | {obj}
             new_intent = frozenset(self.context.prime_objects(new_extent))
             
-            # Verificar canonicidad (no hemos visto este intent antes)
-            is_canonical = True
-            for j in range(i):
-                if objects_list[j] in self.context.prime_attributes(new_intent):
-                    is_canonical = False
-                    break
-            
-            if is_canonical:
-                self._cbo(new_extent, new_intent, i)
-    
+            # Llamada recursiva sin la verificación de canonicidad problemática
+            self._cbo(new_extent, new_intent, i)
+
     def build_lattice_with_library(self) -> List[Tuple[FrozenSet, FrozenSet]]:
         """
         Construye el retículo usando la librería `concepts`.

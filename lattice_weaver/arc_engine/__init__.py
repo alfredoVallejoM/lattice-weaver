@@ -4,28 +4,26 @@ Este módulo se mantendrá hasta la versión 6.0 para compatibilidad.
 """
 import warnings
 
-# Importar los componentes del nuevo motor CSP
-from ..core.csp_engine.graph import ConstraintGraph
-from ..core.csp_engine.solver import AdaptiveConsistencyEngine
-from ..core.csp_engine.tracing import SearchSpaceTracer, SearchEvent
-from ..core.csp_engine.clustering import ClusterDetector
-from ..core.csp_engine.topology_utils import TopologyUtils
-
 warnings.warn(
     "El módulo 'lattice_weaver.arc_engine' está DEPRECATED. "
     "Use 'lattice_weaver.core.csp_engine' en su lugar.",
     DeprecationWarning, stacklevel=2
 )
 
-# Alias para mantener la compatibilidad
-ArcEngine = AdaptiveConsistencyEngine
+# Importar los componentes directamente desde arc_engine para mantener la funcionalidad
+from .core import ArcEngine
+from .domains import SetDomain, create_optimal_domain
+from .constraints import Constraint, get_relation, register_relation
+from .ac31 import revise_with_last_support
 
-# Exportar otros componentes que podrían haber sido usados directamente
+# Exportar los componentes que podrían haber sido usados directamente
 __all__ = [
     "ArcEngine",
-    "ConstraintGraph",
-    "SearchSpaceTracer",
-    "ClusterDetector",
-    "TopologyUtils",
+    "SetDomain",
+    "create_optimal_domain",
+    "Constraint",
+    "get_relation",
+    "register_relation",
+    "revise_with_last_support",
 ]
 

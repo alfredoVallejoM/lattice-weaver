@@ -1,246 +1,159 @@
-"""
-FormalContext: Contexto formal para Formal Concept Analysis (FCA).
-
-Este módulo implementa el concepto de contexto formal, que es la estructura
-básica de FCA, y los operadores de Galois asociados.
-
-Autor: Manus AI
-Fecha: 11 de Octubre de 2025
-"""
-
-from typing import Set, FrozenSet, Tuple, List
+from typing import Set, FrozenSet, Dict, Any, List
 
 
 class FormalContext:
     """
-    Contexto formal para FCA.
-    
-    Un contexto formal es una tripleta K = (G, M, I) donde:
-    - G: Conjunto de objetos
-    - M: Conjunto de atributos
-    - I ⊆ G × M: Relación de incidencia
-    
+    Representa un contexto formal en Formal Concept Analysis (FCA).
+
+    Un contexto formal se define como una terna (G, M, I), donde G es un conjunto
+    de objetos, M es un conjunto de atributos, e I es una relación binaria
+    entre G y M (I ⊆ G × M).
+
     Attributes:
-        objects: Conjunto de objetos
-        attributes: Conjunto de atributos
-        incidence: Relación de incidencia (pares objeto-atributo)
+        objects: Conjunto de objetos.
+        attributes: Conjunto de atributos.
+        incidences: Conjunto de pares (objeto, atributo) que representan la relación I.
+        _obj_to_attrs: Diccionario que mapea cada objeto a un conjunto de sus atributos.
+        _attr_to_objs: Diccionario que mapea cada atributo a un conjunto de los objetos que lo poseen.
+        _objects_list: Lista ordenada de objetos para indexación.
+        _object_to_index: Mapeo de objeto a su índice en _objects_list.
     """
-    
-    def __init__(self):
-        """Inicializa un contexto formal vacío."""
-        self.objects: Set = set()
-        self.attributes: Set = set()
-        self.incidence: Set[Tuple] = set()
-    
-    def add_object(self, obj):
+
+    def __init__(self, objects: Set[Any] = None, attributes: Set[Any] = None, incidences: Set[tuple] = None):
+        self.objects = objects if objects is not None else set()
+        self.attributes = attributes if attributes is not None else set()
+        self.incidences = incidences if incidences is not None else set()
+
+        self._obj_to_attrs: Dict[Any, Set[Any]] = {obj: set() for obj in self.objects}
+        self._attr_to_objs: Dict[Any, Set[Any]] = {attr: set() for attr in self.attributes}
+        self._objects_list: List[Any] = sorted(list(self.objects))
+        self._object_to_index: Dict[Any, int] = {obj: i for i, obj in enumerate(self._objects_list)}
+
+        for obj, attr in self.incidences:
+            self._obj_to_attrs.setdefault(obj, set()).add(attr)
+            self._attr_to_objs.setdefault(attr, set()).add(obj)
+
+    def add_object(self, obj: Any):
+        if obj not in self.objects:
+            self.objects.add(obj)
+            self._obj_to_attrs[obj] = set()
+            # Mantener _objects_list y _object_to_index actualizados y ordenados
+            self._objects_list.append(obj)
+            self._objects_list.sort()
+            self._object_to_index = {o: i for i, o in enumerate(self._objects_list)}
+
+    def add_attribute(self, attr: Any):
+        if attr not in self.attributes:
+            self.attributes.add(attr)
+            self._attr_to_objs[attr] = set()
+
+    def add_incidence(self, obj: Any, attr: Any):
+        self.add_object(obj)
+        self.add_attribute(attr)
+        if (obj, attr) not in self.incidences:
+            self.incidences.add((obj, attr))
+            self._obj_to_attrs[obj].add(attr)
+            self._attr_to_objs[attr].add(obj)
+
+    def prime_objects(self, objects_subset: Set[Any]) -> FrozenSet[Any]:
         """
-        Añade un objeto al contexto.
+        Calcula la intensión de un subconjunto de objetos (A’).
         
         Args:
-            obj: Objeto a añadir
-        """
-        self.objects.add(obj)
-    
-    def add_attribute(self, attr):
-        """
-        Añade un atributo al contexto.
-        
-        Args:
-            attr: Atributo a añadir
-        """
-        self.attributes.add(attr)
-    
-    def add_incidence(self, obj, attr):
-        """
-        Añade una relación de incidencia.
-        
-        Args:
-            obj: Objeto
-            attr: Atributo
-        """
-        if obj in self.objects and attr in self.attributes:
-            self.incidence.add((obj, attr))
-    
-    def prime_objects(self, objects: Set) -> Set:
-        """
-        Calcula A' (operador de Galois sobre objetos).
-        
-        Retorna el conjunto de atributos comunes a todos los objetos en A.
-        
-        Args:
-            objects: Conjunto de objetos
+            objects_subset: Subconjunto de objetos.
             
         Returns:
-            Conjunto de atributos comunes
+            Conjunto de atributos que todos los objetos en objects_subset poseen.
         """
-        if not objects:
-            return self.attributes.copy()
-        
-        common_attrs = None
-        
-        for obj in objects:
-            obj_attrs = {attr for (o, attr) in self.incidence if o == obj}
-            
-            if common_attrs is None:
-                common_attrs = obj_attrs
+        if not objects_subset:
+            return frozenset(self.attributes)
+
+        common_attributes = None
+        for obj in objects_subset:
+            if obj in self._obj_to_attrs:
+                if common_attributes is None:
+                    common_attributes = self._obj_to_attrs[obj].copy()
+                else:
+                    common_attributes.intersection_update(self._obj_to_attrs[obj])
             else:
-                common_attrs &= obj_attrs
-        
-        return common_attrs if common_attrs is not None else set()
-    
-    def prime_attributes(self, attributes: Set) -> Set:
+                return frozenset() # Objeto no existe en el contexto
+        return frozenset(common_attributes) if common_attributes is not None else frozenset()
+
+    def prime_attributes(self, attributes_subset: Set[Any]) -> FrozenSet[Any]:
         """
-        Calcula B' (operador de Galois sobre atributos).
-        
-        Retorna el conjunto de objetos que tienen todos los atributos en B.
+        Calcula la extensión de un subconjunto de atributos (B’).
         
         Args:
-            attributes: Conjunto de atributos
+            attributes_subset: Subconjunto de atributos.
             
         Returns:
-            Conjunto de objetos con todos los atributos
+            Conjunto de objetos que poseen todos los atributos en attributes_subset.
         """
-        if not attributes:
-            return self.objects.copy()
-        
-        objects_with_all = self.objects.copy()
-        
-        for attr in attributes:
-            objects_with_attr = {obj for (obj, a) in self.incidence if a == attr}
-            objects_with_all &= objects_with_attr
-        
-        return objects_with_all
-    
-    def get_object_attributes(self, obj) -> Set:
+        if not attributes_subset:
+            return frozenset(self.objects)
+
+        common_objects = None
+        for attr in attributes_subset:
+            if attr in self._attr_to_objs:
+                if common_objects is None:
+                    common_objects = self._attr_to_objs[attr].copy()
+                else:
+                    common_objects.intersection_update(self._attr_to_objs[attr])
+            else:
+                return frozenset() # Atributo no existe en el contexto
+        return frozenset(common_objects) if common_objects is not None else frozenset()
+
+    def get_object_index(self, obj: Any) -> int:
         """
-        Obtiene todos los atributos de un objeto.
+        Devuelve el índice de un objeto en la lista ordenada de objetos.
         
         Args:
-            obj: Objeto
+            obj: Objeto a buscar.
             
         Returns:
-            Conjunto de atributos del objeto
-        """
-        return {attr for (o, attr) in self.incidence if o == obj}
-    
-    def get_attribute_objects(self, attr) -> Set:
-        """
-        Obtiene todos los objetos que tienen un atributo.
-        
-        Args:
-            attr: Atributo
+            Índice del objeto.
             
-        Returns:
-            Conjunto de objetos con el atributo
+        Raises:
+            ValueError: Si el objeto no se encuentra en el contexto.
         """
-        return {obj for (obj, a) in self.incidence if a == attr}
-    
+        if obj not in self._object_to_index:
+            raise ValueError(f"Object {obj} not found in context.")
+        return self._object_to_index[obj]
+
     def to_concepts_format(self) -> str:
         """
-        Convierte el contexto al formato de la librería `concepts`.
+        Convierte el contexto formal a un formato de cadena compatible con la librería `concepts`.
         
         Returns:
-            String en formato de concepts
+            Cadena representando el contexto formal.
         """
-        # Ordenar objetos y atributos
-        objects_list = sorted(self.objects, key=str)
-        attributes_list = sorted(self.attributes, key=str)
-        
-        # Construir encabezado
-        header = "           |" + "|".join(str(a) for a in attributes_list) + "|\n"
-        
-        # Construir filas
+        header = ' '.join(sorted(list(self.attributes)))
         rows = []
-        for obj in objects_list:
-            row = f"    {obj:<7}|"
-            for attr in attributes_list:
-                if (obj, attr) in self.incidence:
-                    row += "X|"
-                else:
-                    row += " |"
-            rows.append(row)
-        
-        return header + "\n".join(rows)
-    
-    def get_statistics(self) -> dict:
-        """
-        Obtiene estadísticas del contexto.
-        
-        Returns:
-            Diccionario con estadísticas
-        """
-        density = len(self.incidence) / (len(self.objects) * len(self.attributes)) if self.objects and self.attributes else 0
-        
-        return {
-            'num_objects': len(self.objects),
-            'num_attributes': len(self.attributes),
-            'num_incidences': len(self.incidence),
-            'density': round(density, 4)
-        }
-    
+        for obj in sorted(list(self.objects)):
+            row = [obj] + ['X' if (obj, attr) in self.incidences else '' for attr in sorted(list(self.attributes))]
+            rows.append(' '.join(map(str, row)))
+        return f" {header}\n" + '\n'.join(rows)
+
     @classmethod
-    def from_arc_engine(cls, arc_engine) -> 'FormalContext':
+    def from_arc_engine(cls, arc_engine) -> "FormalContext":
         """
-        Crea un contexto formal desde un ArcEngine.
-        
-        Los objetos son las variables y los atributos son los valores posibles.
+        Crea un LatticeBuilder desde un ArcEngine.
         
         Args:
             arc_engine: Instancia de ArcEngine
             
         Returns:
-            FormalContext construido
+            LatticeBuilder con el contexto construido
         """
-        context = cls()
-        
-        # Añadir objetos (variables)
-        for var_name in arc_engine.variables.keys():
-            context.add_object(var_name)
-        
-        # Añadir atributos (valores únicos)
-        all_values = set()
-        for domain in arc_engine.variables.values():
-            all_values.update(domain.get_values())
-        
-        for value in all_values:
-            context.add_attribute(value)
-        
-        # Añadir incidencias (variable puede tener valor)
-        for var_name, domain in arc_engine.variables.items():
-            for value in domain.get_values():
-                context.add_incidence(var_name, value)
-        
-        return context
-    
-    @classmethod
-    def from_dict(cls, data: dict) -> 'FormalContext':
-        """
-        Crea un contexto desde un diccionario.
-        
-        Args:
-            data: Diccionario con objetos, atributos e incidencias
-            
-        Returns:
-            FormalContext construido
-        """
-        context = cls()
-        
-        context.objects = set(data.get('objects', []))
-        context.attributes = set(data.get('attributes', []))
-        context.incidence = {tuple(inc) for inc in data.get('incidence', [])}
-        
-        return context
-    
-    def to_dict(self) -> dict:
-        """
-        Serializa el contexto a un diccionario.
-        
-        Returns:
-            Diccionario con el contexto
-        """
-        return {
-            'objects': list(self.objects),
-            'attributes': list(self.attributes),
-            'incidence': [list(inc) for inc in self.incidence]
-        }
+        objects = set(arc_engine.variables.keys())
+        attributes = set()
+        incidences = set()
+
+        for var_name, var_obj in arc_engine.variables.items():
+            for domain_val in var_obj.domain:
+                attr_name = f"{var_name}={domain_val}"
+                attributes.add(attr_name)
+                incidences.add((var_name, attr_name))
+
+        return cls(objects, attributes, incidences)
 
