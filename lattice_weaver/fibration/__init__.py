@@ -37,6 +37,27 @@ from .coherence_solver_optimized import (
     CoherenceSolverOptimized
 )
 
+from .optimization_solver import (
+    OptimizationSolver
+)
+
+from .simple_optimization_solver import (
+    SimpleOptimizationSolver
+)
+
+from .hacification_engine import (
+    HacificationEngine,
+    HacificationResult
+)
+
+from .landscape_modulator import (
+    LandscapeModulator,
+    ModulationStrategy,
+    FocusOnLocalStrategy,
+    FocusOnGlobalStrategy,
+    AdaptiveStrategy
+)
+
 __all__ = [
     # Constraint Hierarchy
     'ConstraintHierarchy',
@@ -51,6 +72,21 @@ __all__ = [
     # Optimized Components
     'EnergyLandscapeOptimized',
     'CoherenceSolverOptimized',
+    
+    # Optimization
+    'OptimizationSolver',
+    'SimpleOptimizationSolver',
+
+    # Hacification
+    'HacificationEngine',
+    'HacificationResult',
+
+    # Landscape Modulation
+    'LandscapeModulator',
+    'ModulationStrategy',
+    'FocusOnLocalStrategy',
+    'FocusOnGlobalStrategy',
+    'AdaptiveStrategy',
 ]
 
-__version__ = '1.0.1-phase1-optimized'
+__version__ = '1.0.3-phase2-hacification-modulation'
