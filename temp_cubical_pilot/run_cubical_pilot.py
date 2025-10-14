@@ -5,6 +5,7 @@ from lattice_weaver.fibration.energy_landscape_optimized import EnergyLandscapeO
 from lattice_weaver.fibration.hacification_engine import HacificationEngine
 from temp_cubical_pilot.simple_cubical_problem import cubical_problem_definition
 from numba import njit
+from lattice_weaver.fibration.simple_multiscale_compiler import SimpleMultiscaleCompiler
 import time
 
 # 1. Definir el problema cúbico simple
@@ -69,7 +70,8 @@ hacification_engine = HacificationEngine(ch_jit, energy_landscape, variables_dom
 solver = FibrationSearchSolver(
     variables=list(variables_domains.keys()),
     domains=variables_domains,
-    hierarchy=ch_jit
+    hierarchy=ch_jit,
+    multiscale_compiler=SimpleMultiscaleCompiler()
 )
 
 print("\nIniciando búsqueda de solución con Fibration Flow...")
@@ -78,9 +80,10 @@ solution = solver.solve()
 end_time = time.time()
 
 if solution:
-    print("\nSolución encontrada:")
+    print("\nSolución encontrada (descompilada si se usó compilador):")
     print(solution)
-    all_hard_satisfied, total_energy = ch_jit.evaluate_solution(solution)
+    # Evaluar la solución descompilada con la jerarquía original
+    all_hard_satisfied, total_energy = ch.evaluate_solution(solution)
     print(f"Hard constraints satisfechas: {all_hard_satisfied}")
     print(f"Energía total (violación de soft constraints): {total_energy}")
 else:

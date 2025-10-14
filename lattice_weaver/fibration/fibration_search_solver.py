@@ -7,6 +7,8 @@ from .energy_landscape_optimized import EnergyLandscapeOptimized, EnergyComponen
 from .hacification_engine import HacificationEngine, HacificationResult
 from .landscape_modulator import LandscapeModulator, ModulationStrategy, AdaptiveStrategy
 from .autoperturbation_system import AutoperturbationSystem
+from .multiscale_compiler_api import MultiscaleCompilerAPI
+from .simple_multiscale_compiler import SimpleMultiscaleCompiler
 
 class FibrationSearchSolver:
     """
@@ -16,15 +18,37 @@ class FibrationSearchSolver:
     Este solver utiliza una estrategia de búsqueda heurística guiada por el paisaje de energía
     modulado y la poda de dominios mediante hacificación.
     """
-    def __init__(self, variables: List[str], domains: Dict[str, List[Any]], hierarchy: ConstraintHierarchy, max_iterations: int = 10000, max_backtracks: int = 50000):
-        self.variables = variables
-        self.domains = domains
-        self.hierarchy = hierarchy
-        self.landscape = EnergyLandscapeOptimized(hierarchy)
-        self.hacification_engine = HacificationEngine(hierarchy, self.landscape, self.domains)
+    def __init__(self,
+                 variables: List[str],
+                 domains: Dict[str, List[Any]],
+                 hierarchy: ConstraintHierarchy,
+                 multiscale_compiler: Optional[MultiscaleCompilerAPI] = None,
+                 max_iterations: int = 10000, max_backtracks: int = 50000):
+        self.multiscale_compiler = multiscale_compiler
+        self.compilation_metadata: Dict[str, Any] = {}
+
+        # Si se proporciona un compilador, compilar el problema
+        if self.multiscale_compiler:
+            print("Compilando problema con MultiscaleCompiler...")
+            self.internal_hierarchy, self.internal_domains, self.compilation_metadata = \
+                self.multiscale_compiler.compile_problem(hierarchy, domains)
+            self.original_variables = variables # Guardar las variables originales para la descompilación
+            self.original_domains = domains
+        else:
+            self.internal_hierarchy = hierarchy
+            self.internal_domains = domains
+            self.original_variables = variables
+            self.original_domains = domains
+
+        self.variables = list(self.internal_domains.keys()) # Las variables ahora son las del problema compilado
+        self.domains = self.internal_domains # Los dominios ahora son los del problema compilado
+        self.hierarchy = self.internal_hierarchy # La jerarquía ahora es la del problema compilado
+
+        self.landscape = EnergyLandscapeOptimized(self.internal_hierarchy)
+        self.hacification_engine = HacificationEngine(self.internal_hierarchy, self.landscape, self.internal_domains)
         self.modulator = LandscapeModulator(self.landscape)
         self.modulator.set_strategy(AdaptiveStrategy()) # Estrategia adaptativa por defecto
-        self.autoperturbation_system = AutoperturbationSystem(hierarchy, self.landscape, self.modulator, self.domains)
+        self.autoperturbation_system = AutoperturbationSystem(self.internal_hierarchy, self.landscape, self.modulator, self.internal_domains)
 
         self.best_solution: Optional[Dict[str, Any]] = None
         self.best_energy: float = float("inf")
@@ -50,6 +74,12 @@ class FibrationSearchSolver:
 
         initial_assignment: Dict[str, Any] = {}
         self._search(initial_assignment, 0)
+        
+        # Si se usó un compilador, descompilar la mejor solución encontrada
+        if self.best_solution and self.multiscale_compiler:
+            print("Descompilando la solución encontrada...")
+            return self.multiscale_compiler.decompile_solution(self.best_solution, self.compilation_metadata)
+        
         return self.best_solution
 
     def _search(self, assignment: Dict[str, Any], iteration: int) -> None:
