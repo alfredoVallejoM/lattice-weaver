@@ -601,3 +601,57 @@ Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](L
 **LatticeWeaver v6.0: El futuro de las matemáticas computacionales, acelerado por ML** 🚀🧠
 
 
+
+
+
+---
+
+## 🧬 Roadmap de Desarrollo del Flujo de Fibración
+
+El desarrollo del **Flujo de Fibración** se articula en varias fases estratégicas, diseñadas para llevarlo desde su estado actual de validación conceptual a una implementación robusta, optimizada y plenamente integrada en el ecosistema de `lattice-weaver`.
+
+### Fase 1: Refinamiento y Optimización del Core (En Progreso)
+
+**Objetivo:** Corregir las críticas actuales y mejorar la eficiencia y robustez de la implementación base del solver.
+
+*   **1.1. Optimización de la Propagación de Restricciones (Crítica):**
+    *   Implementar algoritmos de consistencia de arco (AC-3, AC-4) para una poda más agresiva del espacio de búsqueda.
+    *   Desarrollar propagadores especializados para restricciones globales (`AllDifferent`, `Sum`).
+    *   Implementar propagación incremental para re-evaluar solo las restricciones afectadas por nuevas asignaciones.
+
+*   **1.2. Heurísticas de Búsqueda Avanzadas (Crítica):**
+    *   Desarrollar heurísticas dinámicas que adapten su estrategia durante la búsqueda (e.g., priorizar HARD vs. SOFT).
+    *   Implementar heurísticas basadas en el impacto para guiar la búsqueda hacia las decisiones más críticas.
+    *   Integrar **Large Neighborhood Search (LNS)** para escapar de óptimos locales y mejorar la calidad de la solución.
+
+*   **1.3. Gestión de Memoria y Rendimiento (Crítica):**
+    *   Realizar un profiling exhaustivo para identificar y optimizar cuellos de botella.
+    *   Implementar estructuras de datos más eficientes para dominios y restricciones.
+    *   Mejorar las estrategias de cacheo para resultados de cálculos costosos.
+
+### Fase 2: Desarrollo de una API Robusta y Flexible
+
+**Objetivo:** Crear una interfaz de programación intuitiva y potente para modelar y resolver problemas con el Flujo de Fibración.
+
+*   **2.1. Diseño de un Lenguaje de Modelado de Alto Nivel:** Permitir la definición de variables, dominios y jerarquías de restricciones de forma declarativa.
+*   **2.2. Implementación de la API:** Desarrollo de las clases y métodos para la creación de problemas y la interacción con el solver.
+*   **2.3. Herramientas de Visualización:** Crear herramientas para visualizar la estructura del problema, el proceso de búsqueda y las soluciones encontradas.
+
+### Fase 3: Integración Profunda con `lattice-weaver` y Machine Learning
+
+**Objetivo:** Conectar el Flujo de Fibración con el resto del ecosistema `lattice-weaver` y explorar sinergias con la suite de Mini-IAs.
+
+*   **3.1. Integración con el `arc_engine`:** Permitir que el Flujo de Fibración utilice el `arc_engine` (acelerado por ML) para la propagación de restricciones HARD.
+*   **3.2. Desarrollo de "Ganchos" para ML:** Exponer interfaces en la API para que los modelos de ML puedan:
+    *   **Aprender Estrategias de Fibración:** Determinar la mejor manera de descomponer un problema.
+    *   **Aprender Heurísticas de Búsqueda:** Seleccionar dinámicamente las mejores heurísticas para cada subproblema.
+    *   **Predecir la Calidad de la Solución:** Guiar la búsqueda hacia regiones prometedoras del espacio de soluciones.
+
+### Fase 4: Validación Continua y Expansión de Casos de Uso
+
+**Objetivo:** Asegurar la robustez del solver y explorar su aplicación en nuevos dominios.
+
+*   **4.1. Benchmarking Continuo:** Mantener un conjunto de pruebas en expansión para comparar el rendimiento con solvers del estado del arte.
+*   **4.2. Aplicación a Problemas del Mundo Real:** Utilizar el Flujo de Fibración para resolver problemas complejos en dominios como la planificación logística, el diseño de sistemas o la bioinformática.
+*   **4.3. Documentación y Publicación:** Crear tutoriales exhaustivos y considerar la publicación de los hallazgos en artículos técnicos o conferencias.
+
