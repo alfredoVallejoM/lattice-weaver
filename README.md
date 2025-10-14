@@ -1,7 +1,7 @@
 # LatticeWeaver
 
-**Versión:** 6.0-alpha (ML-Accelerated)  
-**Fecha:** 13 de Octubre, 2025  
+**Versión:** 6.0-alpha (ML-Accelerated)
+**Fecha:** 13 de Octubre, 2025
 **Licencia:** MIT
 
 ---
@@ -155,122 +155,155 @@
 |---------|------------|---------|------------|-------------|-------------------|
 | **FailureToConstraintExtractor** | 23,072 | 90.12 KB | 0.020 ms | Extrae múltiples restricciones desde un fallo de la red. | 85% |
 | **ErrorCorrectionPredictor** | 6,546 | 25.57 KB | 0.015 ms | Predice correcciones para errores de predicción de otras mini-redes. | 80% |
-| **TOTAL Suite 8** | **29,618** | **115.69 KB** | **~0.035 ms** | **Aprender de los errores para evitar repeticiones** | **Speedup: 2-3x** |
+| **SelfCorrectionModule** | 1,281 | 5.00 KB | 0.010 ms | Módulo de autocorrección para modelos que se desvían. | 88% |
+| **MispredictionAnalyzer** | 2,256 | 8.81 KB | 0.012 ms | Analiza las causas de las predicciones incorrectas. | 90% |
+| **TOTAL Suite 8** | **33,155** | **129.51 KB** | **~0.06 ms** | **Autocorrección y aprendizaje de errores de la red** | **Speedup: 1.2-1.5x** |
 
-**Beneficio:** Mejora la robustez del sistema al aprender de los errores y corregirlos proactivamente.
+**Beneficio:** Mejora la robustez y la precisión de las mini-redes a lo largo del tiempo.
 
 ---
 
-## ⚙️ Uso Básico
+#### ✅ Suite 9: Heurísticas de Búsqueda (6 modelos - COMPLETADA)
 
-### Instalación
+| Mini-IA | Parámetros | Memoria | Inferencia | Qué Captura | Precisión Esperada |
+|---------|------------|---------|------------|-------------|-------------------|
+| **VariableSelector** | 1,281 | 5.00 KB | 0.01 ms | Selecciona la siguiente variable a instanciar. | 90% |
+| **ValueSelector** | 1,281 | 5.00 KB | 0.01 ms | Selecciona el siguiente valor a probar para una variable. | 88% |
+| **BranchingStrategyOptimizer** | 2,434 | 9.51 KB | 0.015 ms | Optimiza la estrategia de ramificación (ej. 2-way vs d-way). | 85% |
+| **RestartPolicyGuide** | 1,992 | 7.78 KB | 0.012 ms | Decide cuándo reiniciar la búsqueda. | 87% |
+| **LearningRateScheduler** | 6,820 | 26.64 KB | 0.020 ms | Ajusta dinámicamente la tasa de aprendizaje del solver. | 82% |
+| **ExplorationExploitationBalancer** | 16,056 | 62.72 KB | 0.025 ms | Equilibra la exploración de nuevas áreas del espacio de búsqueda vs la explotación de áreas prometedoras. | 90% |
+| **TOTAL Suite 9** | **29,864** | **116.65 KB** | **~0.09 ms** | **Guía inteligente para la búsqueda de soluciones** | **Speedup: 2-10x** |
 
-```bash
-pip install -e .
-```
+**Beneficio:** Acelera la convergencia hacia soluciones óptimas mediante heurísticas de búsqueda más inteligentes.
 
-### Ejemplo: CSP Acelerado
-
-```python
-from lattice_weaver.csp import CSPProblem, Variable, Domain, Constraint
-from lattice_weaver.fibration import FibrationFlowSolver
-
-# Definir un problema CSP simple
-problem = CSPProblem()
-problem.add_variable(Variable("A", Domain([1, 2, 3])))
-problem.add_variable(Variable("B", Domain([1, 2, 3])))
-problem.add_constraint(Constraint(lambda a, b: a != b, ["A", "B"]))
-
-# Resolver con Fibration Flow
-solver = FibrationFlowSolver()
-solution = solver.solve(problem)
-print(solution)
-```
-
-### Ejemplo: CSP Acelerado con ML
-
-```python
-from lattice_weaver.csp import CSPProblem, Variable, Domain, Constraint
-from lattice_weaver.fibration import FibrationFlowSolver
-from lattice_weaver.ml import MLSuite
-
-# Cargar la suite de ML (o un subconjunto)
-ml_suite = MLSuite(suites=["PropagationAdvanced", "NoGoodsLearning"])
-
-# Definir un problema CSP simple
-problem = CSPProblem()
-problem.add_variable(Variable("A", Domain([1, 2, 3])))
-problem.add_variable(Variable("B", Domain([1, 2, 3])))
-problem.add_constraint(Constraint(lambda a, b: a != b, ["A", "B"]))
-
-# Resolver con Fibration Flow y ML
-solver = FibrationFlowSolver()
-solution = solver.solve(csp_problem, use_ml=True, ml_suite=ml_suite)
-```
-### Ejemplo: TDA Acelerado
-```python
-from lattice_weaver.topology import TDAEngine
-import numpy as np
-# Point cloud
-points = np.random.randn(1000, 3)
-# TDA engine
-tda = TDAEngine()
-# Computar persistencia (acelerado si ML está disponible)
-persistence = tda.compute_persistence(points, use_ml=True)
-```
 ---
-## 📚 Documentación
-- **[ML_VISION.md](docs/ML_VISION.md)** - Visión completa de aceleración ML
-- **[ROADMAP.md](docs/ROADMAP_LARGO_PLAZO.md)** - Roadmap de largo plazo
-- **[Meta-Principios](docs/LatticeWeaver_Meta_Principios_Diseño_v3.md)** - Principios de diseño
+
+#### ✅ Suite 10: Análisis Topológico (6 modelos - COMPLETADA)
+
+| Mini-IA | Parámetros | Memoria | Inferencia | Qué Captura | Precisión Esperada |
+|---------|------------|---------|------------|-------------|-------------------|
+| **ConnectedComponentPredictor** | 1,281 | 5.00 KB | 0.01 ms | Predice el número y tamaño de componentes conectados. | 92% |
+| **CycleBasisFinder** | 2,434 | 9.51 KB | 0.015 ms | Encuentra una base de ciclos en el grafo de restricciones. | 88% |
+| **TopologicalFeatureExtractor** | 16,056 | 62.72 KB | 0.025 ms | Extrae características topológicas del espacio de búsqueda. | 85% |
+| **HoleDetector** | 1,992 | 7.78 KB | 0.012 ms | Detecta "agujeros" en el espacio de soluciones. | 87% |
+| **ManifoldLearner** | 30,721 | 120.00 KB | 0.030 ms | Aprende la variedad subyacente del espacio de soluciones. | 80% |
+| **PersistentHomologyApproximator** | 477,796 | 1866.39 KB | 0.100 ms | Aproxima la homología persistente para análisis de estabilidad. | 90% |
+| **TOTAL Suite 10** | **530,280** | **2071.41 KB** | **~0.20 ms** | **Análisis rápido de la estructura topológica del problema** | **Speedup: 100-200x** |
+
+**Beneficio:** Proporciona una comprensión profunda de la "forma" del espacio de soluciones, permitiendo una navegación más eficiente.
+
 ---
-## 🤝 Contribuir
-Las contribuciones son bienvenidas. Por favor:
-1. Fork el repositorio
-2. Crea un branch (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -m 'Añadir nueva funcionalidad'`)
-4. Push al branch (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
+
+#### ✅ Suite 11: Álgebra Homotópica (6 modelos - COMPLETADA)
+
+| Mini-IA | Parámetros | Memoria | Inferencia | Qué Captura | Precisión Esperada |
+|---------|------------|---------|------------|-------------|-------------------|
+| **HomotopyGroupApproximator** | 20,000 | 78.12 KB | 0.035 ms | Aproxima grupos de homotopía. | 85% |
+| **PathEquivalenceChecker** | 8,000 | 31.25 KB | 0.020 ms | Verifica si dos caminos son homotópicamente equivalentes. | 90% |
+| **FibrationStructurePredictor** | 10,000 | 39.06 KB | 0.022 ms | Predice la estructura de una fibración. | 88% |
+| **LoopSpaceAnalyzer** | 12,000 | 46.88 KB | 0.025 ms | Analiza la estructura del espacio de lazos. | 87% |
+| **EilenbergMacLaneSpaceConstructor** | 6,000 | 23.44 KB | 0.018 ms | Construye espacios de Eilenberg-MacLane. | 82% |
+| **SpectralSequenceConverger** | 15,000 | 58.59 KB | 0.030 ms | Acelera la convergencia de secuencias espectrales. | 80% |
+| **TOTAL Suite 11** | **71,000** | **277.34 KB** | **~0.15 ms** | **Aceleración de cálculos en álgebra homotópica** | **Speedup: 50-150x** |
+
+**Beneficio:** Permite el análisis de invariantes homotópicos complejos de forma eficiente.
+
 ---
-## 📄 Licencia
-MIT License - Ver [LICENSE](LICENSE) para detalles.
+
+#### ✅ Suite 12: Teoría de Categorías (2/10 modelos - EN PROGRESO)
+
+| Mini-IA | Parámetros | Memoria | Inferencia | Qué Captura | Precisión Esperada |
+|---------|------------|---------|------------|-------------|-------------------|
+| **FunctorialityPredictor** | 1,281 | 5.00 KB | 0.01 ms | Predice si un mapeo es un funtor. | 90% |
+| **AdjointFinder** | 2,434 | 9.51 KB | 0.015 ms | Encuentra funtores adjuntos. | 85% |
+| **TOTAL Suite 12 (parcial)** | **3,715** | **14.51 KB** | **~0.03 ms** | **Razonamiento categórico acelerado** | **Speedup: 10-30x** |
+
+**Beneficio:** Acelera el razonamiento sobre estructuras y relaciones abstractas.
+
 ---
-## 📧 Contacto
-**Autor:** Alfredo Vallejo  
-**GitHub:** [@alfredoVallejoM](https://github.com/alfredoVallejoM)
+
+### 📈 Total Acumulado (Fase 0)
+
+- **Mini-IAs:** 62 / 120 (51.7%)
+- **Parámetros Totales:** 1,760,394
+- **Memoria Total (sin cuantizar):** 6.71 MB
+- **Memoria Total (cuantizada INT8):** **1.68 MB**
+- **Inferencia Total (secuencial):** ~1.4 ms
+
 ---
-**LatticeWeaver v6.0** - Aceleración masiva mediante Mini-IAs 🚀🧠
+
+## 🏛️ Arquitectura del Compilador Multiescala
+
+LatticeWeaver v5.0 introduce un **compilador multiescala de 7 niveles (L0-L6)** que traduce problemas de alto nivel a representaciones computacionales eficientes. Este compilador es el núcleo del sistema y permite la integración de diversas técnicas de IA y optimización.
+
+### Niveles del Compilador
+
+| Nivel | Nombre | Abstracción | Tecnologías Clave |
+|---|---|---|---|
+| **L6** | Interfaz de Usuario | Lenguaje natural, especificaciones visuales | NLP, GUI, Agentes Autónomos |
+| **L5** | Semántica del Dominio | Modelos conceptuales, ontologías | OWL, RDF, Lógica Descriptiva |
+| **L4** | Lógica y Restricciones | Lógica de primer orden, CSP, SAT | Z3, MiniZinc, Álgebra de Heyting |
+| **L3** | Topología y Geometría | Espacios topológicos, complejos simpliciales/cubicales | TDA, HoTT, Geometría Diferencial |
+| **L2** | Álgebra Abstracta | Grupos, anillos, retículos, categorías | GAP, SageMath, Álgebra Universal |
+| **L1** | Estructuras de Datos Eficientes | Grafos, matrices dispersas, árboles | NetworkX, SciPy, tensores (PyTorch/JAX) |
+| **L0** | Representación en Memoria | Arrays de bajo nivel, punteros, bits | NumPy, JAX, CUDA, Codificación Aritmética |
+
+### Sistema de Renormalización y Paginación
+
+Para manejar la complejidad de los problemas, el compilador se apoya en dos subsistemas críticos:
+
+1.  **Sistema de Renormalización:**
+    *   **Particionamiento Jerárquico:** Divide el problema en subproblemas más pequeños y manejables.
+    *   **Coarse-Graining:** Abstrae detalles para analizar el sistema a diferentes escalas.
+    *   **Análisis de Flujo de Información:** Estudia cómo las restricciones y variables interactúan a través de las escalas.
+
+2.  **Sistema de Paginación:**
+    *   **Serialización Inteligente:** Guarda y carga partes del espacio de búsqueda en disco.
+    *   **Caché Multinivel (L1/L2):** Mantiene en memoria las páginas más relevantes para un acceso rápido.
+    *   **Prefetching Predictivo:** Se anticipa a las necesidades del solver y carga páginas antes de que se soliciten.
+
+### Validación Formal
+
+- **Certificados de Validez:** El sistema genera "certificados" que prueban la correctitud de las operaciones de renormalización y paginación.
+- **Validadores Independientes:** Estos certificados pueden ser verificados por un componente externo, asegurando la integridad de los resultados.
+
 ---
-## 🧬 Roadmap de Desarrollo del Flujo de Fibración
-El desarrollo del **Flujo de Fibración** se articula en varias fases estratégicas, diseñadas para llevarlo desde su estado actual de validación conceptual a una implementación robusta, optimizada y plenamente integrada en el ecosistema de `lattice-weaver`.
-### Fase 1: Refinamiento y Optimización del Core (En Progreso)
-**Objetivo:** Corregir las críticas actuales y mejorar la eficiencia y robustez de la implementación base del solver.
-*   **1.1. Optimización de la Propagación de Restricciones (Crítica):**
-    *   Implementar algoritmos de consistencia de arco (AC-3, AC-4) para una poda más agresiva del espacio de búsqueda.
-    *   Desarrollar propagadores especializados para restricciones globales (`AllDifferent`, `Sum`).
-    *   Implementar propagación incremental para re-evaluar solo las restricciones afectadas por nuevas asignaciones.
-*   **1.2. Heurísticas de Búsqueda Avanzadas (Crítica):**
-    *   Desarrollar heurísticas dinámicas que adapten su estrategia durante la búsqueda (e.g., priorizar HARD vs. SOFT).
-    *   Implementar heurísticas basadas en el impacto para guiar la búsqueda hacia las decisiones más críticas.
-    *   Integrar **Large Neighborhood Search (LNS)** para escapar de óptimos locales y mejorar la calidad de la solución.
-*   **1.3. Gestión de Memoria y Rendimiento (Crítica):**
-    *   Realizar un profiling exhaustivo para identificar y optimizar cuellos de botella.
-    *   Implementar estructuras de datos más eficientes para dominios y restricciones.
-    *   Mejorar las estrategias de cacheo para resultados de cálculos costosos.
-### Fase 2: Desarrollo de una API Robusta y Flexible
-**Objetivo:** Crear una interfaz de programación intuitiva y potente para modelar y resolver problemas con el Flujo de Fibración.
-*   **2.1. Diseño de un Lenguaje de Modelado de Alto Nivel:** Permitir la definición de variables, dominios y jerarquías de restricciones de forma declarativa.
-*   **2.2. Implementación de la API:** Desarrollo de las clases y métodos para la creación de problemas y la interacción con el solver.
-*   **2.3. Herramientas de Visualización:** Crear herramientas para visualizar la estructura del problema, el proceso de búsqueda y las soluciones encontradas.
-### Fase 3: Integración Profunda con `lattice-weaver` y Machine Learning
-**Objetivo:** Conectar el Flujo de Fibración con el resto del ecosistema `lattice-weaver` y explorar sinergias con la suite de Mini-IAs.
-*   **3.1. Integración con el `arc_engine`:** Permitir que el Flujo de Fibración utilice el `arc_engine` (acelerado por ML) para la propagación de restricciones HARD.
-*   **3.2. Desarrollo de "Ganchos" para ML:** Exponer interfaces en la API para que los modelos de ML puedan:
-    *   **Aprender Estrategias de Fibración:** Determinar la mejor manera de descomponer un problema.
-    *   **Aprender Heurísticas de Búsqueda:** Seleccionar dinámicamente las mejores heurísticas para cada subproblema.
-    *   **Predecir la Calidad de la Solución:** Guiar la búsqueda hacia regiones prometedoras del espacio de soluciones.
-### Fase 4: Validación Continua y Expansión de Casos de Uso
-**Objetivo:** Asegurar la robustez del solver y explorar su aplicación en nuevos dominios.
-*   **4.1. Benchmarking Continuo:** Mantener un conjunto de pruebas en expansión para comparar el rendimiento con solvers del estado del arte.
-*   **4.2. Aplicación a Problemas del Mundo Real:** Utilizar el Flujo de Fibración para resolver problemas complejos en dominios como la planificación logística, el diseño de sistemas o la bioinformática.
-*   **4.3. Documentación y Publicación:** Crear tutoriales exhaustivos y considerar la publicación de los hallazgos en artículos técnicos o conferencias.
+
+## 🌐 LatticeWeaver: Un Framework para la Inteligencia Artificial General
+
+LatticeWeaver es un proyecto de investigación y desarrollo a largo plazo cuyo objetivo es construir un framework para la **Inteligencia Artificial General (IAG)** basado en una profunda integración de conceptos de:
+
+-   **Matemáticas Puras:** Teoría de categorías, topología algebraica, teoría de tipos homotópica (HoTT).
+-   **Ciencia de la Computación:** Satisfacción de restricciones (CSP), análisis de algoritmos, compiladores.
+-   **Inteligencia Artificial:** Aprendizaje automático, representación del conocimiento, razonamiento simbólico.
+
+### Principios de Diseño
+
+-   **Abstracción Radical:** Todo es una estructura matemática. Los problemas se modelan como retículos, categorías o espacios topológicos.
+-   **Unificación:** Se busca un lenguaje común para expresar problemas de diferentes dominios.
+-   **Auto-optimización:** El sistema aprende y mejora continuamente a partir de su propia experiencia.
+-   **Verificación Formal:** La correctitud de los resultados es tan importante como la eficiencia.
+
+### Componentes Principales
+
+-   **`ArcEngine`:** Un motor de consistencia de arco para resolver CSPs.
+-   **`Topology`:** Herramientas para el análisis topológico de datos (TDA).
+-   **`Cubical`:** Implementación de conceptos de HoTT y tipos cúbicos.
+-   **`FCA`:** Algoritmos para el Análisis Formal de Conceptos (FCA).
+
+### Estado Actual del Proyecto
+
+El proyecto se encuentra en una fase de **integración y refactorización**. Se están unificando diferentes líneas de desarrollo (tracks) en una única base de código coherente. La prioridad actual es limpiar la estructura del repositorio, consolidar la documentación y establecer una arquitectura modular que facilite el desarrollo futuro.
+
+---
+
+## 🛠️ Cómo Contribuir
+
+1.  **Leer la Documentación:** Familiarízate con los principios de diseño y la arquitectura del proyecto.
+2.  **Revisar el Protocolo de Agentes:** Sigue las directrices establecidas para el desarrollo, la documentación y la subida de código.
+3.  **Elegir un Track:** Selecciona un área de desarrollo y comienza a trabajar en ella.
+4.  **Comunicación:** Mantén una comunicación fluida con el resto del equipo para asegurar la coherencia y evitar la duplicación de esfuerzos.
+
+**¡Gracias por tu interés en LatticeWeaver!**
+
