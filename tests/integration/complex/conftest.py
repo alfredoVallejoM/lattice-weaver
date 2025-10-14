@@ -1,20 +1,20 @@
-"""
-Fixtures para tests de integración complejos.
-"""
-
 import pytest
-from lattice_weaver.arc_engine.core import ArcEngine
+from lattice_weaver.core.csp_problem import CSP, Constraint
+from lattice_weaver.core.csp_engine.solver import CSPSolver
 from lattice_weaver.formal.cubical_engine import CubicalEngine
 from lattice_weaver.formal.type_checker import TypeChecker
 from lattice_weaver.lattice_core.parallel_fca import ParallelFCABuilder
 from lattice_weaver.topology.tda_engine import TDAEngine
-from lattice_weaver.formal.csp_integration import CSPProblem
 
 
 @pytest.fixture
 def csp_solver():
     """Solver CSP configurado."""
-    return ArcEngine()
+    # CSPSolver ahora toma una instancia de CSP en su constructor
+    # Para este fixture, retornamos una instancia de CSPSolver que puede ser configurada con un CSP específico en cada test
+    # O, si el test necesita un solver pre-configurado con un CSP, se puede crear un fixture para ese CSP y pasarlo aquí.
+    # Por simplicidad, aquí retornamos la clase CSPSolver para que los tests la instancien con el CSP adecuado.
+    return CSPSolver
 
 
 @pytest.fixture
@@ -26,50 +26,51 @@ def formal_verifier():
 
 @pytest.fixture
 def fca_builder():
-    """Constructor FCA paralelo."""
+    """
+    Constructor FCA paralelo.
+    """
     return ParallelFCABuilder()
 
 
 @pytest.fixture
 def tda_engine():
-    """Motor TDA para análisis topológico."""
+    """
+    Motor TDA para análisis topológico.
+    """
     return TDAEngine()
 
 
 @pytest.fixture
 def nqueens_4_problem():
-    """Problema N-Reinas n=4 para tests."""
-    variables = ['Q0', 'Q1', 'Q2', 'Q3']
-    domains = {var: list(range(4)) for var in variables}
+    """
+    Problema N-Reinas n=4 para tests.
+    """
+    variables = frozenset({f'Q{i}' for i in range(4)})
+    domains = {var: frozenset(range(4)) for var in variables}
     
     constraints = []
     for i in range(4):
         for j in range(i + 1, 4):
-            # No en la misma fila
-            constraints.append((
-                f'Q{i}',
-                f'Q{j}',
-                lambda ri, rj: ri != rj
-            ))
-            # No en la misma diagonal
-            constraints.append((
-                f'Q{i}',
-                f'Q{j}',
-                # La lambda debe capturar i y j para usarlos en la comparación de diagonales
-                # y solo aceptar ri, rj como argumentos de los valores de dominio.
-                lambda ri, rj, current_i=i, current_j=j: abs(ri - rj) != abs(current_i - current_j)
+            # No en la misma fila y no en la misma diagonal
+            constraints.append(Constraint(
+                scope=frozenset({f'Q{i}', f'Q{j}'}),
+                relation=lambda ri, rj, current_i=i, current_j=j: ri != rj and abs(ri - rj) != abs(current_i - current_j),
+                name=f'neq_diag_Q{i}Q{j}'
             ))
     
-    return CSPProblem(
+    return CSP(
         variables=variables,
         domains=domains,
-        constraints=constraints
+        constraints=frozenset(constraints),
+        name="NQueens_4"
     )
 
 
 @pytest.fixture
 def simple_formal_context():
-    """Contexto formal simple para tests."""
+    """
+    Contexto formal simple para tests.
+    """
     objects = ['o1', 'o2', 'o3']
     attributes = ['a1', 'a2', 'a3']
     incidence = {

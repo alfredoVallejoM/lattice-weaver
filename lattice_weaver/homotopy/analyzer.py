@@ -16,7 +16,7 @@ from typing import FrozenSet, Any, Tuple, List, Optional, Dict, Set
 from collections import defaultdict
 import json
 
-from lattice_weaver.arc_engine.core import ArcEngine
+from lattice_weaver.core.csp_problem import CSP, Constraint
 from .rules import HomotopyRules  # 🆕 AÑADIR
 
 # Type aliases
@@ -40,7 +40,7 @@ class HomotopyAnalyzer:
         homotopy_counter (int): Number of homotopies detected
     """
     
-    def __init__(self, arc_engine: Optional[ArcEngine] = None):
+    def __init__(self, csp_instance: Optional[CSP] = None):
         """
         Initializes the HomotopyAnalyzer.
         
@@ -48,12 +48,12 @@ class HomotopyAnalyzer:
             arc_engine: An optional ArcEngine instance. If None, a new one is created.
         """
         # Layer 0: Arc consistency engine
-        self.arc_engine = arc_engine if arc_engine is not None else ArcEngine()
+        self.csp_instance = csp_instance if csp_instance is not None else CSP()
         
         # 🆕 Layer 2: Homotopy rules (precomputed)
         self.rules = HomotopyRules()
-        if len(self.arc_engine.constraints) > 0:
-            self.rules.precompute_from_constraints(self.arc_engine.constraints)
+        if len(self.csp_instance.constraints) > 0:
+            self.rules.precompute_from_constraints(self.csp_instance.constraints)
         
         # Layer 2: Graph of states and specifications
         self.graph = nx.DiGraph()
@@ -134,7 +134,7 @@ class HomotopyAnalyzer:
             return False
         
         # Create a temporary ArcEngine for this check
-        temp_engine = ArcEngine()
+        temp_engine = CSP()
         
         # Parse constraints and populate the engine
         variables = {}
@@ -153,7 +153,7 @@ class HomotopyAnalyzer:
         
         # Add variables to engine
         for var_name, domain in variables.items():
-            temp_engine.add_variable(var_name, domain)
+            temp_engine.variables[var_name] = domain
         
         # Add constraints
         constraint_counter = 0
@@ -163,17 +163,19 @@ class HomotopyAnalyzer:
             constraint_counter += 1
             
             if rel_type == 'neq':
-                temp_engine.add_constraint(var1, var2, lambda a, b: a != b, cid=cid)
+                temp_engine.constraints.append(Constraint(scope=[var1, var2], relation=lambda a, b: a != b, name=cid))
             elif rel_type == 'eq':
-                temp_engine.add_constraint(var1, var2, lambda a, b: a == b, cid=cid)
+                temp_engine.constraints.append(Constraint(scope=[var1, var2], relation=lambda a, b: a == b, name=cid))
             elif rel_type == 'lt':
-                temp_engine.add_constraint(var1, var2, lambda a, b: a < b, cid=cid)
+                temp_engine.constraints.append(Constraint(scope=[var1, var2], relation=lambda a, b: a < b, name=cid))
             elif rel_type == 'gt':
-                temp_engine.add_constraint(var1, var2, lambda a, b: a > b, cid=cid)
+                temp_engine.constraints.append(Constraint(scope=[var1, var2], relation=lambda a, b: a > b, name=cid))
             # Add more relation types as needed
         
         # Run arc consistency
-        return temp_engine.enforce_arc_consistency()
+        from ..core.csp_engine.solver import AC3Solver
+        solver = AC3Solver(temp_engine)
+        return solver.enforce_arc_consistency()
     
     def specify(self, current_state: State, constraint: Constraint) -> State:
         """

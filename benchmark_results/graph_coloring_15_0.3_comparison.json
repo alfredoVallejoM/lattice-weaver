@@ -1,0 +1,26 @@
+{
+  "simple": {
+    "success": false,
+    "time": 0.004082918167114258,
+    "solution": null,
+    "timeout": false,
+    "method": "SimpleBacktracking"
+  },
+  "arc_seq": {
+    "success": false,
+    "time": 0.006672859191894531,
+    "nodes_explored": 4,
+    "solution": null,
+    "timeout": false,
+    "method": "ArcEngine"
+  },
+  "arc_par": {
+    "success": false,
+    "time": 0.0008471012115478516,
+    "nodes_explored": 0,
+    "solution": null,
+    "error": "revise_with_last_support() missing 2 required positional arguments: 'relation_func' and 'metadata'",
+    "timeout": false,
+    "method": "ArcEngine_Parallel"
+  }
+}

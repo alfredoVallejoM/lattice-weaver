@@ -1,9 +1,3 @@
-"""
-Tests de regresión: N-Reinas
-
-Valida que las soluciones de N-Reinas coincidan con golden outputs conocidos.
-"""
-
 import pytest
 from tests.integration.helpers import (
     solve_csp_problem,

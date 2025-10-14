@@ -13,7 +13,8 @@ from lattice_weaver.formal.path_finder import (
     SolutionPath,
     create_path_finder
 )
-from lattice_weaver.formal.csp_cubical_bridge import create_simple_csp_bridge
+from lattice_weaver.core.csp_problem import CSP, Constraint
+from lattice_weaver.formal.csp_cubical_bridge import CSPToCubicalBridge
 
 
 class TestSolutionPath:
@@ -70,11 +71,12 @@ class TestPathFinderConstruction:
     
     def test_create_path_finder(self):
         """Test: Crear PathFinder."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {1, 2}},
+        csp = CSP(
+            variables={'X', 'Y'},
+            domains={'X': frozenset({1, 2}), 'Y': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         
         finder = PathFinder(bridge)
         
@@ -83,11 +85,12 @@ class TestPathFinderConstruction:
     
     def test_create_path_finder_custom_depth(self):
         """Test: Crear PathFinder con profundidad personalizada."""
-        bridge = create_simple_csp_bridge(
-            variables=['X'],
-            domains={'X': {1, 2}},
+        csp = CSP(
+            variables={'X'},
+            domains={'X': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         
         finder = PathFinder(bridge, max_search_depth=5)
         
@@ -95,11 +98,12 @@ class TestPathFinderConstruction:
     
     def test_create_path_finder_function(self):
         """Test: Función create_path_finder."""
-        bridge = create_simple_csp_bridge(
-            variables=['X'],
-            domains={'X': {1, 2}},
+        csp = CSP(
+            variables={'X'},
+            domains={'X': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         
         finder = create_path_finder(bridge, max_depth=15)
         
@@ -112,11 +116,12 @@ class TestHammingDistance:
     
     def test_hamming_distance_identical(self):
         """Test: Distancia de Hamming entre soluciones idénticas."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {1, 2}},
+        csp = CSP(
+            variables={'X', 'Y'},
+            domains={'X': frozenset({1, 2}), 'Y': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge)
         
         solution = {'X': 1, 'Y': 2}
@@ -126,11 +131,12 @@ class TestHammingDistance:
     
     def test_hamming_distance_one_diff(self):
         """Test: Distancia de Hamming con una diferencia."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {1, 2}},
+        csp = CSP(
+            variables={'X', 'Y'},
+            domains={'X': frozenset({1, 2}), 'Y': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge)
         
         sol1 = {'X': 1, 'Y': 2}
@@ -141,11 +147,12 @@ class TestHammingDistance:
     
     def test_hamming_distance_all_diff(self):
         """Test: Distancia de Hamming con todas las variables diferentes."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y', 'Z'],
-            domains={'X': {1, 2}, 'Y': {1, 2}, 'Z': {1, 2}},
+        csp = CSP(
+            variables={'X', 'Y', 'Z'},
+            domains={'X': frozenset({1, 2}), 'Y': frozenset({1, 2}), 'Z': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge)
         
         sol1 = {'X': 1, 'Y': 1, 'Z': 1}
@@ -160,11 +167,12 @@ class TestPathFinding:
     
     def test_find_path_identical_solutions(self):
         """Test: Camino entre soluciones idénticas."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {1, 2}},
+        csp = CSP(
+            variables={'X', 'Y'},
+            domains={'X': frozenset({1, 2}), 'Y': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge)
         
         solution = {'X': 1, 'Y': 2}
@@ -178,11 +186,12 @@ class TestPathFinding:
     
     def test_find_path_simple(self):
         """Test: Encontrar camino simple."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2, 3}, 'Y': {1, 2, 3}},
-            constraints=[('X', 'Y', lambda x, y: x != y)]
+        csp = CSP(
+            variables={'X', 'Y'},
+            domains={'X': frozenset({1, 2, 3}), 'Y': frozenset({1, 2, 3})},
+            constraints=[Constraint(scope=frozenset({'X', 'Y'}), relation=lambda x, y: x != y, name='neq_xy')]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge)
         
         sol1 = {'X': 1, 'Y': 2}
@@ -198,13 +207,14 @@ class TestPathFinding:
     def test_find_path_no_path(self):
         """Test: No existe camino entre soluciones."""
         # CSP donde las soluciones están desconectadas
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {1, 2}},
+        csp = CSP(
+            variables={'X', 'Y'},
+            domains={'X': frozenset({1, 2}), 'Y': frozenset({1, 2})},
             constraints=[
-                ('X', 'Y', lambda x, y: (x == 1 and y == 2) or (x == 2 and y == 1))
+                Constraint(scope=frozenset({'X', 'Y'}), relation=lambda x, y: (x == 1 and y == 2) or (x == 2 and y == 1), name='custom_constraint')
             ]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge, max_search_depth=5)
         
         sol1 = {'X': 1, 'Y': 2}
@@ -250,11 +260,12 @@ class TestPathFinding:
     
     def test_find_path_caching(self):
         """Test: Caché de caminos."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {1, 2}},
+        csp = CSP(
+            variables={'X', 'Y'},
+            domains={'X': frozenset({1, 2}), 'Y': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge)
         
         sol1 = {'X': 1, 'Y': 1}
@@ -274,11 +285,12 @@ class TestEquivalence:
     
     def test_are_equivalent_true(self):
         """Test: Soluciones equivalentes."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2, 3}, 'Y': {1, 2, 3}},
-            constraints=[('X', 'Y', lambda x, y: x != y)]
+        csp = CSP(
+            variables={'X', 'Y'},
+            domains={'X': frozenset({1, 2, 3}), 'Y': frozenset({1, 2, 3})},
+            constraints=[Constraint(scope=frozenset({'X', 'Y'}), relation=lambda x, y: x != y, name='neq_xy')]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge)
         
         sol1 = {'X': 1, 'Y': 2}
@@ -288,13 +300,14 @@ class TestEquivalence:
     
     def test_are_equivalent_false(self):
         """Test: Soluciones no equivalentes."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {1, 2}},
+        csp = CSP(
+            variables={'X', 'Y'},
+            domains={'X': frozenset({1, 2}), 'Y': frozenset({1, 2})},
             constraints=[
-                ('X', 'Y', lambda x, y: (x == 1 and y == 2) or (x == 2 and y == 1))
+                Constraint(scope=frozenset({'X', 'Y'}), relation=lambda x, y: (x == 1 and y == 2) or (x == 2 and y == 1), name='custom_constraint')
             ]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge, max_search_depth=3)
         
         sol1 = {'X': 1, 'Y': 2}
@@ -310,11 +323,12 @@ class TestNeighbors:
     
     def test_get_solution_neighbors(self):
         """Test: Obtener vecinos de una solución."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {1, 2}},
+        csp = CSP(
+            variables={'X', 'Y'},
+            domains={'X': frozenset({1, 2}), 'Y': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge)
         
         solution = {'X': 1, 'Y': 1}
@@ -364,11 +378,12 @@ class TestCaching:
     
     def test_clear_cache(self):
         """Test: Limpiar caché."""
-        bridge = create_simple_csp_bridge(
-            variables=['X'],
-            domains={'X': {1, 2}},
+        csp = CSP(
+            variables={'X'},
+            domains={'X': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge)
         
         # Buscar camino (cachear)
@@ -385,11 +400,12 @@ class TestStringRepresentation:
     
     def test_str_representation(self):
         """Test: Representación en string de PathFinder."""
-        bridge = create_simple_csp_bridge(
-            variables=['X'],
-            domains={'X': {1, 2}},
+        csp = CSP(
+            variables={'X'},
+            domains={'X': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge, max_search_depth=15)
         
         str_repr = str(finder)
@@ -398,11 +414,12 @@ class TestStringRepresentation:
     
     def test_repr_representation(self):
         """Test: Representación detallada de PathFinder."""
-        bridge = create_simple_csp_bridge(
-            variables=['X'],
-            domains={'X': {1, 2}},
+        csp = CSP(
+            variables={'X'},
+            domains={'X': frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         finder = PathFinder(bridge)
         
         repr_str = repr(finder)

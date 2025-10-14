@@ -4,7 +4,7 @@ Tests unitarios para SudokuProblem.
 
 import pytest
 from lattice_weaver.problems.generators.sudoku import SudokuProblem
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_problem import CSP
 
 
 class TestSudokuProblem:
@@ -40,7 +40,7 @@ class TestSudokuProblem:
     def test_generate_creates_arc_engine(self):
         """Test que generate() crea un ArcEngine."""
         engine = self.family.generate(size=4, difficulty='easy')
-        assert isinstance(engine, ArcEngine)
+        assert isinstance(engine, CSP)
     
     def test_generate_4x4_correct_variables(self):
         """Test generación de Sudoku 4x4."""

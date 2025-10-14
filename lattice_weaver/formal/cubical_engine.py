@@ -12,8 +12,8 @@ Homotópica (HoTT) que integra todos los componentes formales de LatticeWeaver:
 El CubicalEngine permite formalizar el razonamiento sobre problemas CSP
 en un sistema de tipos con fundamentos homotópicos.
 
-Autor: LatticeWeaver Team
-Fecha: 11 de Octubre de 2025
+Autor: LatticeWeaver Development Team
+Fecha: 14 de Octubre de 2025
 """
 
 from typing import Optional, List, Dict, Set, Tuple, Any
@@ -217,7 +217,8 @@ class CubicalEngine:
         """
         Busca automáticamente una prueba para una meta.
         
-        Implementa búsqueda en profundidad limitada con tácticas básicas.
+        Implementa búsqueda en profundidad limitada utilizando tácticas básicas de construcción de pruebas,
+    como reflexividad, introducción de lambda para tipos Pi e introducción de par para tipos Sigma.
         
         Args:
             goal: Meta de prueba

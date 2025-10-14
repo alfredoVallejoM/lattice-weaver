@@ -10,7 +10,7 @@ import logging
 
 from ..base import ProblemFamily
 
-from lattice_weaver.arc_engine.constraints import not_equal
+from lattice_weaver.core.csp_problem import CSP, Constraint
 from ..utils.validators import validate_graph_coloring_solution
 from ..utils.graph_generators import (
     generate_random_graph,
@@ -206,13 +206,13 @@ class GraphColoringProblem(ProblemFamily):
         edges = self._generate_edges(**params)
         
         # Crear ArcEngine
-        engine = ArcEngine()
+        engine = CSP()
         
         # Añadir variables (una por nodo, valor = color)
         for i in range(n_nodes):
             var_name = f'V{i}'
             domain = list(range(n_colors))  # Colores disponibles [0, n_colors-1]
-            engine.add_variable(var_name, domain)
+            engine.variables[var_name] = domain
             logger.debug(f"Añadida variable {var_name} con dominio {domain}")
         
         # Añadir restricciones (una por arista)
@@ -221,7 +221,7 @@ class GraphColoringProblem(ProblemFamily):
             var_j = f'V{j}'
             
             # Restricción: colores diferentes
-            engine.add_constraint(var_i, var_j, 'not_equal') # Usar el nombre de la relación registrada
+            engine.constraints.append(Constraint(scope=[var_i, var_j], relation=lambda a, b: a != b, name='not_equal'))
             logger.debug(f"Añadida restricción entre {var_i} y {var_j}")
         
         logger.info(f"Problema Graph Coloring generado: {n_nodes} variables, {len(edges)} restricciones")

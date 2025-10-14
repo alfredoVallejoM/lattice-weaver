@@ -5,7 +5,7 @@ Este módulo proporciona fixtures pre-configuradas de los motores principales
 del sistema para facilitar los tests de integración.
 """
 import pytest
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_problem import CSP
 from lattice_weaver.formal.csp_integration import CSPProblem
 from lattice_weaver.lattice_core import ParallelFCAEngine
 from lattice_weaver.topology import create_tda_engine
@@ -19,7 +19,7 @@ def arc_engine():
     Retorna una instancia del motor de resolución CSP con configuración por defecto.
     Scope 'module' para reutilizar entre tests del mismo módulo.
     """
-    return ArcEngine()
+    return CSP(variables=set(), domains={}, constraints=[], name="TestCSP")
 
 @pytest.fixture(scope="module")
 def fca_engine():

@@ -1,0 +1,22 @@
+{
+  "level_name": "renormalization",
+  "timestamp": 1760394094.2362978,
+  "type_checked": true,
+  "invariants_verified": [
+    "complexity_reduction"
+  ],
+  "runtime_tests_passed": 1,
+  "runtime_tests_failed": 1,
+  "speedup_measured": 7391.116865772633,
+  "memory_reduction": 0.9,
+  "correctness_rate": 0.0,
+  "signature": "676dabce278a57d5ff52910b3ecd38f9c5e33cc85ca4dcfe11fc44982062b5ef",
+  "metadata": {
+    "k_factor": 5,
+    "partition_strategy": "metis",
+    "original_vars": 50,
+    "renormalized_vars": 5,
+    "solution_preservation_rate": 0.0,
+    "effective_domains_correctness": 1.0
+  }
+}

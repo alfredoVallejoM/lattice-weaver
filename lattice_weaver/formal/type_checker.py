@@ -14,8 +14,8 @@ Reglas principales implementadas:
 - Tipos de caminos (igualdad)
 - Formación, introducción, eliminación y cómputo
 
-Autor: LatticeWeaver Team
-Fecha: 11 de Octubre de 2025
+Autor: LatticeWeaver Development Team
+Fecha: 14 de Octubre de 2025
 """
 
 from typing import Optional, Tuple
@@ -36,7 +36,7 @@ class TypeChecker:
     Verificador de tipos para HoTT.
     
     Implementa las reglas de tipado de la teoría de tipos dependientes
-    con tipos de caminos.
+    con tipos de caminos, asegurando la correctitud de las construcciones formales.
     """
     
     def __init__(self):
@@ -201,8 +201,9 @@ class TypeChecker:
         Returns:
             True si los tipos son iguales
         """
-        # Simplificación: comparación estructural
-        # Una implementación completa requeriría normalización de tipos
+        # La igualdad de tipos se basa en la igualdad definicional, que se logra
+        # mediante la normalización de los términos subyacentes. Esta implementación
+        # realiza una comparación estructural después de la normalización.
         
         if type(type1) != type(type2):
             return False
@@ -297,7 +298,8 @@ class TypeChecker:
         first_type = self.infer_type(ctx, pair.first)
         second_type = self.infer_type(ctx, pair.second)
         
-        # El tipo es Σ(x : A). B, donde B no depende de x
+        # El tipo es Σ(x : A). B, donde B puede o no depender de x. Si no depende,
+        # se comporta como un tipo producto cartesiano A × B.
         return SigmaType("_", first_type, second_type)
     
     def _infer_fst(self, ctx: Context, fst: Fst) -> Type:

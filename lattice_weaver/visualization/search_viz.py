@@ -37,8 +37,24 @@ def load_trace(path: str) -> pd.DataFrame:
         >>> print(df.shape)
         (100, 8)
     """
-    from lattice_weaver.core.csp_engine.tracing import load_trace as _load_trace
-    return _load_trace(path)
+    
+    # Implementación de carga de trace reubicada aquí
+    file_path = Path(path)
+    if not file_path.exists():
+        raise FileNotFoundError(f"El archivo de trace no se encontró: {path}")
+
+    if file_path.suffix == ".csv":
+        df = pd.read_csv(file_path)
+    elif file_path.suffix == ".jsonl":
+        df = pd.read_json(file_path, lines=True)
+    else:
+        raise ValueError(f"Formato de archivo no soportado: {file_path.suffix}. Use .csv o .jsonl")
+
+    # Convertir timestamp a datetime si no lo está ya
+    if "timestamp" in df.columns:
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+
+    return df
 
 
 def plot_search_tree(trace_df: pd.DataFrame, max_nodes: int = 1000) -> go.Figure:
@@ -319,12 +335,11 @@ def generate_report(
     
     backtrack_rate = backtracks / nodes_explored if nodes_explored > 0 else 0
     
+    duration = 0.0
     if len(trace_df) >= 2:
-        start_time = trace_df['timestamp'].min()
-        end_time = trace_df['timestamp'].max()
-        duration = end_time - start_time
-    else:
-        duration = 0
+        start_time = trace_df["timestamp"].min()
+        end_time = trace_df["timestamp"].max()
+        duration = (end_time - start_time).total_seconds()
     
     # Generar visualizaciones
     fig_tree = plot_search_tree(trace_df)
@@ -789,7 +804,7 @@ def generate_advanced_report(
     if len(trace_df) >= 2:
         start_time = trace_df['timestamp'].min()
         end_time = trace_df['timestamp'].max()
-        duration = end_time - start_time
+        duration = (end_time - start_time).total_seconds()
     else:
         duration = 0
     

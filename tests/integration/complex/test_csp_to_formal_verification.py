@@ -1,136 +1,117 @@
-"""
-Tests de integración: CSP → Verificación Formal
-
-Valida que las soluciones CSP puedan traducirse a proposiciones formales
-y verificarse correctamente.
-"""
-
 import pytest
+
+from lattice_weaver.core.csp_problem import CSP, Constraint
+from lattice_weaver.core.csp_engine.solver import CSPSolver, CSPSolutionStats
+from lattice_weaver.formal.csp_cubical_bridge import CSPToCubicalBridge
+from lattice_weaver.formal.cubical_engine import CubicalEngine
+
+
+# Helper function to generate N-Queens CSP for testing
+def generate_nqueens_csp(n: int) -> CSP:
+    variables = {f'Q{i}' for i in range(n)}
+    domains = {f'Q{i}': frozenset(range(n)) for i in range(n)}
+    constraints = []
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            # Queens must not be in the same row (handled by domain)
+            # Queens must not be in the same column (handled by variable)
+            # Queens must not be in the same diagonal
+            constraints.append(Constraint(
+                scope=frozenset({f'Q{i}', f'Q{j}'}),
+                relation=lambda qi, qj, i=i, j=j: qi != qj and abs(qi - qj) != abs(i - j),
+                name=f'diag_neq_Q{i}Q{j}'
+            ))
+    return CSP(variables=variables, domains=domains, constraints=constraints)
 
 
 @pytest.mark.integration
 @pytest.mark.complex
-def test_csp_solution_to_formal_proof(csp_solver, formal_verifier, nqueens_4_problem):
+def test_csp_solution_to_formal_proof():
     """
     Test: Resolver CSP y verificar solución formalmente.
-    
     Flujo:
     1. Resolver problema CSP (N-Reinas n=4)
     2. Traducir solución a proposición formal
     3. Verificar que la proposición es válida
-    
     Validación: Solución CSP ≡ Prueba formal válida
     """
-    # 1. Resolver CSP
-    stats = csp_solver.solve(nqueens_4_problem, max_solutions=1)
-    
+    n = 4
+    csp_problem = generate_nqueens_csp(n)
+    solver = CSPSolver(csp_problem)
+    stats: CSPSolutionStats = solver.solve(max_solutions=1)
+
     assert len(stats.solutions) > 0, "Debe encontrar al menos una solución"
     solution = stats.solutions[0]
-    
-    # 2. Traducir a proposición formal
-    # La solución es una asignación de variables a valores
-    # En el sistema formal, esto se traduce a un término
-    # Por ahora, validamos que la solución es consistente
-    
-    # Verificar que todas las variables están asignadas
-    assert len(solution.assignment) == len(nqueens_4_problem.variables)
-    
-    # Verificar que todas las restricciones se satisfacen
-    for v1, v2, predicate in nqueens_4_problem.constraints:
-        val1 = solution.assignment[v1]
-        val2 = solution.assignment[v2]
-        assert predicate(val1, val2), f"Restricción {v1}={val1}, {v2}={val2} no satisfecha"
-    
-    # 3. Verificación formal (simplificada)
-    # En un sistema completo, esto invocaría al type checker
-    # Por ahora, verificamos la consistencia estructural
-    assert all(0 <= v < 4 for v in solution.assignment.values()), "Valores fuera de dominio"
-    
+
+    # Use CSPToCubicalBridge to verify the solution
+    bridge = CSPToCubicalBridge(csp_problem)
+    assert bridge.verify_solution(solution) is True
+
     print(f"✅ Solución CSP verificada formalmente: {solution}")
 
 
 @pytest.mark.integration
 @pytest.mark.complex
-def test_csp_constraints_to_formal_types(csp_solver, formal_verifier, nqueens_4_problem):
+def test_csp_constraints_to_formal_types():
     """
     Test: Traducir restricciones CSP a tipos dependientes.
-    
     Flujo:
     1. Definir restricciones CSP complejas
     2. Traducir a tipos dependientes
     3. Verificar type-checking
-    
     Validación: Restricciones CSP ≡ Tipos válidos
     """
-    # 1. Verificar estructura de restricciones
-    assert len(nqueens_4_problem.constraints) > 0
-    
-    # 2. Traducción a tipos (simplificada)
-    # Cada restricción binaria (v1, v2, pred) se traduce a un tipo dependiente
-    # Π(v1: Dom1, v2: Dom2) → pred(v1, v2) : Bool
-    
-    type_constraints = []
-    for v1, v2, predicate in nqueens_4_problem.constraints:
-        # Verificar que la restricción es callable
-        assert callable(predicate), f"Restricción {v1}-{v2} no es callable"
-        
-        # Simular type-checking: verificar que el predicado es consistente
-        # con los dominios
-        dom1 = nqueens_4_problem.domains[v1]
-        dom2 = nqueens_4_problem.domains[v2]
-        
-        # Probar con algunos valores
-        try:
-            result = predicate(dom1[0], dom2[0])
-            assert isinstance(result, bool), "Predicado debe retornar bool"
-            type_constraints.append((v1, v2, "valid"))
-        except Exception as e:
-            pytest.fail(f"Restricción {v1}-{v2} falló type-checking: {e}")
-    
-    # 3. Verificar que todas las restricciones pasaron type-checking
-    assert len(type_constraints) == len(nqueens_4_problem.constraints)
-    
-    print(f"✅ {len(type_constraints)} restricciones traducidas a tipos válidos")
+    n = 4
+    csp_problem = generate_nqueens_csp(n)
+    bridge = CSPToCubicalBridge(csp_problem)
+
+    # The cubical_type generation implicitly translates constraints to formal types
+    cubical_type = bridge.cubical_type
+    assert cubical_type is not None
+    assert len(cubical_type.constraint_props) == len(csp_problem.constraints)
+
+    # Further formal verification would involve a full CubicalEngine and TypeChecker
+    # For now, we assert that the bridge successfully created the cubical type.
+    print(f"✅ {len(cubical_type.constraint_props)} restricciones traducidas a tipos válidos")
 
 
 @pytest.mark.integration
 @pytest.mark.complex
-def test_csp_optimization_with_formal_guarantees(csp_solver, nqueens_4_problem):
+def test_csp_optimization_with_formal_guarantees():
     """
     Test: Resolver CSP con optimizaciones y verificar equivalencia formal.
-    
     Flujo:
     1. Resolver CSP con optimizaciones habilitadas
     2. Resolver CSP sin optimizaciones
     3. Verificar que las soluciones son equivalentes
-    
     Validación: Solución optimizada ≡ Solución original
     """
-    # 1. Resolver con optimizaciones (por defecto están habilitadas)
-    stats_optimized = csp_solver.solve(nqueens_4_problem, max_solutions=2)
-    
+    n = 4
+    csp_problem = generate_nqueens_csp(n)
+
+    # 1. Resolver con optimizaciones (por defecto están habilitadas en CSPSolver)
+    solver_optimized = CSPSolver(csp_problem, use_ac3=True)
+    stats_optimized: CSPSolutionStats = solver_optimized.solve(max_solutions=2)
+
     assert len(stats_optimized.solutions) > 0, "Debe encontrar soluciones"
-    
-    # 2. Resolver sin optimizaciones (crear nuevo solver básico)
-    # Por ahora, simplemente resolvemos de nuevo
-    stats_baseline = csp_solver.solve(nqueens_4_problem, max_solutions=2)
-    
+
+    # 2. Resolver sin optimizaciones (deshabilitar AC3)
+    solver_baseline = CSPSolver(csp_problem, use_ac3=False)
+    stats_baseline: CSPSolutionStats = solver_baseline.solve(max_solutions=2)
+
     # 3. Verificar equivalencia
-    # Las soluciones pueden estar en diferente orden, pero deben ser las mismas
     assert len(stats_optimized.solutions) == len(stats_baseline.solutions), \
         "Número de soluciones debe ser igual"
-    
-    # Verificar que todas las soluciones son válidas
-    for solution in stats_optimized.solutions:
-        # Verificar restricciones
-        for v1, v2, predicate in nqueens_4_problem.constraints:
 
+    # Convertir listas de soluciones a conjuntos de frozensets para comparación de equivalencia
+    set_optimized_solutions = {frozenset(sol.items()) for sol in stats_optimized.solutions}
+    set_baseline_solutions = {frozenset(sol.items()) for sol in stats_baseline.solutions}
 
-            val1 = solution.assignment[v1]
-            val2 = solution.assignment[v2]
-            assert predicate(val1, val2), \
-                f"Solución optimizada viola restricción {v1}={val1}, {v2}={val2}"
-    
+    assert set_optimized_solutions == set_baseline_solutions, \
+        "Las soluciones optimizadas deben ser equivalentes a las soluciones de línea base"
+
     print(f"✅ Optimizaciones preservan semántica: {len(stats_optimized.solutions)} soluciones válidas")
-    print(f"   Nodos explorados: {stats_optimized.nodes_explored}")
+    print(f"   Nodos explorados (optimizado): {stats_optimized.nodes_explored}")
+    print(f"   Nodos explorados (baseline): {stats_baseline.nodes_explored}")
 

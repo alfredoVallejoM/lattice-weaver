@@ -1,0 +1,23 @@
+{
+  "level_name": "renormalization",
+  "timestamp": 1760394048.039044,
+  "type_checked": true,
+  "invariants_verified": [
+    "satisfiability_preservation",
+    "complexity_reduction"
+  ],
+  "runtime_tests_passed": 2,
+  "runtime_tests_failed": 0,
+  "speedup_measured": 1.2938368194832435,
+  "memory_reduction": 0.5,
+  "correctness_rate": 0.0,
+  "signature": "bd94b195c6dc7abd3cd8571447e18b1074a5fdf28dbba93523433a8f045ea343",
+  "metadata": {
+    "k_factor": 2,
+    "partition_strategy": "topological",
+    "original_vars": 4,
+    "renormalized_vars": 2,
+    "solution_preservation_rate": 0.0,
+    "effective_domains_correctness": 0.7
+  }
+}

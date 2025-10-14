@@ -30,7 +30,7 @@ import logging
 from typing import Dict, List, Tuple, Optional, Any
 import random
 
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_problem import CSP, Constraint
 from lattice_weaver.problems.base import ProblemFamily
 from lattice_weaver.problems.catalog import register_family
 
@@ -162,7 +162,7 @@ class JobShopSchedulingProblem(ProblemFamily):
             }
         }
     
-    def generate(self, **params) -> ArcEngine:
+    def generate(self, **params) -> CSP:
         """
         Genera un problema de Job Shop Scheduling.
         
@@ -200,7 +200,7 @@ class JobShopSchedulingProblem(ProblemFamily):
         horizon = total_duration  # Cota superior: todos los trabajos en secuencia
         
         # Crear ArcEngine
-        engine = ArcEngine()
+        csp_problem = CSP(variables=set(), domains={}, constraints=[], name=f"JobShopScheduling_{instance_name}")
         
         # Variables: operation_{job}_{op_index} -> tiempo de inicio
         # Dominio: [0, horizon - duration]
@@ -209,7 +209,7 @@ class JobShopSchedulingProblem(ProblemFamily):
                 var_name = f'op_{job_id}_{op_index}'
                 # Dominio: tiempos de inicio válidos
                 domain = list(range(horizon - duration + 1))
-                engine.add_variable(var_name, domain)
+                csp_problem.add_variable(var_name, domain)
         
         logger.debug(f"Añadidas {sum(len(job) for job in operations)} variables (operaciones)")
         
@@ -230,7 +230,7 @@ class JobShopSchedulingProblem(ProblemFamily):
                 constraint = make_precedence_constraint(duration1)
                 constraint.__name__ = f'prec_{job_id}_{op_index}'
                 cid = f'precedence_{job_id}_{op_index}'
-                engine.add_constraint(var1, var2, constraint, cid=cid)
+                csp_problem.add_constraint(Constraint(scope=frozenset({var1, var2}), relation=constraint, name=cid))
                 constraint_count += 1
         
         logger.debug(f"Añadidas {constraint_count} restricciones de precedencia")
@@ -263,12 +263,12 @@ class JobShopSchedulingProblem(ProblemFamily):
                     constraint = make_no_overlap_constraint(dur1, dur2)
                     constraint.__name__ = f'no_overlap_m{machine}_{job1}_{op1}_{job2}_{op2}'
                     cid = f'capacity_m{machine}_{job1}_{op1}_{job2}_{op2}'
-                    engine.add_constraint(var1, var2, constraint, cid=cid)
+                    csp_problem.add_constraint(Constraint(scope=frozenset({var1, var2}), relation=constraint, name=cid))
                     constraint_count += 1
         
         logger.info(f"Problema Job Shop Scheduling generado: {n_jobs} trabajos, {n_machines} máquinas, {constraint_count} restricciones")
         
-        return engine
+        return csp_problem
     
     def _generate_random_instance(self, n_jobs: int, n_machines: int, max_duration: int, seed: Optional[int] = None) -> List[List[Tuple[int, int]]]:
         """

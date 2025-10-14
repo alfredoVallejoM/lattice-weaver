@@ -19,8 +19,8 @@ Diferencias con álgebra booleana:
 - La negación es constructiva: ¬a = (a → ⊥)
 - La implicación no es definible desde otras operaciones
 
-Autor: LatticeWeaver Team
-Fecha: 11 de Octubre de 2025
+Autor: LatticeWeaver Development Team
+Fecha: 14 de Octubre de 2025
 """
 
 from typing import Any, Optional, Set, FrozenSet
