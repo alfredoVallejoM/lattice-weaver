@@ -31,8 +31,10 @@ def get_test_cases():
     return test_cases
 
 if __name__ == "__main__":
+    # Este bloque asegura que pytest no intente recolectar este archivo como un test
+    # y solo se ejecute cuando el script es llamado directamente.
     cases = get_test_cases()
     print(f"Generados {len(cases)} casos de prueba:")
     for case in cases:
-        print(f	- {case["name"]})
+        print(f"  - {case['name']}")
 

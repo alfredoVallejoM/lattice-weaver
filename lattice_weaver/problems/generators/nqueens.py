@@ -10,7 +10,7 @@ import logging
 
 from ..base import ProblemFamily
 from ..utils.validators import validate_nqueens_solution
-from lattice_weaver.arc_engine.constraints import Constraint, get_relation
+from lattice_weaver.core.csp_problem import CSP, Constraint
 
 logger = logging.getLogger(__name__)
 
@@ -90,20 +90,11 @@ class NQueensProblem(ProblemFamily):
         logger.info(f"Generando problema N-Queens con n={n}")
         
         # Importar ConstraintGraph
-        from lattice_weaver.arc_engine.csp_solver import ConstraintGraph
         
-        # Crear ConstraintGraph
-        cg = ConstraintGraph()
         
-        # Añadir variables (una por fila, valor = columna)
-        for i in range(n):
-            var_name = f'Q{i}'
-            domain = list(range(n))  # Columnas posibles [0, n-1]
-            cg.add_variable(var_name, set(domain)) # Convertir a set
-            logger.debug(f"Añadida variable {var_name} con dominio {domain}")
-        
-        # Añadir restricciones
-        constraint_count = 0
+        variables = [f'Q{i}' for i in range(n)]
+        domains = {var: list(range(n)) for var in variables}
+        constraints = []
         
         for i in range(n):
             for j in range(i + 1, n):
@@ -111,19 +102,18 @@ class NQueensProblem(ProblemFamily):
                 var_j = f'Q{j}'
                 
                 # Restricción de no ataque en la misma columna (ya cubierta por la diagonal si n > 1)
-                # cg.add_constraint(var_i, var_j, Constraint(var_i, var_j, "nqueens_not_equal"))
+                # constraints.append(Constraint(scope=[var_i, var_j], relation=lambda val_i, val_j: val_i != val_j, name="nqueens_not_equal"))
 
                 # Restricción de no ataque en la misma diagonal
-                cg.add_constraint(var_i, var_j, Constraint(var_i, var_j, "nqueens_not_diagonal", metadata={
+                constraints.append(Constraint(scope=[var_i, var_j], relation=lambda val_i, val_j, i=i, j=j: abs(val_i - val_j) != abs(i - j), name="nqueens_not_diagonal", metadata={
                     "var1_idx": i,
                     "var2_idx": j
                 }))
-                constraint_count += 1
-                logger.debug(f"Añadida restricción entre {var_i} y {var_j}")
         
-        logger.info(f"Problema N-Queens generado: {n} variables, {constraint_count} restricciones")
+        csp_instance = CSP(variables, domains, constraints)
+        logger.info(f"Problema N-Queens generado: {len(variables)} variables, {len(constraints)} restricciones")
         
-        return cg
+        return csp_instance
     
     def validate_solution(self, solution: Dict[str, Any], **params) -> bool:
         """

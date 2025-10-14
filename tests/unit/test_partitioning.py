@@ -5,6 +5,8 @@ Pruebas para las estrategias de particionamiento de variables.
 """
 
 import unittest
+from collections import defaultdict
+import networkx as nx
 from lattice_weaver.core.csp_problem import CSP, Constraint
 from lattice_weaver.renormalization.partition import VariablePartitioner
 
@@ -67,4 +69,37 @@ class TestSymmetryPartitioner(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+    def test_signature_generation_and_grouping(self):
+        """Verifica que la generación de firmas y la agrupación funcionan como se espera."""
+        partitioner = VariablePartitioner(strategy='symmetry')
+        csp = create_symmetric_csp()
+        
+        signatures = defaultdict(list)
+        constraint_graph = partitioner._build_constraint_graph(csp)
+        
+        generated_signatures = {}
+        for var in sorted(list(csp.variables)):
+            domain_size = len(csp.domains[var])
+            degree = constraint_graph.degree(var)
+            neighbor_signatures = []
+            for neighbor in sorted(list(constraint_graph.neighbors(var))):
+                neighbor_sig = (len(csp.domains[neighbor]), constraint_graph.degree(neighbor))
+                neighbor_signatures.append(neighbor_sig)
+            constraints_signature = frozenset(neighbor_signatures)
+            signature = (domain_size, degree, constraints_signature)
+            generated_signatures[var] = signature
+            signatures[signature].append(var)
+
+        # Verificar que todas las firmas son idénticas
+        first_signature = next(iter(generated_signatures.values()))
+        for sig in generated_signatures.values():
+            self.assertEqual(sig, first_signature)
+
+        # Verificar que todas las variables se agrupan en un solo grupo
+        groups = [set(group) for group in signatures.values()]
+        self.assertEqual(len(groups), 1)
+        self.assertCountEqual(groups[0], {"v0", "v1", "v2", "v3"})
 

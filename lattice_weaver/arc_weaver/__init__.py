@@ -17,7 +17,8 @@ Versión: 4.2.0
 # Este __init__.py ahora solo exporta los componentes del nuevo motor
 # para mantener la compatibilidad temporalmente.
 
-from lattice_weaver.arc_engine.csp_solver import CSPSolver, CSPProblem, CSPSolution
+from ..core.csp_problem import CSP as CSPProblem
+from ..core.csp_engine.solver import CSPSolver, CSPSolution
 
 
 # from ..core.csp_engine.clustering import (

@@ -12,18 +12,18 @@ importar directamente desde `lattice_weaver.arc_engine`.
 """
 
 # Re-exportar desde arc_engine
-from lattice_weaver.arc_engine.csp_solver import (
+from .solver import (
     CSPSolver as AdaptiveConsistencyEngine,
     CSPSolver as AC3Solver,
-    CSPSolverResult as SolutionStats,
-    CSPProblem,
+    CSPSolutionStats as SolutionStats,
     CSPSolution,
     solve_csp
 )
+from ..csp_problem import CSP as CSPProblem
 
-from lattice_weaver.arc_engine.constraints import Constraint
-from lattice_weaver.arc_engine.core import ArcEngine
-from lattice_weaver.arc_engine.domains import Domain
+from ..csp_problem import Constraint
+
+
 
 __all__ = [
     'AdaptiveConsistencyEngine',
@@ -32,8 +32,8 @@ __all__ = [
     'CSPProblem',
     'CSPSolution',
     'Constraint',
-    'ArcEngine',
-    'Domain',
+
+
     'solve_csp'
 ]
 

@@ -1,4 +1,15 @@
 
+"""
+Módulo para la gestión del sistema de paginación multinivel de LatticeWeaver.
+
+Este módulo define la clase `PageManager`, que orquesta la interacción entre
+los diferentes niveles de caché (L1, L2, L3) para gestionar eficientemente
+las páginas de datos, optimizando el acceso a la memoria y la persistencia.
+
+Autor: LatticeWeaver Development Team
+Fecha: 14 de Octubre de 2025
+"""
+
 from typing import Optional, List, Dict, Any
 
 from lattice_weaver.paging.page import Page
@@ -6,8 +17,18 @@ from lattice_weaver.paging.cache_levels import L1Cache, L2Cache, L3Cache, CacheL
 
 class PageManager:
     """
-    Orquesta el sistema de paginación, gestionando las solicitudes de páginas,
-    la asignación de memoria, el prefetching y las políticas de desalojo.
+    Orquesta el sistema de paginación multinivel.
+
+    Gestiona las solicitudes de páginas, la asignación de memoria, el prefetching
+    y las políticas de desalojo a través de una jerarquía de caché (L1, L2, L3).
+    Su objetivo es minimizar la latencia de acceso a los datos y optimizar el uso
+    de los recursos de memoria.
+
+    Attributes:
+        l1_cache (L1Cache): Caché de primer nivel (más rápida, menor capacidad).
+        l2_cache (L2Cache): Caché de segundo nivel (intermedia en velocidad y capacidad).
+        l3_cache (L3Cache): Caché de tercer nivel (más lenta, mayor capacidad, persistente).
+        cache_hierarchy (List[CacheLevel]): Lista ordenada de los niveles de caché.
     """
     def __init__(self, l1_capacity: int = 100, l2_capacity: int = 500, l3_capacity: int = 1000, l3_storage_dir: str = "./page_storage"):
         self.l1_cache = L1Cache(capacity=l1_capacity)
@@ -18,7 +39,8 @@ class PageManager:
     def get_page(self, page_id: str) -> Optional[Page]:
         """
         Intenta recuperar una página de la jerarquía de caché.
-        Si la encuentra en un nivel inferior, la promueve a los niveles superiores.
+        Si la encuentra en un nivel inferior, la promueve a los niveles superiores
+        para optimizar futuros accesos (política de promoción de caché).
         """
         page = None
         found_at_level = -1
@@ -50,7 +72,9 @@ class PageManager:
 
     def put_page(self, page: Page) -> None:
         """
-        Coloca una página en la caché L1 y la propaga hacia abajo si es desalojada.
+        Coloca una página en la caché L1. Si la L1 está llena, la página desalojada
+        se intenta colocar en la L2, y así sucesivamente hasta la L3 (política de desalojo en cascada).
+        Asegura que no haya copias de la página en niveles inferiores antes de colocarla en L1 para mantener la coherencia.
         """
         # Asegurarse de que no haya copias de la página en niveles inferiores antes de colocarla en L1
         self.l2_cache.remove(page.id)
@@ -71,7 +95,8 @@ class PageManager:
 
     def get_cache_stats(self) -> Dict[str, Any]:
         """
-        Devuelve estadísticas de rendimiento de todos los niveles de caché.
+        Devuelve estadísticas de rendimiento (hits, misses, hit_rate, tamaño, capacidad)
+        para cada nivel de la jerarquía de caché.
         """
         stats = {}
         for cache in self.cache_hierarchy:

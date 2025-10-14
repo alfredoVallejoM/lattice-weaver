@@ -14,8 +14,8 @@ Elementos principales:
 - Contextos (Context)
 - Sustituciones (Substitution)
 
-Autor: LatticeWeaver Team
-Fecha: 11 de Octubre de 2025
+Autor: LatticeWeaver Development Team
+Fecha: 14 de Octubre de 2025
 """
 
 from typing import Optional, List, Dict, Set, Any

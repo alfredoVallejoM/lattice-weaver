@@ -24,7 +24,7 @@ import logging
 from typing import Dict, List, Tuple, Optional, Any
 import random
 
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_problem import CSP, Constraint
 from lattice_weaver.problems.base import ProblemFamily
 from lattice_weaver.problems.catalog import register_family
 from lattice_weaver.problems.utils.validators import validate_graph_coloring_solution
@@ -223,7 +223,7 @@ class MapColoringProblem(ProblemFamily):
             }
         }
     
-    def generate(self, **params) -> ArcEngine:
+    def generate(self, **params) -> CSP:
         """
         Genera un problema de coloración de mapas.
         
@@ -253,13 +253,13 @@ class MapColoringProblem(ProblemFamily):
             adjacency = PREDEFINED_MAPS[map_name]
         
         # Crear ArcEngine
-        engine = ArcEngine()
+        csp_problem = CSP(variables=set(), domains={}, constraints=[], name=f"MapColoring_{map_name}")
         
         # Añadir variables (una por región)
         regions = sorted(adjacency.keys())
         for region in regions:
             domain = list(range(n_colors))
-            engine.add_variable(region, domain)
+            csp_problem.add_variable(region, domain)
         
         logger.debug(f"Añadidas {len(regions)} variables (regiones)")
         
@@ -274,12 +274,12 @@ class MapColoringProblem(ProblemFamily):
                     
                     different_colors.__name__ = f'diff_{region}_{neighbor}'
                     cid = f'adj_{region}_{neighbor}'
-                    engine.add_constraint(region, neighbor, different_colors, cid=cid)
+                    csp_problem.add_constraint(Constraint(scope=frozenset({region, neighbor}), relation=different_colors, name=cid))
                     constraint_count += 1
         
         logger.info(f"Problema Map Coloring generado: {len(regions)} regiones, {constraint_count} restricciones")
         
-        return engine
+        return csp_problem
     
     def _generate_random_planar_map(self, n_regions: int, seed: Optional[int] = None) -> Dict[str, List[str]]:
         """

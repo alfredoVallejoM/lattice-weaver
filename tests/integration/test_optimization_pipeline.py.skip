@@ -5,7 +5,7 @@ Valida que todas las optimizaciones funcionan juntas correctamente.
 """
 import pytest
 import time
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_problem import CSP
 from lattice_weaver.arc_engine.advanced_optimizations import (
     create_optimization_system,
     SmartMemoizer,
@@ -31,7 +31,7 @@ class TestOptimizationPipeline:
         assert hasattr(opt_system, 'compiler'), "Debe tener compiler"
         
         # Crear motor con optimizaciones
-        engine = ArcEngine(optimization_system=opt_system)
+        engine = CSP(optimization_system=opt_system)
         
         # Resolver problema
         solutions = engine.solve(nqueens_problem)
@@ -118,7 +118,7 @@ class TestOptimizationPipeline:
         Este test es más relevante en benchmarks con problemas grandes.
         """
         # Resolver sin optimizaciones (baseline)
-        engine_baseline = ArcEngine()
+        engine_baseline = CSP()
         
         start = time.perf_counter()
         solutions_baseline = engine_baseline.solve(nqueens_problem)
@@ -128,7 +128,7 @@ class TestOptimizationPipeline:
         
         # Resolver con optimizaciones
         opt_system = create_optimization_system()
-        engine_optimized = ArcEngine(optimization_system=opt_system)
+        engine_optimized = CSP(optimization_system=opt_system)
         
         start = time.perf_counter()
         solutions_optimized = engine_optimized.solve(nqueens_problem)

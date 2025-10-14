@@ -21,8 +21,10 @@ from .search_viz import (
     generate_report,
     generate_advanced_report
 )
+from . import api
 
 __all__ = [
+    'api',
     'load_trace',
     'plot_search_tree',
     'plot_domain_evolution',

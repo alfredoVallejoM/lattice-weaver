@@ -31,11 +31,7 @@ class PageSerializer:
         # Reconstruir el objeto Page. El contenido real necesitará un deserializador específico
         # para CSPs u otras estructuras complejas.
         # Por ahora, el contenido se almacena como un string en to_dict
-        return Page(id=data_dict["id"],
-                    content=json.loads(data_dict["content"]) if isinstance(data_dict["content"], str) and (data_dict["content"].startswith("{") or data_dict["content"].startswith("[")) else data_dict["content"], # Deserializar de JSON si es string y parece JSON
-                    page_type=data_dict["page_type"],
-                    abstraction_level=data_dict["abstraction_level"],
-                    metadata=data_dict["metadata"])
+        return Page.deserialize(decompressed_data)
 
 # Nota: Para una implementación completa, el campo 'content' de la Page
 # necesitaría un serializador/deserializador específico para cada 'page_type'.

@@ -13,8 +13,8 @@ Componentes principales:
 - CoherenceSolver: Solver integrado
 
 Autor: Manus AI (basado en TFM de Alfredo Vallejo Martín)
-Fecha: Octubre 2025
-Versión: 1.0 (Fase 1 - Fundamentos)
+Fecha: 14 de Octubre de 2025
+Versión: 2.0 (Consolidado)
 """
 
 from .constraint_hierarchy import (
@@ -99,5 +99,5 @@ __all__ = [
     'AdaptiveStrategy',
 ]
 
-__version__ = '1.0.3-phase2-hacification-modulation'
+__version__ = '2.0.0'
 

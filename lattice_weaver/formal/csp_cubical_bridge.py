@@ -19,9 +19,9 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 import logging
 
-from ..arc_engine.core import ArcEngine
-from ..arc_engine.domains import Domain
-from ..arc_engine.constraints import Constraint, get_relation
+from ..core.csp_problem import CSP
+
+from ..core.csp_problem import Constraint
 from .cubical_csp_type import CubicalCSPType, PropositionType
 from .cubical_syntax import Term, Type
 from .cubical_engine import CubicalEngine
@@ -42,23 +42,24 @@ class CSPToCubicalBridge:
     y análisis topológico del espacio de soluciones.
     
     Attributes:
-        arc_engine: Motor CSP (ArcEngine)
+        csp_problem: Problema CSP (lattice_weaver.core.csp_problem.CSP)
         cubical_engine: Motor de tipos cúbicos
         cubical_type: Tipo cúbico derivado del CSP
         
     Examples:
-        >>> engine = ArcEngine()
-        >>> engine.add_variable('X', {1, 2, 3})
-        >>> engine.add_variable('Y', {1, 2, 3})
-        >>> engine.add_constraint('X', 'Y', lambda x, y: x < y)
-        >>> 
-        >>> bridge = CSPToCubicalBridge(engine)
+            >>> from lattice_weaver.core.csp_problem import CSP, Constraint
+            >>> csp = CSP(
+            >>>     variables={'X', 'Y'},
+            >>>     domains={'X': frozenset({1, 2, 3}), 'Y': frozenset({1, 2, 3})},
+            >>>     constraints=[Constraint(scope=frozenset({'X', 'Y'}), relation=lambda x, y: x < y, name='X_lt_Y')]
+            >>> )
+            >>> bridge = CSPToCubicalBridge(csp_problem=csp)
         >>> cubical_type = bridge.translate_to_cubical_type()
         >>> print(cubical_type)
         Σ(X : {1, 2, 3}). Σ(Y : {1, 2, 3}). (X_lt_Y(X, Y))
     """
     
-    arc_engine: ArcEngine
+    csp_problem: CSP
     cubical_engine: Optional[CubicalEngine] = None
     cubical_type: Optional[CubicalCSPType] = None
     
@@ -68,9 +69,7 @@ class CSPToCubicalBridge:
     
     def __post_init__(self):
         """Inicializa el bridge."""
-        if self.cubical_engine is None:
-            self.cubical_engine = CubicalEngine()
-        
+        # No se necesita inicializar cubical_engine aquí, se hace en el constructor de CubicalCSPType si es necesario.
         # Traducir automáticamente si no se ha hecho
         if self.cubical_type is None:
             self.cubical_type = self.translate_to_cubical_type()
@@ -83,7 +82,7 @@ class CSPToCubicalBridge:
             Tipo cúbico representando el espacio de soluciones
             
         Examples:
-            >>> bridge = CSPToCubicalBridge(arc_engine)
+            >>> bridge = CSPToCubicalBridge(csp_problem=csp)
             >>> cubical_type = bridge.translate_to_cubical_type()
         """
         # Verificar caché
@@ -93,15 +92,15 @@ class CSPToCubicalBridge:
             return self._translation_cache[csp_hash]
         
         # Extraer variables y dominios
-        variables = list(self.arc_engine.variables.keys())
+        variables = list(self.csp_problem.variables)
         domains = {}
-        for var_name, domain in self.arc_engine.variables.items():
-            domains[var_name] = set(domain.get_values())
+        for var_name, domain in self.csp_problem.domains.items():
+            domains[var_name] = set(domain)
         
         # Extraer restricciones
         constraints = []
-        for constraint_id, constraint in self.arc_engine.constraints.items():
-            constraint_dict = self._constraint_to_dict(constraint_id, constraint)
+        for constraint in self.csp_problem.constraints:
+            constraint_dict = self._constraint_to_dict(constraint)
             if constraint_dict:
                 constraints.append(constraint_dict)
         
@@ -120,11 +119,10 @@ class CSPToCubicalBridge:
     
     def _constraint_to_dict(
         self,
-        constraint_id: str,
         constraint: Constraint
     ) -> Optional[Dict[str, Any]]:
         """
-        Convierte una restricción del ArcEngine a diccionario.
+        Convierte una restricción del CSP a diccionario.
         
         Args:
             constraint_id: ID de la restricción
@@ -133,21 +131,11 @@ class CSPToCubicalBridge:
         Returns:
             Diccionario con variables, predicate y name
         """
-        try:
-            # Obtener función de relación
-            relation_func = get_relation(constraint.relation_name)
-            
-            return {
-                'variables': [constraint.var1, constraint.var2],
-                'predicate': relation_func,
-                'name': constraint_id
-            }
-        except KeyError as e:
-            logger.error(f"Relación '{constraint.relation_name}' no encontrada para restricción {constraint_id}")
-            return None
-        except (AttributeError, TypeError) as e:
-            logger.error(f"Error al acceder a atributos de restricción {constraint_id}: {e}")
-            return None
+        return {
+            'variables': list(constraint.scope),
+            'predicate': constraint.relation,
+            'name': constraint.name
+        }
     
     def solution_to_term(self, solution: Dict[str, Any]) -> Term:
         """
@@ -308,25 +296,24 @@ class CSPToCubicalBridge:
             Hash del CSP
         """
         # Hash basado en variables
-        var_tuple = tuple(sorted(self.arc_engine.variables.keys()))
+        var_tuple = tuple(sorted(self.csp_problem.variables))
         
         # Hash basado en dominios (valores actuales)
         domain_tuples = []
-        for var_name in sorted(self.arc_engine.variables.keys()):
-            domain = self.arc_engine.variables[var_name]
-            domain_values = tuple(sorted(domain.get_values(), key=lambda x: (type(x).__name__, str(x))))
+        for var_name in sorted(self.csp_problem.variables):
+            domain = self.csp_problem.domains[var_name]
+            domain_values = tuple(sorted(list(domain), key=lambda x: (type(x).__name__, str(x))))
             domain_tuples.append((var_name, domain_values))
         domain_tuple = tuple(domain_tuples)
         
         # Hash basado en restricciones (IDs y nombres de relaciones)
         constraint_tuples = []
-        for cid in sorted(self.arc_engine.constraints.keys()):
-            constraint = self.arc_engine.constraints[cid]
+        for constraint in self.csp_problem.constraints:
+
             constraint_tuples.append((
-                cid,
-                constraint.var1,
-                constraint.var2,
-                constraint.relation_name
+                constraint.name,
+                tuple(sorted(constraint.scope)),
+                str(constraint.relation) # Convertir la función a string para el hash
             ))
         constraint_tuple = tuple(constraint_tuples)
         
@@ -348,8 +335,8 @@ class CSPToCubicalBridge:
         """Representación detallada."""
         return (
             f"CSPToCubicalBridge("
-            f"variables={len(self.arc_engine.variables)}, "
-            f"constraints={len(self.arc_engine.constraints)})"
+            f"variables={len(self.csp_problem.variables)}, "
+            f"constraints={len(self.csp_problem.constraints)})"
         )
 
 
@@ -357,127 +344,21 @@ class CSPToCubicalBridge:
 # Funciones de Utilidad
 # ============================================================================
 
-def create_bridge_from_arc_engine(arc_engine: ArcEngine) -> CSPToCubicalBridge:
-    """
-    Crea un bridge desde un ArcEngine.
-    
-    Args:
-        arc_engine: Motor CSP
-    
-    Returns:
-        Bridge CSP-Cubical
-        
-    Examples:
-        >>> engine = ArcEngine()
-        >>> # ... configurar engine ...
-        >>> bridge = create_bridge_from_arc_engine(engine)
-    """
-    return CSPToCubicalBridge(arc_engine)
 
 
-def create_simple_csp_bridge(
-    variables: List[str],
-    domains: Dict[str, Set[Any]],
-    constraints: List[Tuple[str, str, Callable]]
-) -> CSPToCubicalBridge:
-    """
-    Crea un bridge desde una especificación simple de CSP.
-    
-    Args:
-        variables: Lista de nombres de variables
-        domains: Mapa variable → dominio
-        constraints: Lista de (var1, var2, relation)
-    
-    Returns:
-        Bridge CSP-Cubical
-        
-    Examples:
-        >>> bridge = create_simple_csp_bridge(
-        ...     variables=['X', 'Y'],
-        ...     domains={'X': {1, 2, 3}, 'Y': {1, 2, 3}},
-        ...     constraints=[('X', 'Y', lambda x, y: x < y)]
-        ... )
-    """
-    import time
-    
-    # Crear ArcEngine
-    engine = ArcEngine()
-    
-    # Añadir variables
-    for var in variables:
-        domain = domains.get(var, set())
-        engine.add_variable(var, domain)
-    
-    # Añadir restricciones con nombres únicos basados en timestamp
-    timestamp = str(time.time()).replace('.', '_')
-    for i, (var1, var2, relation) in enumerate(constraints):
-        cid = f"C{i}_{var1}_{var2}_{timestamp}"
-        engine.add_constraint(var1, var2, relation, cid=cid)
-    
-    # Crear bridge
-    return CSPToCubicalBridge(engine)
+
+
+
+
 
 
 # ============================================================================
 # Ejemplo de Uso
 # ============================================================================
 
-def example_usage():
-    """
-    Ejemplo de uso de CSPToCubicalBridge.
-    """
-    logger.info("=== Ejemplo de CSPToCubicalBridge ===")
-    
-    # Crear ArcEngine con CSP simple: X < Y
-    engine = ArcEngine()
-    engine.add_variable('X', {1, 2, 3})
-    engine.add_variable('Y', {1, 2, 3})
-    engine.add_constraint('X', 'Y', lambda x, y: x < y, cid='X_lt_Y')
-    
-    # Crear bridge
-    bridge = CSPToCubicalBridge(engine)
-    
-    logger.info(f"Bridge: {bridge}")
-    logger.info(f"Tipo cúbico: {bridge.cubical_type}")
-    
-    # Obtener propiedades del espacio de soluciones
-    props = bridge.get_solution_space_properties()
-    logger.info(f"Propiedades del espacio de soluciones:")
-    for key, value in props.items():
-        logger.info(f"  {key}: {value}")
-    
-    # Verificar solución válida
-    solution1 = {'X': 1, 'Y': 2}
-    is_valid, proof = bridge.verify_solution_with_proof(solution1)
-    logger.info(f"Solución {solution1} válida: {is_valid}")
-    if proof:
-        logger.info(f"  Prueba: {proof}")
-    
-    # Verificar solución inválida
-    solution2 = {'X': 2, 'Y': 1}
-    is_valid, proof = bridge.verify_solution_with_proof(solution2)
-    logger.info(f"Solución {solution2} válida: {is_valid}")
-    
-    # Usar función de utilidad
-    logger.info("\n=== Usando create_simple_csp_bridge ===")
-    bridge2 = create_simple_csp_bridge(
-        variables=['A', 'B', 'C'],
-        domains={'A': {1, 2}, 'B': {1, 2}, 'C': {1, 2}},
-        constraints=[
-            ('A', 'B', lambda a, b: a != b),
-            ('B', 'C', lambda b, c: b != c)
-        ]
-    )
-    logger.info(f"Bridge2: {bridge2}")
-    logger.info(f"Tipo: {bridge2.cubical_type}")
-    
-    # Verificar solución
-    solution3 = {'A': 1, 'B': 2, 'C': 1}
-    is_valid = bridge2.verify_solution(solution3)
-    logger.info(f"Solución {solution3} válida: {is_valid}")
 
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    example_usage()
+
+
+
 

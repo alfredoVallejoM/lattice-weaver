@@ -9,7 +9,7 @@ y la integración de los nuevos niveles L0-L6 del compilador multiescala.
 
 import unittest
 from lattice_weaver.core.csp_problem import CSP, Constraint
-from lattice_weaver.renormalization.core import renormalize_multilevel
+from lattice_weaver.renormalization.core import renormalize_csp
 from lattice_weaver.renormalization.hierarchy import AbstractionHierarchy, AbstractionLevel
 
 def create_simple_csp():
@@ -100,12 +100,12 @@ class TestAbstractionHierarchy(unittest.TestCase):
         self.assertEqual(hierarchy.get_highest_csp(), level1_csp)
 
 class TestMultilevelRenormalization(unittest.TestCase):
-    """Pruebas para la función renormalize_multilevel."""
+    """Pruebas para la función renormalize_csp."""
     
     def test_renormalize_creates_hierarchy(self):
-        """Test: renormalize_multilevel crea una jerarquía de abstracción."""
+        """Test: renormalize_csp crea una jerarquía de abstracción."""
         original_csp = create_simple_csp()
-        hierarchy = renormalize_multilevel(original_csp, target_level=2, k_function=lambda l: 2)
+        hierarchy, _, _ = renormalize_csp(original_csp, target_level=2, k=2)
         
         self.assertIsInstance(hierarchy, AbstractionHierarchy)
         self.assertEqual(hierarchy.highest_level, 2)
@@ -113,7 +113,7 @@ class TestMultilevelRenormalization(unittest.TestCase):
     def test_renormalize_level_0_is_original(self):
         """Test: El nivel 0 de la jerarquía es el CSP original."""
         original_csp = create_simple_csp()
-        hierarchy = renormalize_multilevel(original_csp, target_level=1, k_function=lambda l: 2)
+        hierarchy, _, _ = renormalize_csp(original_csp, target_level=1, k=2)
         
         level0 = hierarchy.get_level(0)
         self.assertEqual(level0.csp, original_csp)
@@ -122,7 +122,7 @@ class TestMultilevelRenormalization(unittest.TestCase):
     def test_renormalize_reduces_variables(self):
         """Test: Cada nivel de renormalización reduce el número de variables."""
         original_csp = create_simple_csp()
-        hierarchy = renormalize_multilevel(original_csp, target_level=2, k_function=lambda l: 2)
+        hierarchy, _, _ = renormalize_csp(original_csp, target_level=2, k=2)
         
         level0_vars = len(hierarchy.get_level(0).csp.variables)
         level1_vars = len(hierarchy.get_level(1).csp.variables)
@@ -137,7 +137,7 @@ class TestMultilevelRenormalization(unittest.TestCase):
     def test_renormalize_variable_naming(self):
         """Test: Las variables renormalizadas siguen la convención de nombres."""
         original_csp = create_simple_csp()
-        hierarchy = renormalize_multilevel(original_csp, target_level=1, k_function=lambda l: 2)
+        hierarchy, _, _ = renormalize_csp(original_csp, target_level=1, k=2)
         
         level1_vars = hierarchy.get_level(1).csp.variables
         
@@ -146,9 +146,9 @@ class TestMultilevelRenormalization(unittest.TestCase):
             self.assertTrue(var.startswith("L1_G"))
     
     def test_renormalize_with_nqueens(self):
-        """Test: renormalize_multilevel funciona con el problema de N-Reinas."""
+        """Test: renormalize_csp funciona con el problema de N-Reinas."""
         nqueens_csp = create_nqueens_csp(n=8)
-        hierarchy = renormalize_multilevel(nqueens_csp, target_level=2, k_function=lambda l: 2)
+        hierarchy, _, _ = renormalize_csp(nqueens_csp, target_level=2, k=2)
         
         self.assertEqual(hierarchy.highest_level, 2)
         
@@ -165,7 +165,7 @@ class TestMultilevelRenormalization(unittest.TestCase):
     def test_renormalize_partition_structure(self):
         """Test: La partición de variables se almacena correctamente."""
         original_csp = create_simple_csp()
-        hierarchy = renormalize_multilevel(original_csp, target_level=1, k_function=lambda l: 2)
+        hierarchy, _, _ = renormalize_csp(original_csp, target_level=1, k=2)
         
         level1 = hierarchy.get_level(1)
         
@@ -180,7 +180,7 @@ class TestMultilevelRenormalization(unittest.TestCase):
     def test_renormalize_variable_map(self):
         """Test: El mapeo de variables se construye correctamente."""
         original_csp = create_simple_csp()
-        hierarchy = renormalize_multilevel(original_csp, target_level=1, k_function=lambda l: 2)
+        hierarchy, _, _ = renormalize_csp(original_csp, target_level=1, k=2)
         
         level1 = hierarchy.get_level(1)
         

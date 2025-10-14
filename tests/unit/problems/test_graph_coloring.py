@@ -1,11 +1,6 @@
-"""
-Tests unitarios para GraphColoringProblem.
-"""
-
 import pytest
 from lattice_weaver.problems.generators.graph_coloring import GraphColoringProblem
-from lattice_weaver.core.csp_engine.graph import ConstraintGraph
-from lattice_weaver.core.csp_engine.constraints import NE
+from lattice_weaver.core.csp_problem import CSP, Constraint
 
 
 class TestGraphColoringProblem:
@@ -40,62 +35,62 @@ class TestGraphColoringProblem:
         assert schema['n_nodes']['required'] is True
         assert schema['n_colors']['required'] is True
     
-    def test_generate_creates_arc_engine(self):
-        """Test que generate() crea un ArcEngine."""
-        engine = self.family.generate(n_nodes=5, n_colors=3, graph_type='cycle')
-        assert isinstance(engine, ConstraintGraph)
+    def test_generate_creates_csp(self):
+        """Test que generate() crea un CSP."""
+        csp = self.family.generate(n_nodes=5, n_colors=3, graph_type='cycle')
+        assert isinstance(csp, CSP)
 
     
     def test_generate_cycle_graph(self):
         """Test generación de grafo cíclico."""
         n = 5
-        engine = self.family.generate(graph_type='cycle', n_nodes=n, n_colors=3)
+        csp = self.family.generate(graph_type='cycle', n_nodes=n, n_colors=3)
         
-        assert len(engine.get_all_variables()) == n
+        assert len(csp.variables) == n
         # Ciclo tiene n aristas
-        assert len(engine.get_all_constraints()) == n
+        assert len(csp.constraints) == n
     
     def test_generate_complete_graph(self):
         """Test generación de grafo completo."""
         n = 4
-        engine = self.family.generate(graph_type='complete', n_nodes=n, n_colors=4)
+        csp = self.family.generate(graph_type='complete', n_nodes=n, n_colors=4)
         
-        assert len(engine.get_all_variables()) == n
+        assert len(csp.variables) == n
         # Grafo completo tiene n*(n-1)/2 aristas
         expected_edges = n * (n - 1) // 2
-        assert len(engine.get_all_constraints()) == expected_edges
+        assert len(csp.constraints) == expected_edges
     
     def test_generate_path_graph(self):
         """Test generación de grafo camino."""
         n = 5
-        engine = self.family.generate(graph_type='path', n_nodes=n, n_colors=2)
+        csp = self.family.generate(graph_type='path', n_nodes=n, n_colors=2)
         
-        assert len(engine.get_all_variables()) == n
+        assert len(csp.variables) == n
         # Camino tiene n-1 aristas
-        assert len(engine.get_all_constraints()) == n - 1
+        assert len(csp.constraints) == n - 1
     
     def test_generate_star_graph(self):
         """Test generación de grafo estrella."""
         n = 6
-        engine = self.family.generate(graph_type='star', n_nodes=n, n_colors=2)
+        csp = self.family.generate(graph_type='star', n_nodes=n, n_colors=2)
         
-        assert len(engine.get_all_variables()) == n
+        assert len(csp.variables) == n
         # Estrella tiene n-1 aristas
-        assert len(engine.get_all_constraints()) == n - 1
+        assert len(csp.constraints) == n - 1
     
     def test_generate_wheel_graph(self):
         """Test generación de grafo rueda."""
         n = 5
-        engine = self.family.generate(graph_type='wheel', n_nodes=n, n_colors=3)
+        csp = self.family.generate(graph_type='wheel', n_nodes=n, n_colors=3)
         
-        assert len(engine.get_all_variables()) == n
+        assert len(csp.variables) == n
         # Rueda tiene 2*(n-1) aristas
-        assert len(engine.get_all_constraints()) == 2 * (n - 1)
+        assert len(csp.constraints) == 2 * (n - 1)
 
     
     def test_generate_grid_graph(self):
         """Test generación de grafo grid."""
-        engine = self.family.generate(
+        csp = self.family.generate(
             graph_type='grid',
             n_nodes=9,
             grid_rows=3,
@@ -103,13 +98,13 @@ class TestGraphColoringProblem:
             n_colors=3
         )
         
-        assert len(engine.get_all_variables()) == 9
+        assert len(csp.variables) == 9
         # Grid 3x3 tiene 12 aristas (6 horizontales + 6 verticales)
-        assert len(engine.get_all_constraints()) == 12
+        assert len(csp.constraints) == 12
     
     def test_generate_bipartite_graph(self):
         """Test generación de grafo bipartito."""
-        engine = self.family.generate(
+        csp = self.family.generate(
             graph_type='bipartite',
             n_nodes=6,
             n_colors=2,
@@ -117,13 +112,13 @@ class TestGraphColoringProblem:
             seed=42
         )
         
-        assert len(engine.get_all_variables()) == 6
+        assert len(csp.variables) == 6
         # Bipartito completo 3+3 tiene 3*3=9 aristas
-        assert len(engine.get_all_constraints()) == 9
+        assert len(csp.constraints) == 9
     
     def test_generate_random_graph_with_seed(self):
         """Test que la semilla produce resultados reproducibles."""
-        engine1 = self.family.generate(
+        csp1 = self.family.generate(
             graph_type='random',
             n_nodes=10,
             n_colors=3,
@@ -131,7 +126,7 @@ class TestGraphColoringProblem:
             seed=42
         )
         
-        engine2 = self.family.generate(
+        csp2 = self.family.generate(
             graph_type='random',
             n_nodes=10,
             n_colors=3,
@@ -140,23 +135,22 @@ class TestGraphColoringProblem:
         )
         
         # Mismo número de restricciones con misma semilla
-        assert len(engine1.constraints) == len(engine2.constraints)
+        assert len(csp1.constraints) == len(csp2.constraints)
     
     def test_generate_correct_variable_names(self):
         """Test que las variables tienen nombres correctos."""
-        engine = self.family.generate(graph_type='cycle', n_nodes=4, n_colors=3)
+        csp = self.family.generate(graph_type='cycle', n_nodes=4, n_colors=3)
         expected_vars = {'V0', 'V1', 'V2', 'V3'}
-        assert set(engine.variables.keys()) == expected_vars
+        assert set(csp.variables) == expected_vars
     
     def test_generate_correct_domains(self):
         """Test que los dominios son correctos."""
         n_colors = 3
-        engine = self.family.generate(graph_type='cycle', n_nodes=5, n_colors=n_colors)
+        csp = self.family.generate(graph_type='cycle', n_nodes=5, n_colors=n_colors)
         
-        for i in range(5):
-            var_name = f'V{i}'
-            domain = list(engine.variables[var_name].get_values())
-            assert domain == list(range(n_colors))
+        for var_name in csp.variables:
+            domain = csp.domains[var_name]
+            assert domain == frozenset(range(n_colors))
     
     def test_validate_solution_cycle_correct(self):
         """Test validación de solución correcta para ciclo."""
@@ -257,5 +251,4 @@ class TestGraphColoringProblem:
 
 
 if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
-
+    pytest.main([__file__, "-v"])

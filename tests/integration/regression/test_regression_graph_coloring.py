@@ -1,9 +1,3 @@
-"""
-Tests de regresión: Graph Coloring
-
-Valida que las soluciones de coloreo de grafos sean correctas.
-"""
-
 import pytest
 from tests.integration.helpers import (
     solve_csp_problem,

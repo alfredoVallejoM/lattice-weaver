@@ -15,7 +15,7 @@ import logging
 from typing import Dict, List, Tuple, Optional, Any
 import random
 
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_problem import CSP, Constraint
 from lattice_weaver.problems.base import ProblemFamily
 from lattice_weaver.problems.catalog import register_family
 from lattice_weaver.problems.utils.validators import validate_magic_square_solution
@@ -174,7 +174,7 @@ class MagicSquareProblem(ProblemFamily):
         
         return clues
     
-    def generate(self, **params) -> ArcEngine:
+    def generate(self, **params) -> CSP:
         """
         Genera un problema de cuadrado mágico.
         
@@ -207,7 +207,7 @@ class MagicSquareProblem(ProblemFamily):
         clues = self._generate_clues(size, n_clues, seed)
         
         # Crear ArcEngine
-        engine = ArcEngine()
+        csp_problem = CSP(variables=set(), domains={}, constraints=[], name=f"MagicSquare_{size}x{size}")
         
         # Añadir variables (celdas del cuadrado)
         for row in range(size):
@@ -221,7 +221,7 @@ class MagicSquareProblem(ProblemFamily):
                     # Dominio: todos los números de 1 a n²
                     domain = list(range(1, size * size + 1))
                 
-                engine.add_variable(var_name, domain)
+                csp_problem.add_variable(var_name, domain)
         
         # Calcular suma mágica
         magic_sum = self._calculate_magic_sum(size)
@@ -239,7 +239,7 @@ class MagicSquareProblem(ProblemFamily):
                     return v1 != v2
                 
                 constraint_id = f'neq_{var_i}_{var_j}'
-                engine.add_constraint(var_i, var_j, neq_constraint, cid=constraint_id)
+                csp_problem.add_constraint(Constraint(scope=frozenset({var_i, var_j}), relation=neq_constraint, name=constraint_id))
 
         # Nota: Las restricciones de suma (filas, columnas, diagonales) son n-arias.
         # El ArcEngine actual solo soporta restricciones binarias directamente.
@@ -254,7 +254,7 @@ class MagicSquareProblem(ProblemFamily):
         
         logger.info(f"Generado Magic Square {size}×{size} con {n_clues} pistas (suma mágica = {magic_sum})")
         
-        return engine
+        return csp_problem
     
     def validate_solution(self, solution: Dict[str, int], **params) -> bool:
         """

@@ -8,7 +8,7 @@ la aproximación multinivel con la derivación de dominios y restricciones efect
 
 La API pública de este módulo incluye:
 - `RenormalizationSolver`: Un solver de CSP que utiliza el flujo de renormalización multinivel.
-- `renormalize_multilevel`: Función para construir una jerarquía de abstracción.
+- `renormalize_csp`: Función para construir una jerarquía de abstracción.
 - `AbstractionHierarchy`: Clase para gestionar la jerarquía de abstracción.
 - `VariablePartitioner`: Herramienta para particionar variables de un CSP.
 - `EffectiveDomainDeriver`: Derivador de dominios efectivos.
@@ -18,14 +18,14 @@ La API pública de este módulo incluye:
 """
 
 from .hierarchy import AbstractionHierarchy, AbstractionLevel
-from .core import renormalize_multilevel, RenormalizationSolver, refine_solution # Se mantiene refine_solution de la rama feature
+from .core import renormalize_csp, RenormalizationSolver, refine_solution # Se mantiene refine_solution de la rama feature
 from .partition import VariablePartitioner
 from .effective_domains import EffectiveDomainDeriver, LazyEffectiveDomain
 from .effective_constraints import EffectiveConstraintDeriver, LazyEffectiveConstraint
 
 __all__ = [
     "RenormalizationSolver",
-    "renormalize_multilevel",
+    "renormalize_csp",
     "refine_solution", # Añadido de la rama feature
     "AbstractionHierarchy",
     "AbstractionLevel",

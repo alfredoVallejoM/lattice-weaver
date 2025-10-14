@@ -3,9 +3,12 @@
 """
 Núcleo de la Renormalización Computacional
 
-Este módulo implementa el flujo principal de la renormalización computacional,
-incluyendo la capacidad de construir jerarquías de abstracción multinivel,
-así como funciones para renormalizar un CSP y refinar soluciones.
+Este módulo implementa el flujo principal de la renormalización computacional dentro de LatticeWeaver.
+Proporciona funciones para realizar un paso de renormalización de un CSP, construir jerarquías
+de abstracción multinivel y refinar soluciones desde niveles abstractos al original.
+
+Autor: LatticeWeaver Development Team
+Fecha: 14 de Octubre de 2025
 """
 
 from typing import List, Set, Dict, Tuple, Any, Optional, Callable
@@ -19,29 +22,39 @@ from .effective_constraints import EffectiveConstraintDeriver, LazyEffectiveCons
 from .hierarchy import AbstractionHierarchy, AbstractionLevel
 
 
-def renormalize_single_level(
+def renormalize_csp(
     source_csp: CSP,
-    source_level: int,
     k: int,
     partition_strategy: str = 'metis',
     domain_deriver: Optional[EffectiveDomainDeriver] = None,
     constraint_deriver: Optional[EffectiveConstraintDeriver] = None,
+    source_level: int = 0, # Nivel de abstracción del CSP de entrada
+    target_level: Optional[int] = None # Si se especifica, construye hasta este nivel
 ) -> Tuple[Optional[CSP], Optional[List[Set[str]]], Optional[Dict[str, str]]]:
     """
-    Realiza un único paso de renormalización desde el nivel `source_level` al `source_level + 1`.
+    Realiza un paso de renormalización o construye una jerarquía de abstracción.
 
     Args:
         source_csp: El CSP original o de nivel inferior a renormalizar.
-        source_level: El nivel de abstracción actual (0 para el CSP original).
         k: El factor de renormalización (número de grupos).
         partition_strategy: Estrategia para particionar las variables.
         domain_deriver: Instancia de EffectiveDomainDeriver. Si es None, se crea uno.
         constraint_deriver: Instancia de EffectiveConstraintDeriver. Si es None, se crea uno.
+        source_level: El nivel de abstracción del CSP de entrada (0 para el original).
+        target_level: Si se especifica, construye una jerarquía hasta este nivel.
+                      Si es None, realiza un solo paso de renormalización.
 
     Returns:
-        - El nuevo CSP renormalizado (nivel L+1)
-        - La partición utilizada
-        - El mapa de variables de L a L+1
+        Returns:
+            Tuple[Optional[CSP | AbstractionHierarchy], Optional[List[Set[str]]], Optional[Dict[str, str]]]:
+            Si `target_level` es `None` (un solo paso de renormalización):
+                - El nuevo CSP renormalizado (nivel L+1).
+                - La partición de variables utilizada para crear el CSP renormalizado.
+                - Un diccionario que mapea las variables originales a las nuevas variables renormalizadas.
+            Si `target_level` se especifica (construcción de jerarquía):
+                - Un objeto `AbstractionHierarchy` que contiene todos los niveles de abstracción construidos.
+                - `None` (la partición y el mapa de variables están dentro de la jerarquía).
+                - `None` (la partición y el mapa de variables están dentro de la jerarquía).
     """
     if domain_deriver is None:
         domain_deriver = EffectiveDomainDeriver()
@@ -109,121 +122,38 @@ def renormalize_single_level(
         name=f"L{source_level+1}_{source_csp.name or 'CSP'}"
     )
 
-    return renormalized_csp, partition, variable_map
+    if target_level is None:
+        return renormalized_csp, partition, variable_map
+    else:
+        # Si se especifica target_level, construimos la jerarquía
+        hierarchy = AbstractionHierarchy(source_csp)
+        hierarchy.add_level(source_level + 1, renormalized_csp, partition, variable_map)
 
-def renormalize_multilevel(
-    original_csp: CSP,
-    target_level: int = 6,
-    k_function: Callable[[int], int] = lambda level: 2,
-    strategy_function: Callable[[int], str] = lambda level: 'metis'
-) -> AbstractionHierarchy:
-    """
-    Construye una jerarquía de abstracción hasta el nivel objetivo.
-    """
-    hierarchy = AbstractionHierarchy(original_csp)
-    
-    for level in range(target_level):
-        current_csp = hierarchy.get_level(level).csp
-        k = k_function(level)
-        strategy = strategy_function(level)
-        
-        new_csp, partition, var_map = renormalize_single_level(
-            source_csp=current_csp,
-            source_level=level,
-            k=k,
-            partition_strategy=strategy
-        )
-        
-        if new_csp is None or partition is None or var_map is None:
-            break
-            
-        hierarchy.add_level(level + 1, new_csp, partition, var_map)
-        
-    return hierarchy
+        current_level_csp = renormalized_csp
+        current_level = source_level + 1
 
-def renormalize_csp(
-    original_csp: CSP,
-    k: int,
-    partition_strategy: str = 'metis',
-    domain_deriver: Optional[EffectiveDomainDeriver] = None,
-    constraint_deriver: Optional[EffectiveConstraintDeriver] = None,
-) -> Tuple[Optional[CSP], Optional[List[Set[str]]]]:
-    """
-    Renormaliza un CSP dado, transformándolo en un CSP con menos variables
-    pero con dominios y restricciones efectivas. Esta es una versión de un solo paso.
-    
-    Args:
-        original_csp: El CSP original a renormalizar.
-        k: El factor de renormalización (número de grupos).
-        partition_strategy: Estrategia para particionar las variables.
-        domain_deriver: Instancia de EffectiveDomainDeriver. Si es None, se crea uno.
-        constraint_deriver: Instancia de EffectiveConstraintDeriver. Si es None, se crea uno.
-    
-    Returns:
-        Una tupla que contiene:
-        - El CSP renormalizado.
-        - La partición de variables original utilizada.
-    """
-    if domain_deriver is None:
-        domain_deriver = EffectiveDomainDeriver()
-    if constraint_deriver is None:
-        constraint_deriver = EffectiveConstraintDeriver()
+        while current_level < target_level:
+            next_k = k # Asumimos k constante para la jerarquía, se puede hacer más flexible
+            next_strategy = partition_strategy # Asumimos estrategia constante
 
-    partitioner = VariablePartitioner(strategy=partition_strategy)
-    partition_result = partitioner.partition(original_csp, k)
-
-    if partition_result is None:
-        return None, None
-
-    partition = [group for group in partition_result if group]
-
-    if not partition:
-        return None, None
-    
-    renormalized_variables = {f"G{i}" for i in range(len(partition))}
-
-    renormalized_domains_lazy: Dict[str, LazyEffectiveDomain] = {}
-    for i, group in enumerate(partition):
-        group_name = f"G{i}"
-        renormalized_domains_lazy[group_name] = LazyEffectiveDomain(domain_deriver, original_csp, group)
-
-    renormalized_constraints: List[Constraint] = []
-    for i in range(len(partition)):
-        for j in range(i + 1, len(partition)):
-            group1_name = f"G{i}"
-            group2_name = f"G{j}"
-            group1 = partition[i]
-            group2 = partition[j]
-
-            lazy_effective_constraint = LazyEffectiveConstraint(
-                constraint_deriver,
-                original_csp,
-                group1,
-                group2,
-                renormalized_domains_lazy[group1_name],
-                renormalized_domains_lazy[group2_name]
+            next_csp, next_partition, next_var_map = renormalize_csp(
+                source_csp=current_level_csp,
+                k=next_k,
+                partition_strategy=next_strategy,
+                domain_deriver=domain_deriver,
+                constraint_deriver=constraint_deriver,
+                source_level=current_level,
+                target_level=None # Un solo paso
             )
-            renormalized_constraints.append(Constraint(
-                scope=frozenset({group1_name, group2_name}),
-                relation=lazy_effective_constraint,
-                name=f"RG_C_{group1_name}_{group2_name}"
-            ))
 
-    renormalized_domains_concrete = {}
-    for name, lazy_domain in renormalized_domains_lazy.items():
-        domain_values = lazy_domain.get()
-        if not domain_values:
-            return None, None
-        renormalized_domains_concrete[name] = domain_values
-
-    renormalized_csp = CSP(
-        variables=renormalized_variables,
-        domains=renormalized_domains_concrete,
-        constraints=renormalized_constraints,
-        name=f"RG_{original_csp.name or 'CSP'}"
-    )
-
-    return renormalized_csp, partition
+            if next_csp is None or next_partition is None or next_var_map is None:
+                break
+            
+            hierarchy.add_level(current_level + 1, next_csp, next_partition, next_var_map)
+            current_level_csp = next_csp
+            current_level += 1
+        
+        return hierarchy, None, None # Devolvemos la jerarquía
 
 def refine_solution(
     renormalized_solution: Dict[str, Any],
@@ -237,7 +167,8 @@ def refine_solution(
     Args:
         renormalized_solution: La solución del CSP renormalizado.
         original_csp: El CSP original.
-        partition: La partición de variables utilizada para la renormalización.
+        partition: La partición de variables utilizada para la renormalización que generó el CSP abstracto.
+                   Es una lista de conjuntos de variables del CSP original que forman cada variable abstracta.
         domain_deriver: Instancia de EffectiveDomainDeriver. Si es None, se crea uno.
         
     Returns:
@@ -266,6 +197,8 @@ def refine_solution(
         # Para simplificar, tomamos la primera asignación posible. 
         # En un sistema real, esto podría requerir un backtracking o una búsqueda más inteligente.
         # TODO: Implementar un mecanismo más robusto para seleccionar la asignación original.
+        # Esto podría implicar un backtracking o una búsqueda heurística para asegurar la consistencia
+        # con otras variables del mismo nivel, o la integración con un solver de bajo nivel.
         selected_assignment = possible_original_assignments[0]
         refined_solution.update(selected_assignment)
         
@@ -290,14 +223,18 @@ class RenormalizationSolver:
         """
         Resuelve un CSP utilizando el flujo de renormalización multinivel.
         """
-        hierarchy = renormalize_multilevel(
-            original_csp=csp,
-            target_level=self.target_level,
-            k_function=lambda level: self.k,
-            strategy_function=lambda level: self.partition_strategy
+        # Usar la función unificada renormalize_csp para construir la jerarquía
+        hierarchy, _, _ = renormalize_csp(
+            source_csp=csp,
+            k=self.k,
+            partition_strategy=self.partition_strategy,
+            domain_deriver=self.domain_deriver,
+            constraint_deriver=self.constraint_deriver,
+            source_level=0,
+            target_level=self.target_level
         )
 
-        if not hierarchy.levels:
+        if not hierarchy or not hierarchy.levels:
             return None
 
         # Intentar resolver el CSP más abstracto
@@ -315,54 +252,22 @@ class RenormalizationSolver:
         for level_idx in range(hierarchy.max_level, 0, -1):
             level_info = hierarchy.get_level(level_idx)
             if level_info.parent_level_info is None:
-                # Esto no debería pasar si la jerarquía está bien construida
                 return None
-            
-            # Mapear la solución abstracta a la partición del nivel inferior
-            # La función refine_solution opera de un CSP renormalizado a su original.
-            # Aquí necesitamos ir de la solución del CSP de nivel L+1 a la solución del CSP de nivel L.
-            # Esto implica usar el `variable_map` y la `partition` del nivel_info.
-            
-            # Reconstruir la solución para el CSP del nivel inferior (parent_level_info.csp)
-            # a partir de la solución del CSP actual (level_info.csp)
-            
-            # La `refine_solution` que tenemos está diseñada para ir de un CSP renormalizado a su original.
-            # Necesitamos adaptar esto para ir de un nivel L+1 a L.
-            # La `variable_map` en `level_info` mapea variables originales a variables renormalizadas.
-            # Necesitamos el inverso: variables renormalizadas a variables originales.
-            
-            # Para simplificar, vamos a usar la lógica de `refine_solution` pero adaptada.
-            # La `renormalized_solution` sería `current_solution`.
-            # El `original_csp` sería `level_info.parent_level_info.csp`.
-            # La `partition` sería `level_info.partition`.
-            
-            # Esto es un poco más complejo de lo que `refine_solution` maneja directamente.
-            # `refine_solution` asume que `partition` es la partición del `original_csp`.
-            # Aquí, `level_info.partition` es la partición del `parent_level_info.csp`.
-            
-            # Vamos a usar una lógica de refinamiento más directa basada en el `variable_map`
-            # y los dominios efectivos.
             
             lower_level_solution = {}
             parent_csp = level_info.parent_level_info.csp
             if parent_csp is None:
                 return None
 
-            # Iterar sobre las variables del nivel inferior
             for original_var in parent_csp.variables:
-                # Encontrar a qué variable renormalizada pertenece
                 renormalized_var = level_info.variable_map.get(original_var)
                 if renormalized_var is None:
-                    # Esto no debería pasar si el mapa es completo
                     return None
                 
-                # Obtener el valor efectivo de la solución abstracta
                 effective_value = current_solution.get(renormalized_var)
                 if effective_value is None:
                     return None
                 
-                # Derivar los valores originales posibles para esta variable
-                # que son consistentes con el effective_value
                 group_for_var = next((g for g in level_info.partition if original_var in g), None)
                 if group_for_var is None:
                     return None
@@ -374,19 +279,14 @@ class RenormalizationSolver:
                 if not possible_original_assignments:
                     return None
                 
-                # Tomar la primera asignación posible para esta variable
-                # TODO: Esto es una simplificación. Necesita un mecanismo más robusto.
                 lower_level_solution[original_var] = possible_original_assignments[0].get(original_var)
                 if lower_level_solution[original_var] is None:
                     return None
             
             current_solution = lower_level_solution
             
-            # Verificar la solución en cada paso de refinamiento (opcional, pero buena práctica)
             if not verify_solution(parent_csp, current_solution):
                 return None
 
         return current_solution
-
-
 

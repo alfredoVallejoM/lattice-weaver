@@ -362,7 +362,7 @@ def get_statistics():
         if len(df) >= 2:
             start_time = df["timestamp"].min()
             end_time = df["timestamp"].max()
-            duration = float(end_time - start_time) # Convertir a float explícitamente
+            duration = (end_time - start_time).total_seconds() # Convertir Timedelta a segundos y luego a float
         elif len(df) == 1:
 
             # Si solo hay un evento, la duración es 0

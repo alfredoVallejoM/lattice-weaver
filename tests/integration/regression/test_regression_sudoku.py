@@ -1,13 +1,7 @@
-"""
-Tests de regresión: Sudoku
-
-Valida que las soluciones de Sudoku coincidan con golden outputs conocidos.
-"""
-
 import pytest
 from tests.integration.helpers import (
     solve_csp_problem,
-    create_sudoku_4x4
+    create_sudoku_problem
 )
 
 
@@ -25,7 +19,7 @@ def test_sudoku_4x4_known_solution(load_golden_output):
     expected_solution = golden["solution"]
     
     # Resolver problema
-    problem = create_sudoku_4x4(puzzle)
+    problem = create_sudoku_problem(puzzle)
     stats = solve_csp_problem(problem, max_solutions=1)
     
     assert len(stats.solutions) > 0, "Debe encontrar al menos una solución"
@@ -64,7 +58,7 @@ def test_sudoku_4x4_uniqueness():
         [4, 0, 0, 1]
     ]
     
-    problem = create_sudoku_4x4(puzzle)
+    problem = create_sudoku_problem(puzzle)
     stats = solve_csp_problem(problem, max_solutions=10)  # Buscar hasta 10
     
     # Debe encontrar exactamente 1 solución

@@ -11,10 +11,12 @@ Componentes:
 - datasets: Generación y gestión de datasets
 - benchmarks: Benchmarks y validación
 
-Versión: 0.1.0 (Fase 0 - Fundación)
+Autor: LatticeWeaver Development Team
+Fecha: 14 de Octubre de 2025
+Versión: 1.0 (Consolidado)
 """
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 
 # Importar componentes principales (lazy import para evitar dependencias circulares)
 def get_feature_extractors():

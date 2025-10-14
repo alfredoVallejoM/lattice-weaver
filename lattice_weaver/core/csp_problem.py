@@ -1,4 +1,4 @@
-# lattice_weaver/arc_engine/csp_problem.py
+# lattice_weaver/core/csp_problem.py
 
 """
 Definición Base de Problemas CSP
@@ -79,7 +79,8 @@ from .simple_backtracking_solver import solve_csp_backtracking
 
 def is_satisfiable(csp: CSP) -> bool:
     """
-    Verifica si un CSP es satisfacible utilizando el solver de backtracking.
+    Verifica si un CSP es satisfacible utilizando el solver de backtracking
+    implementado en `simple_backtracking_solver`.
     """
     return solve_csp_backtracking(csp) is not None
 
@@ -140,8 +141,9 @@ def generate_nqueens(n: int, name: Optional[str] = None) -> CSP:
             qi = f"Q{i}"
             qj = f"Q{j}"
 
-            # No en la misma fila (ya cubierto por dominio)
-            # No en la misma columna (ya cubierto por asignación de valores distintos)
+            # Las restricciones de fila y columna están implícitas por la asignación
+            # de una reina por fila (variable) y un valor único por columna (dominio).
+            # La restricción `val_i != val_j` asegura que no estén en la misma columna.
 
             # No en la misma diagonal
             constraints.append(Constraint(

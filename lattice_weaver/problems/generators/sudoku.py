@@ -14,7 +14,7 @@ import logging
 from ..base import ProblemFamily
 from ..utils.validators import validate_sudoku_solution
 
-from lattice_weaver.arc_engine.constraints import not_equal
+from lattice_weaver.core.csp_problem import CSP, Constraint
 
 logger = logging.getLogger(__name__)
 
@@ -183,14 +183,14 @@ class SudokuProblem(ProblemFamily):
             raise ValueError(f"Tamaño de Sudoku inválido: {size} (debe ser 4, 9, 16, 25)")
         
         # Crear ArcEngine
-        engine = ArcEngine()
+        engine = CSP()
         
         # Añadir variables (una por celda)
         for row in range(size):
             for col in range(size):
                 var_name = f'C_{row}_{col}'
                 domain = list(range(1, size + 1))  # Dígitos [1, size]
-                engine.add_variable(var_name, domain)
+                engine.variables[var_name] = domain
         
         logger.debug(f'Añadidas {size*size} variables')
         
@@ -202,7 +202,7 @@ class SudokuProblem(ProblemFamily):
                     var1 = f'C_{row}_{col1}'
                     var2 = f'C_{row}_{col2}'
                     
-                    engine.add_constraint(var1, var2, 'not_equal')
+                    engine.constraints.append(Constraint(scope=[var1, var2], relation=lambda a, b: a != b, name='not_equal'))
                     constraint_count += 1
         
         logger.debug(f'Añadidas restricciones de fila: {constraint_count}')
@@ -214,7 +214,7 @@ class SudokuProblem(ProblemFamily):
                     var1 = f'C_{row1}_{col}'
                     var2 = f'C_{row2}_{col}'
                     
-                    engine.add_constraint(var1, var2, 'not_equal')
+                    engine.constraints.append(Constraint(scope=[var1, var2], relation=lambda a, b: a != b, name='not_equal'))
                     constraint_count += 1
         
         logger.debug(f'Total restricciones (fila+columna): {constraint_count}')
@@ -238,7 +238,7 @@ class SudokuProblem(ProblemFamily):
                         var1 = f'C_{row1}_{col1}'
                         var2 = f'C_{row2}_{col2}'
                         
-                        engine.add_constraint(var1, var2, 'not_equal')
+                        engine.constraints.append(Constraint(scope=[var1, var2], relation=lambda a, b: a != b, name='not_equal'))
                         constraint_count += 1
         
         logger.info(f'Total restricciones: {constraint_count}')
@@ -252,11 +252,11 @@ class SudokuProblem(ProblemFamily):
             for row, col in clue_cells:
                 var_name = f'C_{row}_{col}'
                 # Obtener el dominio actual del ArcEngine
-                current_domain_values = list(engine.variables[var_name].get_values())
+                current_domain_values = list(engine.variables[var_name])
                 if current_domain_values:
                     clue_value = random.choice(current_domain_values)
                     # Reducir el dominio a un solo valor
-                    engine.variables[var_name].set_values({clue_value})
+                    engine.variables[var_name] = [clue_value]
                     logger.debug(f'Pista en {var_name}: {clue_value}')
         
         logger.info(f'Problema Sudoku generado: {size}x{size}, {n_clues} pistas')

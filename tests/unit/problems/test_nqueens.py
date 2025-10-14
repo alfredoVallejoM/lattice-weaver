@@ -1,10 +1,6 @@
-"""
-Tests unitarios para NQueensProblem.
-"""
-
 import pytest
 from lattice_weaver.problems.generators.nqueens import NQueensProblem
-from lattice_weaver.core.csp_engine.graph import ConstraintGraph
+from lattice_weaver.core.csp_problem import CSP
 
 
 class TestNQueensProblem:
@@ -34,50 +30,49 @@ class TestNQueensProblem:
         assert schema['n']['min'] == 4
         assert schema['n']['max'] == 1000
     
-    def test_generate_creates_arc_engine(self):
-        """Test que generate() crea un ArcEngine."""
-        engine = self.family.generate(n=4)
-        from lattice_weaver.core.csp_engine.graph import ConstraintGraph
-        assert isinstance(engine, ConstraintGraph)
+    def test_generate_creates_csp(self):
+        """Test que generate() crea un CSP."""
+        csp = self.family.generate(n=4)
+        assert isinstance(csp, CSP)
 
     
     def test_generate_correct_number_of_variables(self):
         """Test que generate() crea el número correcto de variables."""
         for n in [4, 8, 16]:
-            engine = self.family.generate(n=n)
-            assert len(engine.get_all_variables()) == n
+            csp = self.family.generate(n=n)
+            assert len(csp.variables) == n
     
     def test_generate_correct_variable_names(self):
         """Test que las variables tienen nombres correctos."""
-        engine = self.family.generate(n=4)
+        csp = self.family.generate(n=4)
         expected_vars = {'Q0', 'Q1', 'Q2', 'Q3'}
-        assert set(engine.get_all_variables()) == expected_vars
+        assert set(csp.variables) == expected_vars
     
     def test_generate_correct_domains(self):
         """Test que los dominios son correctos."""
         n = 4
-        engine = self.family.generate(n=n)
+        csp = self.family.generate(n=n)
         
         for i in range(n):
             var_name = f'Q{i}'
-            domain = list(engine.get_variable_domain(var_name))
-            assert domain == list(range(n))
+            domain = csp.domains[var_name]
+            assert domain == frozenset(range(n))
     
     def test_generate_correct_number_of_constraints(self):
         """Test que generate() crea el número correcto de restricciones."""
         n = 4
-        engine = self.family.generate(n=n)
+        csp = self.family.generate(n=n)
         
         # Número de restricciones = C(n, 2) = n*(n-1)/2
         expected_constraints = n * (n - 1) // 2
-        assert len(engine.get_all_constraints()) == expected_constraints
+        assert len(csp.constraints) == expected_constraints
     
     def test_generate_with_different_sizes(self):
         """Test que generate() funciona con diferentes tamaños."""
         for n in [4, 5, 8, 10, 16]:
-            engine = self.family.generate(n=n)
-            assert len(engine.get_all_variables()) == n
-            assert len(engine.get_all_constraints()) == n * (n - 1) // 2
+            csp = self.family.generate(n=n)
+            assert len(csp.variables) == n
+            assert len(csp.constraints) == n * (n - 1) // 2
     
     def test_generate_invalid_n_too_small(self):
         """Test que generate() rechaza n < 4."""
@@ -165,5 +160,4 @@ class TestNQueensProblem:
 
 
 if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
-
+    pytest.main([__file__, "-v"])

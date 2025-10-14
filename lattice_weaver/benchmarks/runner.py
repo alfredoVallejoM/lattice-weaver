@@ -18,9 +18,9 @@ import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import pandas as pd
 
-from lattice_weaver.arc_engine.csp_solver import CSPSolver
+from lattice_weaver.core.csp_engine.solver import CSPSolver
 
-from lattice_weaver.arc_engine.core import ArcEngine
+from lattice_weaver.core.csp_problem import CSP
 
 
 

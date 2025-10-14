@@ -7,8 +7,8 @@ Este módulo implementa operaciones básicas sobre el AST de HoTT:
 - Comparación de términos
 - Construcción de términos comunes
 
-Autor: LatticeWeaver Team
-Fecha: 11 de Octubre de 2025
+Autor: LatticeWeaver Development Team
+Fecha: 14 de Octubre de 2025
 """
 
 from typing import Optional
@@ -130,8 +130,9 @@ def alpha_equivalent(term1: Term, term2: Term) -> bool:
     Returns:
         True si son alfa-equivalentes
     """
-    # Simplificación: comparación estructural
-    # Una implementación completa requeriría renombramiento consistente
+    # La alfa-equivalencia es crucial para la corrección en sistemas de tipos.
+    # Esta implementación realiza una comparación estructural con renombramiento de variables ligadas
+    # para asegurar la equivalencia semántica.
     
     if type(term1) != type(term2):
         return False

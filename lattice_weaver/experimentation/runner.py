@@ -4,7 +4,8 @@ import os
 import logging
 from typing import List, Dict, Any, Optional
 
-from lattice_weaver.arc_engine.csp_solver import CSPSolver, CSPProblem, CSPSolution
+from lattice_weaver.core.csp_engine.solver import CSPSolver, CSPSolution
+from lattice_weaver.core.csp_problem import CSP as CSPProblem
 from lattice_weaver.problems.catalog import get_catalog, get_family
 from .config import ExperimentConfig, SolverConfig, ProblemInstanceConfig
 
@@ -42,7 +43,7 @@ class BenchmarkRunner:
             "backtracks": solutions.backtracks,
             "constraints_checked": solutions.constraints_checked,
             "initial_domain_size": sum(len(d) for d in problem_instance.domains.values()),
-            "final_domain_size": sum(len(d.get_values()) for d in solver.arc_engine.variables.values()),
+            "final_domain_size": sum(len(d.get_values()) for d in solver.csp_engine.variables.values()),
             "problem_family": self.config.problem_family,
             "problem_params": self.config.problem_params,
             "solver_params": solver_config.params,
@@ -70,17 +71,17 @@ class BenchmarkRunner:
 
         logger.info(f"Generando problema para {self.config.problem_family} con parámetros {self.config.problem_params}")
         # Generar el ArcEngine, que luego se envuelve en CSPProblem
-        arc_engine = problem_family_instance.generate(**self.config.problem_params)
+        csp_instance = problem_family_instance.generate(**self.config.problem_params)
         # CSPProblem espera variables como List[str] y dominios como Dict[str, List[Any]]
-        # Convertir arc_engine.variables (Dict[str, Domain]) a los formatos esperados
-        csp_variables = list(arc_engine.variables.keys())
-        csp_domains = {name: list(domain.get_values()) for name, domain in arc_engine.variables.items()}
+        # Convertir csp_instance.variables (Dict[str, Domain]) a los formatos esperados
+        csp_variables = list(csp_instance.variables.keys())
+        csp_domains = {name: list(domain.get_values()) for name, domain in csp_instance.variables.items()}
         
         # CSPProblem espera constraints como List[Tuple[str, str, Any]]
-        # Convertir arc_engine.constraints (Dict[str, Constraint]) a los formatos esperados
+        # Convertir csp_instance.constraints (Dict[str, Constraint]) a los formatos esperados
         # Nota: La relación en CSPProblem es solo un placeholder, el CSPSolver usa la relación registrada
         csp_constraints = [
-            (c.var1, c.var2, c.relation_name) for c in arc_engine.constraints.values()
+            (c.var1, c.var2, c.relation_name) for c in csp_instance.constraints.values()
         ]
 
         problem_instance = CSPProblem(csp_variables, csp_domains, csp_constraints)

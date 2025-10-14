@@ -14,7 +14,8 @@ from lattice_weaver.formal.symmetry_extractor import (
     SymmetryGroup,
     create_symmetry_extractor
 )
-from lattice_weaver.formal.csp_cubical_bridge import create_simple_csp_bridge
+from lattice_weaver.core.csp_problem import CSP, Constraint
+from lattice_weaver.formal.csp_cubical_bridge import CSPToCubicalBridge
 
 
 class TestSymmetry:
@@ -103,11 +104,12 @@ class TestSymmetryExtractorConstruction:
     
     def test_create_symmetry_extractor(self):
         """Test: Crear SymmetryExtractor."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {1, 2}},
+        csp = CSP(
+            variables={"X", "Y"},
+            domains={"X": frozenset({1, 2}), "Y": frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         
         extractor = SymmetryExtractor(bridge)
         
@@ -115,11 +117,12 @@ class TestSymmetryExtractorConstruction:
     
     def test_create_symmetry_extractor_function(self):
         """Test: Función create_symmetry_extractor."""
-        bridge = create_simple_csp_bridge(
-            variables=['X'],
-            domains={'X': {1, 2}},
+        csp = CSP(
+            variables={"X"},
+            domains={"X": frozenset({1, 2})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         
         extractor = create_symmetry_extractor(bridge)
         
@@ -131,11 +134,12 @@ class TestVariableSymmetries:
     
     def test_extract_no_symmetries(self):
         """Test: Problema sin simetrías."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {3, 4}},  # Dominios diferentes
+        csp = CSP(
+            variables={"X", "Y"},
+            domains={"X": frozenset({1, 2}), "Y": frozenset({3, 4})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         extractor = SymmetryExtractor(bridge)
         
         symmetries = extractor.extract_variable_symmetries()
@@ -160,11 +164,12 @@ class TestVariableSymmetries:
     
     def test_group_variables_by_domain(self):
         """Test: Agrupar variables por dominio."""
-        bridge = create_simple_csp_bridge(
-            variables=['X', 'Y', 'Z'],
-            domains={'X': {1, 2}, 'Y': {1, 2}, 'Z': {3, 4}},
+        csp = CSP(
+            variables={"X", "Y", "Z"},
+            domains={"X": frozenset({1, 2}), "Y": frozenset({1, 2}), "Z": frozenset({3, 4})},
             constraints=[]
         )
+        bridge = CSPToCubicalBridge(csp_problem=csp)
         extractor = SymmetryExtractor(bridge)
         
         groups = extractor._group_variables_by_domain()

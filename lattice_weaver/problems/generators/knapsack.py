@@ -20,7 +20,7 @@ import logging
 from typing import Dict, List, Tuple, Optional, Any
 import random
 
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_problem import CSP
 from lattice_weaver.problems.base import ProblemFamily
 from lattice_weaver.problems.catalog import register_family
 
@@ -142,7 +142,7 @@ class KnapsackProblem(ProblemFamily):
         
         return weights, values
     
-    def generate(self, **params) -> ArcEngine:
+    def generate(self, **params) -> CSP:
         """
         Genera un problema de mochila 0/1.
         
@@ -177,13 +177,13 @@ class KnapsackProblem(ProblemFamily):
             capacity = sum(weights) // 2
         
         # Crear ArcEngine
-        engine = ArcEngine()
+        csp_problem = CSP(variables=set(), domains={}, constraints=[], name=f"Knapsack_{n_items}_items")
         
         # Añadir variables (decisión binaria para cada item)
         for i in range(n_items):
             var_name = f'item_{i}'
             domain = [0, 1]  # 0 = no incluir, 1 = incluir
-            engine.add_variable(var_name, domain)
+            csp_problem.add_variable(var_name, domain)
         
         # Nota: La restricción de capacidad es n-aria.
         # El ArcEngine actual solo soporta restricciones binarias directamente.
@@ -204,11 +204,11 @@ class KnapsackProblem(ProblemFamily):
         )
         
         # Almacenar metadatos en el engine para uso posterior
-        engine._knapsack_weights = weights
-        engine._knapsack_values = values
-        engine._knapsack_capacity = capacity
+        csp_problem.metadata["knapsack_weights"] = weights
+        csp_problem.metadata["knapsack_values"] = values
+        csp_problem.metadata["knapsack_capacity"] = capacity
         
-        return engine
+        return csp_problem
     
     def validate_solution(self, solution: Dict[str, int], **params) -> bool:
         """

@@ -5,7 +5,7 @@ Este módulo valida el flujo completo desde la definición de un problema CSP
 hasta su verificación formal en HoTT.
 """
 import pytest
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_problem import CSP
 from lattice_weaver.formal.csp_integration import translate_csp_to_hott
 from lattice_weaver.formal.csp_properties import verify_csp_property, CSPProperty
 
@@ -13,7 +13,7 @@ from lattice_weaver.formal.csp_properties import verify_csp_property, CSPPropert
 class TestCSPToHoTTFlow:
     """Tests del flujo completo CSP → HoTT → Verificación."""
     
-    def test_nqueens_complete_flow(self, nqueens_problem, arc_engine, cubical_engine):
+    def test_nqueens_complete_flow(self, nqueens_problem, csp_problem, cubical_engine):
         """
         Test: N-Reinas → Resolución → Traducción HoTT → Verificación.
         
@@ -28,7 +28,7 @@ class TestCSPToHoTTFlow:
         y el sistema formal HoTT.
         """
         # 1. Resolver problema
-        solutions = arc_engine.solve(nqueens_problem)
+        solutions = csp_problem.solve(nqueens_problem)
         
         # 2. Verificar soluciones
         assert len(solutions) > 0, "Debe encontrar al menos una solución"
@@ -71,7 +71,7 @@ class TestCSPToHoTTFlow:
             # Si la estructura de prueba es diferente, validar de otra forma
             assert proof is not None, "Prueba existe y fue generada"
     
-    def test_sudoku_consistency_verification(self, sudoku_problem, arc_engine, cubical_engine):
+    def test_sudoku_consistency_verification(self, sudoku_problem, csp_problem, cubical_engine):
         """
         Test: Sudoku → Verificación de consistencia.
         
@@ -79,7 +79,7 @@ class TestCSPToHoTTFlow:
         y que esta propiedad puede ser verificada formalmente.
         """
         # Resolver
-        solutions = arc_engine.solve(sudoku_problem)
+        solutions = csp_problem.solve(sudoku_problem)
         assert len(solutions) > 0, "Debe encontrar al menos una solución"
         
         solution = solutions[0]
@@ -106,7 +106,7 @@ class TestCSPToHoTTFlow:
         assert proof is not None, "Debe generar prueba de consistencia"
     
     @pytest.mark.slow
-    def test_graph_coloring_completeness(self, graph_coloring_problem, arc_engine, cubical_engine):
+    def test_graph_coloring_completeness(self, graph_coloring_problem, csp_problem, cubical_engine):
         """
         Test: Graph Coloring → Verificación de completitud.
         
@@ -114,7 +114,7 @@ class TestCSPToHoTTFlow:
         (completitud) y que esta propiedad es verificable formalmente.
         """
         # Resolver
-        solutions = arc_engine.solve(graph_coloring_problem)
+        solutions = csp_problem.solve(graph_coloring_problem)
         assert len(solutions) > 0, "Debe encontrar al menos una solución"
         
         solution = solutions[0]

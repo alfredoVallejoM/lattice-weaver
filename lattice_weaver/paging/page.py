@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
 import hashlib
 import json
+import base64
 import time
 
 @dataclass
@@ -58,7 +59,13 @@ class Page:
         """Deserializa bytes a una página. Placeholder."""
         # Esto será manejado por el Serializer/Deserializer real
         data_dict = json.loads(data.decode())
-        deserialized_content = json.loads(data_dict["content"]) if isinstance(data_dict["content"], str) and (data_dict["content"].startswith("{") or data_dict["content"].startswith("[")) else data_dict["content"]
+        content_data = data_dict["content"]
+        if isinstance(content_data, str) and data_dict["page_type"] == "binary_data": # Asumiendo un page_type para datos binarios
+            deserialized_content = base64.b64decode(content_data.encode('utf-8'))
+        elif isinstance(content_data, str) and (content_data.startswith("{") or content_data.startswith("[")):
+            deserialized_content = json.loads(content_data)
+        else:
+            deserialized_content = content_data
         return cls(id=data_dict["id"], 
                    content=deserialized_content, 
                    page_type=data_dict["page_type"], 
@@ -68,7 +75,7 @@ class Page:
     def to_dict(self) -> Dict[str, Any]:
         return {
             "id": self.id,
-            "content": json.dumps(self.content) if isinstance(self.content, (dict, list)) else self.content,
+            "content": base64.b64encode(self.content).decode('utf-8') if isinstance(self.content, bytes) else (json.dumps(self.content) if isinstance(self.content, (dict, list)) else self.content),
             "page_type": self.page_type,
             "abstraction_level": self.abstraction_level,
             "metadata": self.metadata

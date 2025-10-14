@@ -1,10 +1,25 @@
 import pytest
 import time
+from typing import Dict, Any, List, Set, Tuple
 
-from lattice_weaver.core.csp_engine.solver import AdaptiveConsistencyEngine
-from lattice_weaver.core.csp_engine.graph import ConstraintGraph
-from lattice_weaver.core.csp_engine.constraints import NE, LT
+from lattice_weaver.core.csp_problem import CSP, Constraint
+from lattice_weaver.core.csp_engine.solver import CSPSolver, CSPSolutionStats
 from lattice_weaver.core.csp_engine.tms import TruthMaintenanceSystem, create_tms
+
+# Helper function to create an N-Queens problem CSP
+def create_nqueens_csp(n):
+    variables = frozenset({f'Q{i}' for i in range(n)})
+    domains = {var: frozenset(range(n)) for var in variables}
+    constraints = []
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            constraints.append(Constraint(
+                scope=frozenset({f'Q{i}', f'Q{j}'}),
+                relation=lambda qi, qj, i=i, j=j: qi != qj and abs(qi - qj) != abs(i - j),
+                name=f'neq_diag_Q{i}Q{j}'
+            ))
+    return CSP(variables=variables, domains=domains, constraints=frozenset(constraints), name=f"NQueens_{n}")
 
 
 class TestTruthMaintenanceSystem:
@@ -73,20 +88,19 @@ class TestTruthMaintenanceSystem:
         assert 3 in restorable["Y"]
         assert "Z" not in restorable # C2 removals should not be restored by C1
 
-    def test_tms_with_adaptive_consistency_engine(self):
-        """Test: Integración TMS con AdaptiveConsistencyEngine."""
-        # Crear engine con TMS
-        cg = ConstraintGraph()
-        cg.add_variable("X", {1, 2})
-        cg.add_variable("Y", {1, 2})
-        cg.add_constraint("X", "Y", NE(), cid="C1")
-
-        engine = AdaptiveConsistencyEngine()
-        # TMS is not directly integrated into ACE in this version, it's a separate component
-        # This test should focus on how TMS can be used alongside ACE, not within it.
-        # For now, we just ensure that TMS can be created and used independently.
+    def test_tms_with_csp_solver(self):
+        """Test: Integración TMS con CSPSolver (indirecta)."""
+        # El TMS es un componente separado que puede ser usado por el CSPSolver
+        # o para analizar su comportamiento. Aquí, simplemente verificamos que
+        # podemos crear un CSPSolver y un TMS de forma independiente.
+        n = 4
+        csp = create_nqueens_csp(n)
+        solver = CSPSolver(csp)
         tms = create_tms()
+        assert solver is not None
         assert tms is not None
+        # Para una integración más profunda, se necesitaría modificar CSPSolver
+        # para que use el TMS o para que el TMS pueda observar el CSPSolver.
 
     def test_tms_conflict_graph(self):
         """Test: Grafo de conflictos."""
@@ -138,5 +152,4 @@ class TestTruthMaintenanceSystem:
         assert len(tms.justifications) == 0
         assert len(tms.decisions) == 0
         assert len(tms.dependency_graph) == 0
-
 

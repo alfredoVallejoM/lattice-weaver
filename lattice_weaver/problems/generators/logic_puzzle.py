@@ -18,7 +18,7 @@ import logging
 from typing import Dict, List, Tuple, Optional, Any
 import random
 
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_problem import CSP, Constraint
 from lattice_weaver.problems.base import ProblemFamily
 from lattice_weaver.problems.catalog import register_family
 
@@ -135,7 +135,7 @@ class LogicPuzzleProblem(ProblemFamily):
         
         return attributes
     
-    def generate(self, **params) -> ArcEngine:
+    def generate(self, **params) -> CSP:
         """
         Genera un problema de logic puzzle.
         
@@ -170,7 +170,7 @@ class LogicPuzzleProblem(ProblemFamily):
             attributes = self._get_simple_attributes(n_entities, n_attributes)
         
         # Crear ArcEngine
-        engine = ArcEngine()
+        csp_problem = CSP(variables=set(), domains={}, constraints=[], name=f"LogicPuzzle_{puzzle_type}")
         
         # Añadir variables
         # Para cada categoría de atributo, cada entidad tiene una variable
@@ -184,7 +184,7 @@ class LogicPuzzleProblem(ProblemFamily):
                 var_name = f'{category}_{entity_id}'
                 # Dominio: índices de los valores posibles
                 domain = list(range(len(values)))
-                engine.add_variable(var_name, domain)
+                csp_problem.add_variable(var_name, domain)
         
         # Añadir restricciones de AllDifferent por categoría
         # Cada valor de una categoría debe asignarse a exactamente una entidad
@@ -201,7 +201,7 @@ class LogicPuzzleProblem(ProblemFamily):
                         return v1 != v2
                     
                     constraint_id = f'neq_{var_i}_{var_j}'
-                    engine.add_constraint(var_i, var_j, neq_constraint, cid=constraint_id)
+                    csp_problem.add_constraint(Constraint(scope=frozenset({var_i, var_j}), relation=neq_constraint, name=constraint_id))
 
         
         # Añadir algunas pistas específicas para Zebra puzzle
@@ -209,7 +209,7 @@ class LogicPuzzleProblem(ProblemFamily):
             # Pista 1: El noruego vive en la primera casa
             # nationality_0 = 3 (norwegian es el índice 3)
             # Esto se implementa reduciendo el dominio de la variable
-            engine.variables['nationality_0'] = engine.variables['nationality_0'].__class__([3])
+            csp_problem.domains["nationality_0"] = {3}
             logger.debug("Pista aplicada: noruego en casa 0")
             
             # Pista 2: La casa verde está inmediatamente a la derecha de la blanca
@@ -220,11 +220,11 @@ class LogicPuzzleProblem(ProblemFamily):
                         return color_next == 1  # green
                     return True
                 
-                engine.add_constraint(
-                    f'color_{i}', f'color_{i+1}',
-                    green_right_of_white,
-                    cid=f'clue_green_right_white_{i}'
-                )
+                csp_problem.add_constraint(Constraint(
+                    scope=frozenset({f'color_{i}', f'color_{i+1}'}),
+                    relation=green_right_of_white,
+                    name=f'clue_green_right_white_{i}'
+                ))
             
             # Pista 3: Se bebe café en la casa verde
             # Si color_i = 1 (green), entonces drink_i = 0 (coffee)
@@ -234,11 +234,11 @@ class LogicPuzzleProblem(ProblemFamily):
                         return drink == 0  # coffee
                     return True
                 
-                engine.add_constraint(
-                    f'color_{i}', f'drink_{i}',
-                    coffee_in_green,
-                    cid=f'clue_coffee_green_{i}'
-                )
+                csp_problem.add_constraint(Constraint(
+                    scope=frozenset({f'color_{i}', f'drink_{i}'}),
+                    relation=coffee_in_green,
+                    name=f'clue_coffee_in_green_{i}'
+                ))
         
         logger.info(
             f"Generado Logic Puzzle tipo '{puzzle_type}' con "
@@ -246,10 +246,10 @@ class LogicPuzzleProblem(ProblemFamily):
         )
         
         # Almacenar metadatos en el engine
-        engine._logic_puzzle_attributes = attributes
-        engine._logic_puzzle_type = puzzle_type
+        csp_problem.metadata["logic_puzzle_attributes"] = attributes
+        csp_problem.metadata["logic_puzzle_type"] = puzzle_type
         
-        return engine
+        return csp_problem
     
     def validate_solution(self, solution: Dict[str, int], **params) -> bool:
         """

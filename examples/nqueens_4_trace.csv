@@ -1,0 +1,215 @@
+timestamp,event_type,variable,value,depth,domain_size,pruned_values,constraint,result
+2025-10-14T18:37:01.469198,assignment,Q0,0.0,1.0,,,,
+2025-10-14T18:37:01.469220,propagation,Q1,,,,[1],,
+2025-10-14T18:37:01.469231,propagation,Q2,,,,[2],,
+2025-10-14T18:37:01.469243,propagation,Q3,,,,[3],,
+2025-10-14T18:37:01.469260,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q1'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469266,assignment,Q1,0.0,2.0,,,,
+2025-10-14T18:37:01.469281,propagation,Q2,,,,[1],,
+2025-10-14T18:37:01.469288,propagation,Q3,,,,[2],,
+2025-10-14T18:37:01.469297,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469303,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469306,assignment,Q2,0.0,3.0,,,,
+2025-10-14T18:37:01.469317,propagation,Q3,,,,[1],,
+2025-10-14T18:37:01.469328,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469333,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469339,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469340,assignment,Q3,0.0,4.0,,,,
+2025-10-14T18:37:01.469356,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469361,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469365,assignment,Q2,3.0,3.0,,,,
+2025-10-14T18:37:01.469379,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469383,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469386,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469391,assignment,Q3,0.0,4.0,,,,
+2025-10-14T18:37:01.469402,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469405,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469408,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469412,assignment,Q3,1.0,4.0,,,,
+2025-10-14T18:37:01.469422,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q1'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469426,assignment,Q1,2.0,2.0,,,,
+2025-10-14T18:37:01.469435,propagation,Q2,,,,"[1, 3]",,
+2025-10-14T18:37:01.469442,propagation,Q3,,,,[0],,
+2025-10-14T18:37:01.469448,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469454,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469457,assignment,Q2,0.0,3.0,,,,
+2025-10-14T18:37:01.469466,propagation,Q3,,,,[1],,
+2025-10-14T18:37:01.469471,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469474,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469477,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469479,assignment,Q3,2.0,4.0,,,,
+2025-10-14T18:37:01.469491,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q1'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469494,assignment,Q1,3.0,2.0,,,,
+2025-10-14T18:37:01.469505,propagation,Q3,,,,[1],,
+2025-10-14T18:37:01.469510,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469513,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469515,assignment,Q2,0.0,3.0,,,,
+2025-10-14T18:37:01.469524,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469528,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469531,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469532,assignment,Q3,0.0,4.0,,,,
+2025-10-14T18:37:01.469543,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469546,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469549,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469550,assignment,Q3,2.0,4.0,,,,
+2025-10-14T18:37:01.469559,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469562,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469564,assignment,Q2,1.0,3.0,,,,
+2025-10-14T18:37:01.469574,backtrack,Q2,,3.0,,,,
+2025-10-14T18:37:01.469578,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469581,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469583,assignment,Q2,3.0,3.0,,,,
+2025-10-14T18:37:01.469591,propagation,Q3,,,,[2],,
+2025-10-14T18:37:01.469595,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469599,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469602,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469603,assignment,Q3,0.0,4.0,,,,
+2025-10-14T18:37:01.469613,assignment,Q0,1.0,1.0,,,,
+2025-10-14T18:37:01.469629,propagation,Q1,,,,"[0, 2]",,
+2025-10-14T18:37:01.469638,propagation,Q2,,,,[3],,
+2025-10-14T18:37:01.469646,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q1'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469649,assignment,Q1,1.0,2.0,,,,
+2025-10-14T18:37:01.469657,propagation,Q2,,,,"[0, 2]",,
+2025-10-14T18:37:01.469663,propagation,Q3,,,,[3],,
+2025-10-14T18:37:01.469667,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469671,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469673,assignment,Q2,1.0,3.0,,,,
+2025-10-14T18:37:01.469681,propagation,Q3,,,,"[0, 2]",,
+2025-10-14T18:37:01.469685,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469689,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469692,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469693,assignment,Q3,1.0,4.0,,,,
+2025-10-14T18:37:01.469705,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q1'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469708,assignment,Q1,3.0,2.0,,,,
+2025-10-14T18:37:01.469715,propagation,Q2,,,,[2],,
+2025-10-14T18:37:01.469724,propagation,Q3,,,,[1],,
+2025-10-14T18:37:01.469729,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469732,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469735,assignment,Q2,0.0,3.0,,,,
+2025-10-14T18:37:01.469746,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469749,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469754,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469756,assignment,Q3,0.0,4.0,,,,
+2025-10-14T18:37:01.469766,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469769,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469773,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469774,assignment,Q3,2.0,4.0,,,,
+2025-10-14T18:37:01.469782,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469785,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469788,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469789,assignment,Q3,3.0,4.0,,,,
+2025-10-14T18:37:01.469798,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469801,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469803,assignment,Q2,1.0,3.0,,,,
+2025-10-14T18:37:01.469811,propagation,Q3,,,,"[0, 2]",,
+2025-10-14T18:37:01.469816,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469819,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469826,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469827,assignment,Q3,3.0,4.0,,,,
+2025-10-14T18:37:01.469839,assignment,Q0,2.0,1.0,,,,
+2025-10-14T18:37:01.469847,propagation,Q1,,,,"[1, 3]",,
+2025-10-14T18:37:01.469856,propagation,Q2,,,,[0],,
+2025-10-14T18:37:01.469863,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q1'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469867,assignment,Q1,0.0,2.0,,,,
+2025-10-14T18:37:01.469874,propagation,Q2,,,,[1],,
+2025-10-14T18:37:01.469880,propagation,Q3,,,,[2],,
+2025-10-14T18:37:01.469884,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469887,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469890,assignment,Q2,2.0,3.0,,,,
+2025-10-14T18:37:01.469907,propagation,Q3,,,,"[1, 3]",,
+2025-10-14T18:37:01.469912,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469915,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469918,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469919,assignment,Q3,0.0,4.0,,,,
+2025-10-14T18:37:01.469927,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469933,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469935,assignment,Q2,3.0,3.0,,,,
+2025-10-14T18:37:01.469945,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469948,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469951,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469952,assignment,Q3,0.0,4.0,,,,
+2025-10-14T18:37:01.469960,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469963,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469966,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469968,assignment,Q3,1.0,4.0,,,,
+2025-10-14T18:37:01.469977,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469981,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469984,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469985,assignment,Q3,3.0,4.0,,,,
+2025-10-14T18:37:01.469993,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q1'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.469996,assignment,Q1,2.0,2.0,,,,
+2025-10-14T18:37:01.470003,propagation,Q2,,,,"[1, 3]",,
+2025-10-14T18:37:01.470009,propagation,Q3,,,,[0],,
+2025-10-14T18:37:01.470014,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470017,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470019,assignment,Q2,2.0,3.0,,,,
+2025-10-14T18:37:01.470027,propagation,Q3,,,,"[1, 3]",,
+2025-10-14T18:37:01.470031,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470034,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470037,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470039,assignment,Q3,2.0,4.0,,,,
+2025-10-14T18:37:01.470049,assignment,Q0,3.0,1.0,,,,
+2025-10-14T18:37:01.470056,propagation,Q1,,,,[2],,
+2025-10-14T18:37:01.470064,propagation,Q2,,,,[1],,
+2025-10-14T18:37:01.470070,propagation,Q3,,,,[0],,
+2025-10-14T18:37:01.470075,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q1'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470078,assignment,Q1,0.0,2.0,,,,
+2025-10-14T18:37:01.470087,propagation,Q3,,,,[2],,
+2025-10-14T18:37:01.470092,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470095,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470100,assignment,Q2,0.0,3.0,,,,
+2025-10-14T18:37:01.470110,propagation,Q3,,,,[1],,
+2025-10-14T18:37:01.470114,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470117,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470120,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470122,assignment,Q3,3.0,4.0,,,,
+2025-10-14T18:37:01.470132,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470136,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470138,assignment,Q2,2.0,3.0,,,,
+2025-10-14T18:37:01.470144,backtrack,Q2,,3.0,,,,
+2025-10-14T18:37:01.470151,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470154,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470156,assignment,Q2,3.0,3.0,,,,
+2025-10-14T18:37:01.470167,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470171,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470174,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470175,assignment,Q3,1.0,4.0,,,,
+2025-10-14T18:37:01.470187,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470191,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470239,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470241,assignment,Q3,3.0,4.0,,,,
+2025-10-14T18:37:01.470250,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q1'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470253,assignment,Q1,1.0,2.0,,,,
+2025-10-14T18:37:01.470262,propagation,Q2,,,,"[0, 2]",,
+2025-10-14T18:37:01.470268,propagation,Q3,,,,[3],,
+2025-10-14T18:37:01.470273,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470276,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470278,assignment,Q2,3.0,3.0,,,,
+2025-10-14T18:37:01.470286,propagation,Q3,,,,[2],,
+2025-10-14T18:37:01.470291,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470294,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470297,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470299,assignment,Q3,1.0,4.0,,,,
+2025-10-14T18:37:01.470309,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q1'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470313,assignment,Q1,3.0,2.0,,,,
+2025-10-14T18:37:01.470320,propagation,Q2,,,,[2],,
+2025-10-14T18:37:01.470325,propagation,Q3,,,,[1],,
+2025-10-14T18:37:01.470330,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470336,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470338,assignment,Q2,0.0,3.0,,,,
+2025-10-14T18:37:01.470347,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470350,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470353,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470355,assignment,Q3,2.0,4.0,,,,
+2025-10-14T18:37:01.470362,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470366,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470368,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470370,assignment,Q3,3.0,4.0,,,,
+2025-10-14T18:37:01.470378,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470381,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q2'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470383,assignment,Q2,3.0,3.0,,,,
+2025-10-14T18:37:01.470391,propagation,Q3,,,,[2],,
+2025-10-14T18:37:01.470395,constraint_check,,,,,,"Constraint(scope=['Q0', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470399,constraint_check,,,,,,"Constraint(scope=['Q1', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470402,constraint_check,,,,,,"Constraint(scope=['Q2', 'Q3'], name=nqueens_not_diagonal)",True
+2025-10-14T18:37:01.470403,assignment,Q3,3.0,4.0,,,,

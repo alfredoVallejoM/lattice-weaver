@@ -6,7 +6,8 @@ from unittest.mock import MagicMock, patch
 
 from lattice_weaver.experimentation.config import ExperimentConfig, SolverConfig
 from lattice_weaver.experimentation.runner import BenchmarkRunner
-from lattice_weaver.arc_engine.csp_solver import CSPSolver, CSPProblem, CSPSolution
+from lattice_weaver.core.csp_engine.solver import CSPSolver, CSPSolutionStats
+from lattice_weaver.core.csp_problem import CSP, Constraint
 from lattice_weaver.problems.base import ProblemFamily
 from lattice_weaver.problems.catalog import ProblemCatalog
 
@@ -18,14 +19,12 @@ class MockProblemFamily(ProblemFamily):
             description="A mock problem for testing"
         )
 
-    def generate(self, **params):
-        # Simula la generación de un ArcEngine
-        mock_engine = MagicMock()
-        mock_engine.variables = {"V1": MagicMock(), "V2": MagicMock()}
-        mock_engine.constraints = {"C1": MagicMock()}
-        mock_engine.variables["V1"].get_values.return_value = [1, 2, 3]
-        mock_engine.variables["V2"].get_values.return_value = [1, 2, 3]
-        return mock_engine
+    def generate(self, **params) -> CSP:
+        # Simula la generación de un CSP
+        variables = {"V1", "V2"}
+        domains = {"V1": frozenset({1, 2, 3}), "V2": frozenset({1, 2, 3})}
+        constraints = [Constraint(scope=frozenset({"V1", "V2"}), relation=lambda x, y: x != y, name="neq_v1v2")]
+        return CSP(variables=variables, domains=domains, constraints=constraints)
 
     def validate_solution(self, solution: Dict[str, Any], **params) -> bool:
         return True  # Siempre válida para el mock
@@ -62,13 +61,26 @@ def test_benchmark_runner_run(mock_get_catalog, mock_csp_solver, real_catalog, c
 
     # Configurar el mock del CSPSolver
     mock_solver_instance = MagicMock()
-    mock_solver_instance.solve.return_value = [CSPSolution({"V1": 1, "V2": 2})]
-    mock_solver_instance.nodes_visited = 10
-    mock_solver_instance.backtracks = 5
-    mock_solver_instance.constraints_checked = 20
-    mock_solver_instance.arc_engine.variables = {"V1": MagicMock(), "V2": MagicMock()}
-    mock_solver_instance.arc_engine.variables["V1"].get_values.return_value = [1]
-    mock_solver_instance.arc_engine.variables["V2"].get_values.return_value = [2]
+    # El método solve_all de CSPSolver devuelve una lista de soluciones (diccionarios)
+    mock_solver_instance.solve_all.return_value = [{
+        "V1": 1, "V2": 2
+    }]
+    # CSPSolutionStats es un dataclass, no un objeto con atributos directos en el mock
+    # Necesitamos mockear el retorno de solve_all para que sea una lista de diccionarios
+    # y luego el runner extraerá las estadísticas de un objeto CSPSolutionStats si se usa solve
+    # Para este test, simplificamos y asumimos que solve_all devuelve directamente las soluciones
+    # y las estadísticas se calculan o se mockean por separado si el runner las necesita.
+    
+    # Mockear el retorno de solve para que devuelva un CSPSolutionStats
+    mock_stats = MagicMock(spec=CSPSolutionStats)
+    mock_stats.solutions = [{
+        "V1": 1, "V2": 2
+    }]
+    mock_stats.nodes_explored = 10
+    mock_stats.backtracks = 5
+    mock_stats.constraints_checked = 20
+    mock_solver_instance.solve.return_value = mock_stats
+
     mock_csp_solver.return_value = mock_solver_instance
 
     config = ExperimentConfig(

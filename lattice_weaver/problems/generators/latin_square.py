@@ -25,7 +25,7 @@ import logging
 from typing import Dict, List, Tuple, Optional, Any
 import random
 
-from lattice_weaver.arc_engine import ArcEngine
+from lattice_weaver.core.csp_problem import CSP, Constraint
 from lattice_weaver.problems.base import ProblemFamily
 from lattice_weaver.problems.catalog import register_family
 from lattice_weaver.problems.utils.validators import validate_latin_square_solution
@@ -115,7 +115,7 @@ class LatinSquareProblem(ProblemFamily):
             }
         }
     
-    def generate(self, **params) -> ArcEngine:
+    def generate(self, **params) -> CSP:
         """
         Genera un problema de cuadrado latino.
         
@@ -156,7 +156,7 @@ class LatinSquareProblem(ProblemFamily):
         clues = self._generate_clues(size, n_clues, seed)
         
         # Crear ArcEngine
-        engine = ArcEngine()
+        csp_problem = CSP(variables=set(), domains={}, constraints=[], name=f"LatinSquare_{size}x{size}")
         
         # Añadir variables (una por celda)
         for row in range(size):
@@ -169,7 +169,7 @@ class LatinSquareProblem(ProblemFamily):
                 else:
                     domain = list(range(1, size + 1))
                 
-                engine.add_variable(var_name, domain)
+                csp_problem.add_variable(var_name, domain)
         
         logger.debug(f"Añadidas {size * size} variables (celdas)")
         
@@ -186,7 +186,7 @@ class LatinSquareProblem(ProblemFamily):
                     
                     different.__name__ = f'diff_row{row}_c{col1}_c{col2}'
                     cid = f'row_{row}_{col1}_{col2}'
-                    engine.add_constraint(var1, var2, different, cid=cid)
+                    csp_problem.add_constraint(Constraint(scope=frozenset({var1, var2}), relation=different, name=cid))
                     constraint_count += 1
         
         logger.debug(f"Añadidas {constraint_count} restricciones de fila")
@@ -203,12 +203,12 @@ class LatinSquareProblem(ProblemFamily):
                     
                     different.__name__ = f'diff_col{col}_r{row1}_r{row2}'
                     cid = f'col_{col}_{row1}_{row2}'
-                    engine.add_constraint(var1, var2, different, cid=cid)
+                    csp_problem.add_constraint(Constraint(scope=frozenset({var1, var2}), relation=different, name=cid))
                     constraint_count += 1
         
         logger.info(f"Problema Latin Square generado: {size}×{size}, {n_clues} pistas, {constraint_count} restricciones")
         
-        return engine
+        return csp_problem
     
     def _generate_clues(self, size: int, n_clues: int, seed: Optional[int] = None) -> Dict[Tuple[int, int], int]:
         """

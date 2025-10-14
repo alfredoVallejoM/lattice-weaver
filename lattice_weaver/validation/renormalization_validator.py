@@ -12,8 +12,7 @@ import hashlib
 import numpy as np
 import random
 import traceback
-
-from ..renormalization.core import renormalize_csp, refine_solution
+from ..renormalization.core import renormalize_csp, RenormalizationSolver, refine_solution
 from ..paging.page_manager import PageManager
 from ..renormalization.partition import VariablePartitioner
 from ..core.csp_problem import CSP, Constraint, is_satisfiable, verify_solution, solve_subproblem_exhaustive, generate_nqueens, generate_random_csp

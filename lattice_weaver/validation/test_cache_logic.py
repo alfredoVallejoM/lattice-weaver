@@ -201,3 +201,62 @@ class TestPageManager(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main(argv=['first-arg-is-ignored'], exit=False)
 
+
+
+
+from lattice_weaver.core.csp_problem import CSP, Constraint
+from lattice_weaver.core.csp_engine.solver import CSPSolution
+
+class TestCSPCaching(unittest.TestCase):
+    def setUp(self):
+        self.manager = PageManager(l1_capacity=2, l2_capacity=2, l3_capacity=2, l3_storage_dir="./test_csp_cache_storage")
+
+    def tearDown(self):
+        if Path("./test_csp_cache_storage").exists():
+            shutil.rmtree("./test_csp_cache_storage")
+
+    def create_simple_csp(self):
+        variables = {"A", "B"}
+        domains = {"A": frozenset([1, 2]), "B": frozenset([1, 2])}
+        constraints = [Constraint(["A", "B"], lambda a, b: a != b)]
+        return CSP(variables, domains, constraints)
+
+    def test_cache_csp_problem(self):
+        csp = self.create_simple_csp()
+        csp_page = Page("csp_problem_1", csp, page_type="csp_problem", abstraction_level=1)
+        self.manager.put_page(csp_page)
+
+        retrieved_csp_page = self.manager.get_page("csp_problem_1")
+        self.assertIsNotNone(retrieved_csp_page)
+        self.assertEqual(retrieved_csp_page.id, "csp_problem_1")
+        self.assertIsInstance(retrieved_csp_page.content, CSP)
+        self.assertIn("A", retrieved_csp_page.content.variables)
+
+    def test_cache_csp_solution(self):
+        solution_data = {"A": 1, "B": 2}
+        csp_solution = CSPSolution(assignment=solution_data)
+        solution_page = Page("csp_solution_1", csp_solution, page_type="csp_solution", abstraction_level=2)
+        self.manager.put_page(solution_page)
+
+        retrieved_solution_page = self.manager.get_page("csp_solution_1")
+        self.assertIsNotNone(retrieved_solution_page)
+        self.assertEqual(retrieved_solution_page.id, "csp_solution_1")
+        self.assertIsInstance(retrieved_solution_page.content, CSPSolution)
+        self.assertEqual(retrieved_solution_page.content.assignment["A"], 1)
+
+    def test_cache_csp_intermediate_state(self):
+        # Simulate an intermediate state, e.g., a partial assignment or pruned domains
+        intermediate_state = {"assignment": {"A": 1}, "domains": {"B": [2]}}
+        state_page = Page("csp_intermediate_state_1", intermediate_state, page_type="csp_state", abstraction_level=1)
+        self.manager.put_page(state_page)
+
+        retrieved_state_page = self.manager.get_page("csp_intermediate_state_1")
+        self.assertIsNotNone(retrieved_state_page)
+        self.assertEqual(retrieved_state_page.id, "csp_intermediate_state_1")
+        self.assertIsInstance(retrieved_state_page.content, dict)
+        self.assertEqual(retrieved_state_page.content["assignment"]["A"], 1)
+
+
+if __name__ == '__main__':
+    unittest.main(argv=['first-arg-is-ignored'], exit=False)
+
