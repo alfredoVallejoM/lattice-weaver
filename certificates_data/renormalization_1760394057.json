@@ -1,0 +1,23 @@
+{
+  "level_name": "renormalization",
+  "timestamp": 1760394057.9624407,
+  "type_checked": true,
+  "invariants_verified": [
+    "satisfiability_preservation",
+    "complexity_reduction"
+  ],
+  "runtime_tests_passed": 2,
+  "runtime_tests_failed": 0,
+  "speedup_measured": 5.041680661376068,
+  "memory_reduction": 0.9,
+  "correctness_rate": 0.0,
+  "signature": "4a01c2822d68a0f28de5c48abb94f746212e2b74537bf0af060285ea22ed7194",
+  "metadata": {
+    "k_factor": 10,
+    "partition_strategy": "adaptive",
+    "original_vars": 100,
+    "renormalized_vars": 10,
+    "solution_preservation_rate": 0.0,
+    "effective_domains_correctness": 0.6916666666666667
+  }
+}
