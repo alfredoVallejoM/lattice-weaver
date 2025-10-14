@@ -162,7 +162,7 @@ class VariablePartitioner:
             signatures[signature].append(var)
             
         # Devolver los grupos de variables con la misma firma
-        print(f"DEBUG (partition.py): Final signatures dict: {dict(signatures)}")
+        # print(f"DEBUG (partition.py): Final signatures dict: {dict(signatures)}") # Comentado para evitar output excesivo
         return [set(group) for group in signatures.values()]
     
     def _partition_symmetry(self, csp, k: int) -> List[Set[str]]:
@@ -245,173 +245,67 @@ class VariablePartitioner:
         # Crear lista de adyacencia
         adjacency = [[] for _ in range(len(G.nodes()))]
         for u, v in G.edges():
-            u_idx = node_to_idx[u]
-            v_idx = node_to_idx[v]
-            adjacency[u_idx].append(v_idx)
-            adjacency[v_idx].append(u_idx)
+            adjacency[node_to_idx[u]].append(node_to_idx[v])
+            adjacency[node_to_idx[v]].append(node_to_idx[u]) # Metis espera grafo no dirigido
         
-        # Particionar con metis
-        try:
-            # pymetis.part_graph can take a NetworkX graph directly.
-            # The documentation suggests passing the graph object and nparts as positional arguments.
-            # pymetis.part_graph expects nparts as the first argument, then the adjacency.
-            # It can directly take a NetworkX graph as the adjacency argument.
-            # pymetis expects integer node IDs. Convert NetworkX graph to use integer nodes.
-            G_undirected = G.to_undirected()
-            node_to_int = {node: i for i, node in enumerate(G_undirected.nodes())}
-            int_to_node = {i: node for i, node in enumerate(G_undirected.nodes())}
-
-            # Create a new graph with integer nodes for pymetis
-            G_int_nodes = nx.Graph()
-            G_int_nodes.add_nodes_from(range(len(G_undirected.nodes())))
-            for u, v in G_undirected.edges():
-                G_int_nodes.add_edge(node_to_int[u], node_to_int[v])
-
-            edgecuts, parts = metis.part_graph(k, adjacency=G_int_nodes)
-
-            partition = [set() for _ in range(k)]
-            for idx, part_id in enumerate(parts):
-                original_node = int_to_node[idx]
-                partition[part_id].add(original_node)
-            return partition
-        except Exception as e:
-            print(f"Warning: metis failed ({e}), falling back to topological")
-            return self._partition_topological(csp, k)
+        # Llamar a metis
+        # nparts: número de particiones
+        # xadj, adjncy: representación del grafo
+        # vwgt: pesos de los vértices (None para pesos unitarios)
+        # adjwgt: pesos de las aristas (None para pesos unitarios)
+        # tpwgts: pesos de las particiones (None para particiones balanceadas)
+        # ubvec: vector de desbalanceo (None para default)
+        
+        edge_cut, parts = metis.part_graph(k, adjacency)
+        
+        # Convertir resultado de metis a formato de sets de variables
+        partition = [set() for _ in range(k)]
+        for idx, part_id in enumerate(parts):
+            partition[part_id].add(idx_to_node[idx])
+            
+        return partition
     
     def _build_constraint_graph(self, csp) -> nx.Graph:
         """
-        Construye grafo de restricciones del CSP.
-        
-        Nodos: variables
-        Edges: restricciones (peso = fuerza de la restricción)
+        Construye un grafo de restricciones donde los nodos son variables
+        y las aristas representan restricciones entre ellas.
         """
         G = nx.Graph()
-        
-        # Añadir nodos (variables)
         G.add_nodes_from(csp.variables)
         
-        # Añadir edges (restricciones)
         for constraint in csp.constraints:
-            # Obtener variables involucradas
-            vars_involved = constraint.scope
-            
-            # Para restricciones binarias, añadir edge directo
-            if len(vars_involved) == 2:
-                var1, var2 = vars_involved
-                weight = self._estimate_constraint_strength(constraint)
-                G.add_edge(var1, var2, weight=weight)
-            
-            # Para restricciones n-arias, añadir clique
-            elif len(vars_involved) > 2:
-                for i, var1 in enumerate(vars_involved):
-                    for var2 in vars_involved[i+1:]:
-                        weight = self._estimate_constraint_strength(constraint)
-                        if G.has_edge(var1, var2):
-                            G[var1][var2]['weight'] += weight
-                        else:
-                            G.add_edge(var1, var2, weight=weight)
-        
+            # Solo consideramos restricciones binarias para el grafo
+            if len(constraint.scope) == 2:
+                v1, v2 = tuple(constraint.scope)
+                G.add_edge(v1, v2)
+            elif len(constraint.scope) > 2:
+                # Para restricciones de aridad > 2, añadimos aristas entre todas las parejas
+                # de variables en el scope (clique)
+                for v1, v2 in itertools.combinations(constraint.scope, 2):
+                    G.add_edge(v1, v2)
         return G
     
-    def _estimate_constraint_strength(self, constraint) -> float:
-        """
-        Estima fuerza de una restricción.
-        
-        Fuerza = qué tan restrictiva es la restricción
-        """
-        # Placeholder: Implementar lógica real para estimar la fuerza de la restricción
-        # Por ejemplo, basada en el tamaño del dominio de las variables involucradas
-        # o la complejidad de la función de relación.
-        return 1.0 # Por ahora, todas las restricciones tienen la misma fuerza
-
-    def _detect_symmetry_groups(self, csp) -> List[Set[str]]:
-        """
-        Detecta grupos de variables simétricas en el CSP.
-
-        Variables son simétricas si tienen:
-        - Mismo dominio
-        - Mismas restricciones (módulo permutación)
-        """
-        # Placeholder: Implementar lógica real para detectar simetrías.
-        # Esto es un problema complejo en sí mismo y puede requerir algoritmos
-        # de isomorfismo de grafos o análisis de automorfismos.
-        
-        # Por ahora, una implementación trivial: cada variable es su propio grupo.
-        return [{var} for var in csp.variables]
-
     def _estimate_difficulty(self, csp) -> Dict[str, float]:
         """
-        Estima la dificultad de cada variable en el CSP.
-
-        La dificultad puede basarse en:
-        - Grado de la variable en el grafo de restricciones
-        - Tamaño de su dominio
-        - Número y fuerza de las restricciones en las que participa
+        Estima la dificultad de cada variable.
+        
+        Heurística simple: número de restricciones en las que participa la variable
+        multiplicado por el logaritmo del tamaño de su dominio.
         """
-        difficulty_map: Dict[str, float] = {}
+        difficulty_map = {}
         G = self._build_constraint_graph(csp)
-
-        for var in sorted(list(csp.variables)):
-            degree = G.degree(var) if G.has_node(var) else 0
-            domain_size = len(csp.domains.get(var, []))
-            
-            # Heurística simple: mayor grado, menor dominio -> mayor dificultad
-            difficulty = float(degree) / (domain_size + 1) # Evitar división por cero
-            difficulty_map[var] = difficulty
         
-        return difficulty_map
-
-    def _balance_partition(self, partition: List[Set[str]], csp) -> List[Set[str]]:
-        """
-        Balancea el tamaño de los grupos en una partición.
-        
-        Args:
-            partition: La partición a balancear.
-            csp: El CSP original (para acceder a las variables).
+        for var in csp.variables:
+            degree = G.degree(var) # Número de restricciones en las que participa
+            domain_size = len(csp.domains[var])
             
-        Returns:
-            Partición balanceada
-        """
-        if not partition:
-            return partition
-        
-        avg_size = sum(len(group) for group in partition) / len(partition)
-        
-        # Mientras haya desbalance significativo
-        max_iterations = 100 # Para evitar bucles infinitos
-        iteration = 0
-        while iteration < max_iterations:
-            largest_group_idx = -1
-            smallest_group_idx = -1
-            max_size = -1
-            min_size = float('inf')
-
-            for i, group in enumerate(partition):
-                if len(group) > max_size:
-                    max_size = len(group)
-                    largest_group_idx = i
-                if len(group) < min_size:
-                    min_size = len(group)
-                    smallest_group_idx = i
-            
-            # Si el desbalance es aceptable, salir
-            if max_size - min_size <= 1 or largest_group_idx == -1 or smallest_group_idx == -1:
-                break
-            
-            # Mover una variable del grupo más grande al más pequeño
-            # Elegir la variable que menos impacte las restricciones inter-grupo
-            # (esto es una heurística simple, se podría mejorar con análisis de edge-cut)
-            
-            # Por simplicidad, movemos una variable arbitraria del grupo más grande
-            if partition[largest_group_idx]: # Asegurarse de que el grupo no esté vacío
-                var_to_move = next(iter(partition[largest_group_idx]))
-                partition[largest_group_idx].remove(var_to_move)
-                partition[smallest_group_idx].add(var_to_move)
+            # Evitar log(0) si el dominio está vacío (aunque no debería pasar)
+            if domain_size > 0:
+                difficulty = degree * np.log(domain_size)
             else:
-                # Si el grupo más grande está vacío, algo salió mal o ya está balanceado
-                break
+                difficulty = float('inf') # Variable imposible
             
-            iteration += 1
-        
-        return partition
+            difficulty_map[var] = difficulty
+            
+        return difficulty_map
 

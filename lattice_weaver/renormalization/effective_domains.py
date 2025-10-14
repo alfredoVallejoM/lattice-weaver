@@ -199,8 +199,11 @@ class EffectiveDomainDeriver:
         from ..core.csp_problem import CSP, verify_solution
         temp_csp = CSP(variables=set(assignment.keys()),
                        domains={var: frozenset([val]) for var, val in assignment.items()},
-                       constraints=constraints)
-        return verify_solution(temp_csp, assignment)
+                       constraints=constraints,
+                       name="TempSubproblemCSP")
+        result = verify_solution(temp_csp, assignment)
+
+        return result
     
     def _estimate_domain_size(self, subproblem: Dict) -> int:
         """
@@ -263,7 +266,9 @@ class EffectiveDomainDeriver:
         return hashlib.md5(canonical_str.encode()).hexdigest()
     
     def get_cache_stats(self) -> Dict:
-        """Obtiene estadísticas del caché."""
+        """
+        Obtiene estadísticas del caché.
+        """
         total_requests = self.stats['cache_hits'] + self.stats['cache_misses']
         hit_rate = self.stats['cache_hits'] / total_requests if total_requests > 0 else 0.0
         
@@ -277,7 +282,9 @@ class EffectiveDomainDeriver:
         }
     
     def clear_cache(self) -> None:
-        """Limpia caché (útil para testing)."""
+        """
+        Limpia caché (útil para testing).
+        """
         self.cache.clear()
         self.stats = {
             'cache_hits': 0,
@@ -309,7 +316,8 @@ class LazyEffectiveDomain:
         self._domain: Optional[FrozenSet[Tuple]] = None
     
     def get(self) -> FrozenSet[Tuple]:
-        """Obtiene dominio efectivo (computándolo si es necesario)."""
+        """
+        Obtiene dominio efectivo (computándolo si es necesario)."""
         if self._domain is None:
             self._domain = self.deriver.derive(self.csp, self.group)
         return self._domain
@@ -319,14 +327,17 @@ class LazyEffectiveDomain:
         return self._domain is not None
     
     def __len__(self) -> int:
-        """Tamaño del dominio."""
+        """
+        Tamaño del dominio."""
         return len(self.get())
     
     def __iter__(self):
-        """Itera sobre configuraciones del dominio."""
+        """
+        Itera sobre configuraciones del dominio."""
         return iter(self.get())
     
     def __contains__(self, config: Tuple) -> bool:
-        """Verifica si una configuración está en el dominio."""
+        """
+        Verifica si una configuración está en el dominio."""
         return config in self.get()
 

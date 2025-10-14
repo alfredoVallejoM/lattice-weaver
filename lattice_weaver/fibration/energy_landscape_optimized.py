@@ -272,161 +272,51 @@ class EnergyLandscapeOptimized:
         for value in domain:
             # OPTIMIZACIÓN: Cálculo incremental
             energy_components = self.compute_energy_incremental(
-                assignment, base_energy, variable, value
+                assignment,
+                base_energy,
+                variable,
+                value
             )
             gradient[value] = energy_components.total_energy
             
         return gradient
     
-    def compute_energy_gradient(self, 
-                               assignment: Dict[str, Any], 
-                               variable: str,
-                               domain: List[Any]) -> Dict[Any, float]:
-        """
-        Calcula el gradiente de energía (interfaz compatible).
-        
-        Calcula primero la energía base y luego usa el método optimizado.
-        
-        Args:
-            assignment: Asignación parcial actual
-            variable: Variable para la cual calcular el gradiente
-            domain: Dominio de valores posibles para la variable
-            
-        Returns:
-            Diccionario {valor: energía}
-        """
-        # Calcular energía base
-        base_energy = self.compute_energy(assignment, use_cache=True)
-        
-        # Usar método optimizado
-        return self.compute_energy_gradient_optimized(
-            assignment, base_energy, variable, domain
-        )
-    
-    def find_energy_minimum(self,
-                           assignment: Dict[str, Any],
-                           variable: str,
-                           domain: List[Any]) -> Tuple[Any, float]:
-        """
-        Encuentra el valor de mínima energía para una variable.
-        
-        Args:
-            assignment: Asignación parcial actual
-            variable: Variable a optimizar
-            domain: Dominio de la variable
-            
-        Returns:
-            Tupla (valor_óptimo, energía_mínima)
-        """
-        gradient = self.compute_energy_gradient(assignment, variable, domain)
-        
-        if not gradient:
-            return (None, float('inf'))
-        
-        min_value = min(gradient, key=gradient.get)
-        min_energy = gradient[min_value]
-        
-        return (min_value, min_energy)
-    
-    def find_local_minima(self, 
-                         assignment: Dict[str, Any], 
-                         unassigned_vars: List[str],
-                         domains: Dict[str, List[Any]],
-                         max_minima: int = 10) -> List[Tuple[Dict[str, Any], float]]:
-        """
-        Identifica atractores (mínimos locales) en la vecindad de una asignación.
-        
-        Args:
-            assignment: Asignación parcial actual
-            unassigned_vars: Variables no asignadas
-            domains: Dominios de las variables
-            max_minima: Número máximo de mínimos a devolver
-            
-        Returns:
-            Lista de tuplas (asignación, energía) ordenadas por energía
-        """
-        current_energy = self.compute_energy(assignment).total_energy
-        local_minima = []
-        
-        for var in unassigned_vars:
-            if var not in domains:
-                continue
-                
-            min_value, min_energy = self.find_energy_minimum(
-                assignment, var, domains[var]
-            )
-            
-            if min_energy < current_energy:
-                new_assignment = assignment.copy()
-                new_assignment[var] = min_value
-                local_minima.append((new_assignment, min_energy))
-        
-        local_minima.sort(key=lambda x: x[1])
-        return local_minima[:max_minima]
-    
-    def compute_energy_delta(self,
-                            assignment: Dict[str, Any],
-                            variable: str,
-                            old_value: Any,
-                            new_value: Any) -> float:
-        """
-        Calcula el cambio de energía al modificar una asignación.
-        
-        Args:
-            assignment: Asignación actual
-            variable: Variable a modificar
-            old_value: Valor anterior
-            new_value: Valor nuevo
-            
-        Returns:
-            Delta de energía (positivo = aumenta, negativo = disminuye)
-        """
-        # Energía con valor anterior
-        old_assignment = assignment.copy()
-        old_assignment[variable] = old_value
-        old_energy = self.compute_energy(old_assignment, use_cache=True).total_energy
-        
-        # Energía con valor nuevo
-        new_assignment = assignment.copy()
-        new_assignment[variable] = new_value
-        new_energy = self.compute_energy(new_assignment, use_cache=True).total_energy
-        
-        return new_energy - old_energy
-    
     def _assignment_to_key(self, assignment: Dict[str, Any]) -> str:
-        """Convierte una asignación a una clave de cache."""
-        items = sorted(assignment.items())
-        return str(items)
+        """
+        Convierte una asignación a una clave de string para el caché.
+        
+        Args:
+            assignment: Asignación
+            
+        Returns:
+            Clave de string
+        """
+        # Ordenar por clave para asegurar consistencia
+        return "|".join(f"{k}:{assignment[k]}" for k in sorted(assignment.keys()))
+    
+    def get_cache_statistics(self) -> Dict[str, int]:
+        """
+        Obtiene estadísticas de uso de caché.
+        
+        Returns:
+            Diccionario con estadísticas
+        """
+        return {
+            "cache_hits": self.cache_hits,
+            "cache_misses": self.cache_misses,
+            "incremental_calculations": self.incremental_calculations,
+            "full_calculations": self.full_calculations,
+            "cache_size": len(self._energy_cache)
+        }
     
     def clear_cache(self):
-        """Limpia el cache de energías."""
+        """
+        Limpia el caché de energía.
+        """
         self._energy_cache.clear()
         self.cache_hits = 0
         self.cache_misses = 0
         self.incremental_calculations = 0
         self.full_calculations = 0
-    
-    def get_cache_statistics(self) -> Dict[str, Any]:
-        """Obtiene estadísticas del cache y optimizaciones."""
-        total_accesses = self.cache_hits + self.cache_misses
-        hit_rate = self.cache_hits / total_accesses if total_accesses > 0 else 0.0
-        
-        total_calculations = self.incremental_calculations + self.full_calculations
-        incremental_rate = self.incremental_calculations / total_calculations if total_calculations > 0 else 0.0
-        
-        return {
-            'cache_size': len(self._energy_cache),
-            'cache_hits': self.cache_hits,
-            'cache_misses': self.cache_misses,
-            'hit_rate': hit_rate,
-            'incremental_calculations': self.incremental_calculations,
-            'full_calculations': self.full_calculations,
-            'incremental_rate': incremental_rate
-        }
-    
-    def __repr__(self):
-        stats = self.get_cache_statistics()
-        return (f"EnergyLandscapeOptimized(cache_size={stats['cache_size']}, "
-                f"hit_rate={stats['hit_rate']:.2%}, "
-                f"incremental_rate={stats['incremental_rate']:.2%})")
+
 
