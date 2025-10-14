@@ -1,31 +1,37 @@
+# lattice_weaver/arc_engine/__init__.py
+
 """
-Módulo de compatibilidad para arc_engine (DEPRECATED).
-Este módulo se mantendrá hasta la versión 6.0 para compatibilidad.
+Redirección para el módulo arc_engine (DEPRECATED).
+
+Este módulo ahora redirige las importaciones a la nueva estructura en `lattice_weaver.core`.
 """
+
 import warnings
 
-# Importar los componentes del nuevo motor CSP
-from ..core.csp_engine.graph import ConstraintGraph
-from ..core.csp_engine.solver import AdaptiveConsistencyEngine
-from ..core.csp_engine.tracing import SearchSpaceTracer, SearchEvent
-from ..core.csp_engine.clustering import ClusterDetector
-from ..core.csp_engine.topology_utils import TopologyUtils
-
 warnings.warn(
-    "El módulo 'lattice_weaver.arc_engine' está DEPRECATED. "
-    "Use 'lattice_weaver.core.csp_engine' en su lugar.",
+    "El módulo `lattice_weaver.arc_engine` está DEPRECATED. "
+    "Use `lattice_weaver.core.csp_problem` para las definiciones de CSP.",
     DeprecationWarning, stacklevel=2
 )
 
-# Alias para mantener la compatibilidad
-ArcEngine = AdaptiveConsistencyEngine
+# Redirigir las importaciones de CSP a la nueva ubicación
+from ..core.csp_problem import (
+    CSP,
+    Constraint,
+    is_satisfiable,
+    verify_solution,
+    generate_nqueens,
+    generate_random_csp,
+    solve_subproblem_exhaustive
+)
 
-# Exportar otros componentes que podrían haber sido usados directamente
 __all__ = [
-    "ArcEngine",
-    "ConstraintGraph",
-    "SearchSpaceTracer",
-    "ClusterDetector",
-    "TopologyUtils",
+    'CSP',
+    'Constraint',
+    'is_satisfiable',
+    'verify_solution',
+    'generate_nqueens',
+    'generate_random_csp',
+    'solve_subproblem_exhaustive'
 ]
 
