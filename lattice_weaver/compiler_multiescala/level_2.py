@@ -192,6 +192,12 @@ class Level2(AbstractionLevel):
             'inter_pattern_constraints': inter_pattern_constraints
         }
         
+        # Guardar información original para refinamiento desde L3
+        if 'original_patterns' not in self.config:
+            self.config['original_patterns'] = patterns
+        if 'original_unique_blocks' not in self.config:
+            self.config['original_unique_blocks'] = unique_blocks
+        
         # Reconstruir mapeo de bloques a patrones
         self.pattern_instances = {}
         for pattern in patterns:

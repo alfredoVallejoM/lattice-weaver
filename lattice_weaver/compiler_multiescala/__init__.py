@@ -9,14 +9,18 @@ from .base import AbstractionLevel
 from .level_0 import Level0
 from .level_1 import Level1, ConstraintBlock
 from .level_2 import Level2, LocalPattern, PatternSignature
+from .level_3 import Level3, CompositeStructure, CompositeSignature
 
 __all__ = [
     'AbstractionLevel',
     'Level0',
     'Level1',
     'Level2',
+    'Level3',
     'ConstraintBlock',
     'LocalPattern',
     'PatternSignature',
+    'CompositeStructure',
+    'CompositeSignature',
 ]
 
