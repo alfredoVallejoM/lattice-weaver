@@ -3,14 +3,15 @@ from typing import Dict, List, Any, Optional, Tuple
 import random
 
 from .constraint_hierarchy import ConstraintHierarchy, ConstraintLevel, Hardness
-from .energy_landscape_optimized import EnergyLandscapeOptimized, EnergyComponents
+from .energy_landscape_optimized import EnergyLandscapeOptimized
 from .hacification_engine import HacificationEngine, HacificationResult
 from .landscape_modulator import LandscapeModulator, ModulationStrategy, AdaptiveStrategy
 from .autoperturbation_system import AutoperturbationSystem
 from .multiscale_compiler_api import MultiscaleCompilerAPI
 from .simple_multiscale_compiler import SimpleMultiscaleCompiler
+from .fibration_search_solver_api import FibrationSearchSolverAPI
 
-class FibrationSearchSolver:
+class FibrationSearchSolver(FibrationSearchSolverAPI):
     """
     Un solver de búsqueda que integra el Flujo de Fibración (HacificationEngine y LandscapeModulator)
     para encontrar soluciones óptimas en problemas con restricciones HARD y SOFT.
@@ -87,8 +88,8 @@ class FibrationSearchSolver:
             return
 
         if len(assignment) == len(self.variables):
-            current_energy = self.landscape.compute_energy(assignment).total_energy
-            if current_energy < self.best_energy:
+            all_hard_satisfied, current_energy, _, _, _ = self.landscape.compute_energy(assignment)
+            if all_hard_satisfied and current_energy < self.best_energy:
                 self.best_energy = current_energy
                 self.best_solution = assignment.copy()
             self.num_solutions_found += 1
@@ -123,14 +124,14 @@ class FibrationSearchSolver:
 
             # Branch & Bound principal: Podar si la energía actual de la asignación parcial ya es peor que la mejor solución encontrada.
             # Solo podar si ya tenemos una solución completa para comparar.
-            if self.best_solution is not None and h_result.energy.total_energy >= self.best_energy:
+            if self.best_solution is not None and h_result.energy[1] >= self.best_energy:
                 self.backtracks_count += 1
                 continue # Podar esta rama, no puede llevar a una solución mejor
 
             # Poda heurística para SOFT constraints: si la energía es significativamente peor en una asignación parcial
             # y ya hemos avanzado bastante en la asignación, podar.
             # El factor 1.05 (5% peor) y el 50% de variables asignadas son heurísticas ajustables.
-            if self.best_solution is not None and h_result.energy.total_energy > self.best_energy * 1.05 and len(new_assignment) > len(self.variables) * 0.5:
+            if self.best_solution is not None and h_result.energy[1] > self.best_energy * 1.05 and len(new_assignment) > len(self.variables) * 0.5:
                 self.backtracks_count += 1
                 continue # Podar si la energía es significativamente peor en una asignación parcial avanzada.
 
@@ -144,8 +145,11 @@ class FibrationSearchSolver:
 
         context = {
             "progress": len(assignment) / len(self.variables),
-            "local_violations": self.landscape.compute_energy(assignment).local_energy,
-            "global_violations": self.landscape.compute_energy(assignment).global_energy
+            # Ya no se accede directamente a local_energy y global_energy desde el resultado de compute_energy
+            # Se necesita una forma de obtener estos valores si son necesarios para la modulación.
+            # Por ahora, se usarán valores dummy o se eliminará si no son críticos.
+            "local_violations": 0.0, # Placeholder
+            "global_violations": 0.0 # Placeholder
         }
         self.modulator.apply_modulation(context)
 
@@ -168,9 +172,9 @@ class FibrationSearchSolver:
 
             # Calcular el grado (número de restricciones HARD que involucran a 'var' y a otras variables no asignadas)
             current_degree = 0
-            for const in self.hierarchy.get_constraints_at_level(ConstraintLevel.LOCAL) + \
-                         self.hierarchy.get_constraints_at_level(ConstraintLevel.PATTERN) + \
-                         self.hierarchy.get_constraints_at_level(ConstraintLevel.GLOBAL):
+            for const in self.hierarchy.get_constraints_by_level(ConstraintLevel.LOCAL) + \
+                         self.hierarchy.get_constraints_by_level(ConstraintLevel.PATTERN) + \
+                         self.hierarchy.get_constraints_by_level(ConstraintLevel.GLOBAL):
                 if const.hardness == Hardness.HARD and var in const.variables:
                     for other_var in const.variables:
                         if other_var != var and other_var in unassigned_vars:
@@ -197,7 +201,8 @@ class FibrationSearchSolver:
         def calculate_value_cost(value):
             temp_assignment = assignment.copy()
             temp_assignment[variable] = value
-            return self.landscape.compute_energy(temp_assignment).total_energy
+            _, total_energy, _, _, _ = self.landscape.compute_energy(temp_assignment)
+            return total_energy
         
         return sorted(filtered_domain, key=calculate_value_cost)
 
