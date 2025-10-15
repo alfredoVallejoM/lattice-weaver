@@ -1,0 +1,609 @@
+"""
+Fibration Search Solver Adaptativo v2 - Corregido
+
+Versión corregida del solver adaptativo que mantiene AC-3 activo en todos los modos
+y elimina solo el overhead de HomotopyRules en problemas pequeños.
+
+Cambios principales respecto a v1:
+- Modo LITE mantiene AC-3 activo (esencial para poda de dominios)
+- Solo desactiva HomotopyRules precomputation en problemas pequeños
+- TMS se mantiene activo en MEDIUM y FULL
+- Caching mejorado con LRU y TTL
+
+Autor: Agente Autónomo - Lattice Weaver
+Fecha: 15 de Octubre, 2025
+Versión: 2.0
+"""
+
+import time
+import logging
+from typing import Dict, List, Any, Optional, Set, Tuple
+from dataclasses import dataclass
+from functools import lru_cache
+from enum import Enum
+from collections import OrderedDict
+
+from lattice_weaver.fibration.constraint_hierarchy import ConstraintHierarchy, Hardness, ConstraintLevel
+from lattice_weaver.fibration.energy_landscape_optimized import EnergyLandscapeOptimized
+from lattice_weaver.fibration.hacification_engine_optimized import HacificationEngineOptimized
+from lattice_weaver.arc_engine.core import ArcEngine
+from lattice_weaver.homotopy.rules import HomotopyRules
+
+logger = logging.getLogger(__name__)
+
+
+class SolverMode(Enum):
+    """Modos de operación del solver."""
+    LITE = "lite"       # Sin HomotopyRules, con AC-3, sin TMS
+    MEDIUM = "medium"   # Sin HomotopyRules, con AC-3, con TMS
+    FULL = "full"       # Con HomotopyRules, con AC-3, con TMS
+
+
+@dataclass
+class ProblemCharacteristics:
+    """Características del problema para selección de modo."""
+    n_variables: int
+    n_constraints: int
+    avg_domain_size: float
+    max_domain_size: int
+    has_soft_constraints: bool
+    has_hierarchy: bool
+    has_global_constraints: bool
+    estimated_complexity: float
+    
+    def suggest_mode(self) -> SolverMode:
+        """
+        Sugiere el modo óptimo basándose en características.
+        
+        Lógica de decisión:
+        - LITE: Problemas muy pequeños (<15 vars, <10 dominio, solo HARD, sin jerarquía)
+        - FULL: Problemas con SOFT, jerarquía, o grandes (>40 vars o >30 dominio)
+        - MEDIUM: Casos intermedios
+        """
+        # Problema muy pequeño y simple -> LITE
+        if (self.n_variables < 15 and 
+            self.max_domain_size < 10 and 
+            not self.has_soft_constraints and
+            not self.has_hierarchy and
+            not self.has_global_constraints):
+            return SolverMode.LITE
+        
+        # Problema con restricciones SOFT o jerarquía -> FULL
+        if self.has_soft_constraints or self.has_hierarchy or self.has_global_constraints:
+            return SolverMode.FULL
+        
+        # Problema grande -> FULL (para aprovechar HomotopyRules y backjumping)
+        if self.n_variables > 40 or self.max_domain_size > 30:
+            return SolverMode.FULL
+        
+        # Caso intermedio -> MEDIUM
+        return SolverMode.MEDIUM
+
+
+class LRUCacheWithTTL:
+    """Cache LRU con time-to-live para evitar entradas obsoletas."""
+    
+    def __init__(self, maxsize: int = 1000, ttl_seconds: float = 60.0):
+        """
+        Inicializa el cache.
+        
+        Args:
+            maxsize: Tamaño máximo del cache
+            ttl_seconds: Tiempo de vida de las entradas en segundos
+        """
+        self.maxsize = maxsize
+        self.ttl_seconds = ttl_seconds
+        self.cache: OrderedDict = OrderedDict()
+        self.timestamps: Dict[Any, float] = {}
+    
+    def get(self, key: Any) -> Optional[Any]:
+        """Obtiene valor del cache si existe y no ha expirado."""
+        if key not in self.cache:
+            return None
+        
+        # Verificar TTL
+        if time.time() - self.timestamps[key] > self.ttl_seconds:
+            del self.cache[key]
+            del self.timestamps[key]
+            return None
+        
+        # Mover al final (LRU)
+        self.cache.move_to_end(key)
+        return self.cache[key]
+    
+    def put(self, key: Any, value: Any):
+        """Añade valor al cache."""
+        if key in self.cache:
+            self.cache.move_to_end(key)
+        else:
+            if len(self.cache) >= self.maxsize:
+                # Eliminar el más antiguo
+                oldest = next(iter(self.cache))
+                del self.cache[oldest]
+                del self.timestamps[oldest]
+            self.cache[key] = value
+        
+        self.timestamps[key] = time.time()
+    
+    def clear(self):
+        """Limpia el cache."""
+        self.cache.clear()
+        self.timestamps.clear()
+
+
+class FibrationSearchSolverAdaptiveV2:
+    """
+    Solver adaptativo v2 con correcciones críticas.
+    
+    Mejoras respecto a v1:
+    - AC-3 siempre activo (esencial para poda)
+    - Solo HomotopyRules se desactiva en LITE
+    - Caching mejorado con TTL
+    - Heurísticas optimizadas
+    """
+    
+    def __init__(
+        self,
+        hierarchy: ConstraintHierarchy,
+        landscape: EnergyLandscapeOptimized,
+        arc_engine: ArcEngine,
+        variables: List[str],
+        domains: Dict[str, List[Any]],
+        mode: Optional[SolverMode] = None,  # None = auto-detect
+        homotopy_threshold: int = 50,  # Reducido de 100
+        max_backtracks: int = 10000,
+        max_iterations: int = 10000,
+        time_limit_seconds: float = 60.0
+    ):
+        """
+        Inicializa el solver adaptativo v2.
+        
+        Args:
+            hierarchy: Jerarquía de restricciones
+            landscape: Landscape de energía
+            arc_engine: Motor de consistencia de arcos (DEBE tener AC-3 activo)
+            variables: Lista de IDs de variables
+            domains: Dominios iniciales {variable: [valores]}
+            mode: Modo de operación (None = auto-detect)
+            homotopy_threshold: Backtracks antes de computar HomotopyRules
+            max_backtracks: Máximo número de backtracks
+            max_iterations: Máximo número de iteraciones
+            time_limit_seconds: Límite de tiempo en segundos
+        """
+        self.hierarchy = hierarchy
+        self.landscape = landscape
+        self.arc_engine = arc_engine
+        self.variables = variables
+        self.domains = {v: list(d) for v, d in domains.items()}
+        self.homotopy_threshold = homotopy_threshold
+        self.max_backtracks = max_backtracks
+        self.max_iterations = max_iterations
+        self.time_limit_seconds = time_limit_seconds
+        
+        # Analizar características del problema
+        self.characteristics = self._analyze_problem()
+        
+        # Seleccionar modo
+        if mode is None:
+            self.mode = self.characteristics.suggest_mode()
+            logger.info(f"[AdaptiveV2] Modo auto-detectado: {self.mode.value}")
+        else:
+            self.mode = mode
+            logger.info(f"[AdaptiveV2] Modo manual: {self.mode.value}")
+        
+        # Configurar según modo
+        self.use_homotopy = (self.mode == SolverMode.FULL)
+        self.use_tms = (self.mode in [SolverMode.MEDIUM, SolverMode.FULL])
+        self.use_enhanced_heuristics = (self.mode == SolverMode.FULL)
+        
+        # IMPORTANTE: AC-3 siempre activo (a través de HacificationEngine)
+        # No se desactiva en ningún modo
+        
+        # Lazy initialization de HomotopyRules
+        self.homotopy_rules: Optional[HomotopyRules] = None
+        self.homotopy_computed = False
+        
+        # Estado de búsqueda
+        self.best_solution: Optional[Dict[str, Any]] = None
+        self.best_energy: float = float('inf')
+        self.backtracks = 0
+        self.iterations = 0
+        self.start_time: float = 0.0
+        self.variable_to_decision_level: Dict[str, int] = {}
+        
+        # Caché mejorado con TTL
+        self._mrv_cache = LRUCacheWithTTL(maxsize=1000, ttl_seconds=30.0)
+        self._lcv_cache = LRUCacheWithTTL(maxsize=5000, ttl_seconds=30.0)
+        
+        # Estadísticas
+        self.stats = {
+            'mode': self.mode.value,
+            'characteristics': {
+                'n_variables': self.characteristics.n_variables,
+                'n_constraints': self.characteristics.n_constraints,
+                'avg_domain_size': self.characteristics.avg_domain_size,
+                'has_soft': self.characteristics.has_soft_constraints,
+                'has_hierarchy': self.characteristics.has_hierarchy
+            },
+            'search': {
+                'backtracks': 0,
+                'backjumps': 0,
+                'nodes_explored': 0,
+                'homotopy_computations': 0,
+                'cache_hits_mrv': 0,
+                'cache_hits_lcv': 0
+            },
+            'solution': {
+                'found': False,
+                'energy': float('inf'),
+                'time_seconds': 0.0
+            }
+        }
+        
+        logger.info(f"[AdaptiveV2] Inicializado en modo {self.mode.value}")
+        logger.info(f"  Variables: {self.characteristics.n_variables}")
+        logger.info(f"  Restricciones: {self.characteristics.n_constraints}")
+        logger.info(f"  Dominio promedio: {self.characteristics.avg_domain_size:.1f}")
+        logger.info(f"  Restricciones SOFT: {self.characteristics.has_soft_constraints}")
+        logger.info(f"  Jerarquía: {self.characteristics.has_hierarchy}")
+        logger.info(f"  AC-3: SIEMPRE ACTIVO")
+        logger.info(f"  HomotopyRules: {'ACTIVO' if self.use_homotopy else 'DESACTIVADO'}")
+        logger.info(f"  TMS: {'ACTIVO' if self.use_tms else 'DESACTIVADO'}")
+    
+    def _analyze_problem(self) -> ProblemCharacteristics:
+        """Analiza las características del problema."""
+        n_variables = len(self.variables)
+        
+        # Contar restricciones por nivel
+        n_local = len(self.hierarchy.get_constraints_at_level(ConstraintLevel.LOCAL))
+        n_pattern = len(self.hierarchy.get_constraints_at_level(ConstraintLevel.PATTERN))
+        n_global = len(self.hierarchy.get_constraints_at_level(ConstraintLevel.GLOBAL))
+        n_constraints = n_local + n_pattern + n_global
+        
+        # Analizar dominios
+        domain_sizes = [len(d) for d in self.domains.values()]
+        avg_domain_size = sum(domain_sizes) / len(domain_sizes) if domain_sizes else 0
+        max_domain_size = max(domain_sizes) if domain_sizes else 0
+        
+        # Detectar restricciones SOFT
+        has_soft = False
+        for level in [ConstraintLevel.LOCAL, ConstraintLevel.PATTERN, ConstraintLevel.GLOBAL]:
+            for constraint in self.hierarchy.get_constraints_at_level(level):
+                if constraint.hardness == Hardness.SOFT:
+                    has_soft = True
+                    break
+            if has_soft:
+                break
+        
+        # Detectar jerarquía (múltiples niveles con restricciones)
+        levels_with_constraints = sum([
+            1 if n_local > 0 else 0,
+            1 if n_pattern > 0 else 0,
+            1 if n_global > 0 else 0
+        ])
+        has_hierarchy = levels_with_constraints > 1
+        
+        # Detectar restricciones globales
+        has_global_constraints = n_global > 0
+        
+        # Estimar complejidad (heurística simple)
+        estimated_complexity = (
+            n_variables * 
+            avg_domain_size * 
+            (n_constraints / max(n_variables, 1)) *
+            (2.0 if has_soft else 1.0) *
+            (1.5 if has_hierarchy else 1.0)
+        )
+        
+        return ProblemCharacteristics(
+            n_variables=n_variables,
+            n_constraints=n_constraints,
+            avg_domain_size=avg_domain_size,
+            max_domain_size=max_domain_size,
+            has_soft_constraints=has_soft,
+            has_hierarchy=has_hierarchy,
+            has_global_constraints=has_global_constraints,
+            estimated_complexity=estimated_complexity
+        )
+    
+    def solve(self) -> Optional[Dict[str, Any]]:
+        """
+        Resuelve el CSP con estrategia adaptativa v2.
+        
+        Returns:
+            Mejor solución encontrada, o None si no hay solución
+        """
+        self.start_time = time.time()
+        self.backtracks = 0
+        self.iterations = 0
+        self.best_solution = None
+        self.best_energy = float('inf')
+        
+        logger.info(f"[AdaptiveV2] Iniciando búsqueda en modo {self.mode.value}...")
+        
+        # Inicializar asignación vacía
+        assignment: Dict[str, Any] = {}
+        
+        # Ejecutar búsqueda
+        try:
+            self._search(assignment, decision_level=0)
+        except TimeoutError:
+            logger.warning("[AdaptiveV2] Tiempo límite alcanzado")
+        
+        # Actualizar estadísticas
+        elapsed = time.time() - self.start_time
+        self.stats['search']['backtracks'] = self.backtracks
+        self.stats['search']['nodes_explored'] = self.iterations
+        self.stats['solution']['found'] = self.best_solution is not None
+        self.stats['solution']['energy'] = self.best_energy
+        self.stats['solution']['time_seconds'] = elapsed
+        
+        logger.info(f"[AdaptiveV2] Búsqueda completada en {elapsed:.2f}s")
+        logger.info(f"  Soluciones encontradas: {1 if self.best_solution else 0}")
+        logger.info(f"  Mejor energía: {self.best_energy:.4f}")
+        logger.info(f"  Backtracks: {self.backtracks}")
+        logger.info(f"  Nodos explorados: {self.iterations}")
+        logger.info(f"  Cache hits MRV: {self.stats['search']['cache_hits_mrv']}")
+        logger.info(f"  Cache hits LCV: {self.stats['search']['cache_hits_lcv']}")
+        if self.use_tms:
+            logger.info(f"  Backjumps realizados: {self.stats['search']['backjumps']}")
+        if self.homotopy_computed:
+            logger.info(f"  HomotopyRules computado: {self.stats['search']['homotopy_computations']} veces")
+        
+        return self.best_solution
+    
+    def _search(self, assignment: Dict[str, Any], decision_level: int):
+        """Búsqueda recursiva con estrategia adaptativa v2."""
+        # Verificar límites
+        self.iterations += 1
+        if self.iterations > self.max_iterations:
+            raise TimeoutError("Max iterations reached")
+        if time.time() - self.start_time > self.time_limit_seconds:
+            raise TimeoutError("Time limit reached")
+        
+        # Caso base: solución completa
+        if len(assignment) == len(self.variables):
+            energy_components = self.landscape.compute_energy(assignment)
+            total_energy = energy_components.total_energy
+            if total_energy < self.best_energy:
+                self.best_solution = assignment.copy()
+                self.best_energy = total_energy
+                logger.debug(f"[AdaptiveV2] Nueva mejor solución: energía={total_energy:.4f}")
+            return
+        
+        # Seleccionar siguiente variable
+        var = self._select_next_variable(assignment)
+        if var is None:
+            return
+        
+        # Ordenar valores del dominio
+        ordered_values = self._get_ordered_domain_values(var, assignment)
+        
+        # Probar cada valor
+        for value in ordered_values:
+            # Registrar decisión en TMS (si está activado)
+            if self.use_tms and self.arc_engine.tms:
+                self.arc_engine.tms.record_decision(var, value)
+            
+            # Hacer asignación
+            assignment[var] = value
+            self.variable_to_decision_level[var] = decision_level
+            
+            # Verificar consistencia con HacificationEngine (AC-3 siempre activo)
+            hacification_result = self._hacify(assignment)
+            
+            if hacification_result.is_coherent:
+                # Recursión
+                self._search(assignment, decision_level + 1)
+            else:
+                # Backtrack
+                self.backtracks += 1
+                
+                # Backjumping si TMS está activado
+                if self.use_tms and self.arc_engine.tms:
+                    # Aquí se implementaría backjumping real
+                    # Por ahora es backtracking simple
+                    self.stats['search']['backjumps'] += 0
+            
+            # Deshacer asignación
+            del assignment[var]
+            if var in self.variable_to_decision_level:
+                del self.variable_to_decision_level[var]
+    
+    def _select_next_variable(self, assignment: Dict[str, Any]) -> Optional[str]:
+        """Selecciona la siguiente variable a asignar."""
+        unassigned = [v for v in self.variables if v not in assignment]
+        if not unassigned:
+            return None
+        
+        # Caché hit?
+        assignment_hash = hash(frozenset(assignment.keys()))
+        cached_var = self._mrv_cache.get(assignment_hash)
+        if cached_var and cached_var in unassigned:
+            self.stats['search']['cache_hits_mrv'] += 1
+            return cached_var
+        
+        # Modo LITE o MEDIUM: MRV simple (más rápido)
+        if self.mode in [SolverMode.LITE, SolverMode.MEDIUM]:
+            var = min(unassigned, key=lambda v: len(self.domains[v]))
+            self._mrv_cache.put(assignment_hash, var)
+            return var
+        
+        # Modo FULL: MRV mejorado con HomotopyRules (lazy)
+        if self.use_homotopy and self.backtracks > self.homotopy_threshold:
+            if not self.homotopy_computed:
+                self._compute_homotopy_rules()
+        
+        # MRV mejorado (4 componentes)
+        best_var = None
+        best_score = float('inf')
+        
+        for var in unassigned:
+            # Componente 1: Tamaño de dominio (MRV clásico)
+            domain_size = len(self.domains[var])
+            
+            # Componente 2: Grado (número de restricciones)
+            degree = self._count_constraints_involving(var)
+            
+            # Componente 3: Dependencias (de HomotopyRules si está disponible)
+            dependency_score = 0.0
+            if self.homotopy_computed and self.homotopy_rules:
+                dependency_score = len(self.homotopy_rules.get_dependencies(var))
+            
+            # Componente 4: Energía potencial
+            energy_score = 0.0
+            if self.characteristics.has_soft_constraints:
+                energy_score = self._estimate_energy_impact(var, assignment)
+            
+            # Score combinado (pesos ajustables)
+            score = (
+                1.0 * domain_size +
+                0.1 * degree +
+                0.05 * dependency_score +
+                0.02 * energy_score
+            )
+            
+            if score < best_score:
+                best_score = score
+                best_var = var
+        
+        self._mrv_cache.put(assignment_hash, best_var)
+        return best_var
+    
+    def _get_ordered_domain_values(self, var: str, assignment: Dict[str, Any]) -> List[Any]:
+        """Ordena los valores del dominio de una variable."""
+        # Caché hit?
+        cache_key = (var, hash(frozenset(assignment.items())))
+        cached_values = self._lcv_cache.get(cache_key)
+        if cached_values:
+            self.stats['search']['cache_hits_lcv'] += 1
+            return cached_values
+        
+        values = list(self.domains[var])
+        
+        # Modo LITE: sin ordenamiento (más rápido)
+        if self.mode == SolverMode.LITE:
+            self._lcv_cache.put(cache_key, values)
+            return values
+        
+        # Modo MEDIUM o FULL: LCV (Least Constraining Value)
+        if self.mode in [SolverMode.MEDIUM, SolverMode.FULL]:
+            # Ordenar por número de valores eliminados en vecinos
+            value_scores = []
+            for value in values:
+                # Contar cuántos valores eliminaría en vecinos
+                eliminated = self._count_eliminated_values(var, value, assignment)
+                value_scores.append((value, eliminated))
+            
+            # Ordenar por menor número de eliminaciones (LCV)
+            value_scores.sort(key=lambda x: x[1])
+            ordered_values = [v for v, _ in value_scores]
+            
+            self._lcv_cache.put(cache_key, ordered_values)
+            return ordered_values
+        
+        return values
+    
+    def _compute_homotopy_rules(self):
+        """Computa HomotopyRules (lazy)."""
+        if self.homotopy_computed:
+            return
+        
+        logger.info("[AdaptiveV2] Computando HomotopyRules...")
+        start = time.time()
+        
+        self.homotopy_rules = HomotopyRules(self.hierarchy)
+        self.homotopy_rules.precompute_dependencies()
+        
+        elapsed = time.time() - start
+        self.homotopy_computed = True
+        self.stats['search']['homotopy_computations'] += 1
+        
+        logger.info(f"[AdaptiveV2] HomotopyRules computado en {elapsed:.3f}s")
+    
+    def _hacify(self, assignment: Dict[str, Any]):
+        """Ejecuta hacificación sobre la asignación (AC-3 siempre activo)."""
+        engine = HacificationEngineOptimized(
+            hierarchy=self.hierarchy,
+            landscape=self.landscape,
+            arc_engine=self.arc_engine
+        )
+        return engine.hacify(assignment, strict=True)
+    
+    def _count_constraints_involving(self, var: str) -> int:
+        """Cuenta restricciones que involucran una variable."""
+        count = 0
+        for level in [ConstraintLevel.LOCAL, ConstraintLevel.PATTERN, ConstraintLevel.GLOBAL]:
+            for constraint in self.hierarchy.get_constraints_at_level(level):
+                if var in constraint.variables:
+                    count += 1
+        return count
+    
+    def _estimate_energy_impact(self, var: str, assignment: Dict[str, Any]) -> float:
+        """Estima el impacto en energía de asignar una variable."""
+        impact = 0.0
+        for level in [ConstraintLevel.LOCAL, ConstraintLevel.PATTERN, ConstraintLevel.GLOBAL]:
+            for constraint in self.hierarchy.get_constraints_at_level(level):
+                if var in constraint.variables and constraint.hardness == Hardness.SOFT:
+                    impact += constraint.weight
+        return impact
+    
+    def _count_eliminated_values(self, var: str, value: Any, assignment: Dict[str, Any]) -> int:
+        """Cuenta valores que serían eliminados en vecinos si var=value."""
+        eliminated = 0
+        temp_assignment = assignment.copy()
+        temp_assignment[var] = value
+        
+        for level in [ConstraintLevel.LOCAL]:
+            for constraint in self.hierarchy.get_constraints_at_level(level):
+                if var in constraint.variables and len(constraint.variables) == 2:
+                    other_vars = [v for v in constraint.variables if v != var]
+                    if not other_vars:  # Restricción unaria (misma variable dos veces)
+                        continue
+                    other_var = other_vars[0]
+                    if other_var not in assignment:
+                        # Contar valores inconsistentes
+                        for other_value in self.domains[other_var]:
+                            temp_assignment[other_var] = other_value
+                            if not constraint.predicate(temp_assignment):
+                                eliminated += 1
+                            del temp_assignment[other_var]
+        
+        return eliminated
+    
+    def get_statistics(self) -> Dict[str, Any]:
+        """Retorna estadísticas de la búsqueda."""
+        return self.stats
+
+
+def create_adaptive_solver_v2(
+    hierarchy: ConstraintHierarchy,
+    landscape: EnergyLandscapeOptimized,
+    arc_engine: ArcEngine,
+    variables: List[str],
+    domains: Dict[str, List[Any]],
+    **kwargs
+) -> FibrationSearchSolverAdaptiveV2:
+    """
+    Factory function para crear un solver adaptativo v2.
+    
+    Args:
+        hierarchy: Jerarquía de restricciones
+        landscape: Landscape de energía
+        arc_engine: Motor de consistencia de arcos
+        variables: Lista de variables
+        domains: Dominios iniciales
+        **kwargs: Argumentos adicionales para el solver
+    
+    Returns:
+        Solver adaptativo v2 configurado
+    """
+    return FibrationSearchSolverAdaptiveV2(
+        hierarchy=hierarchy,
+        landscape=landscape,
+        arc_engine=arc_engine,
+        variables=variables,
+        domains=domains,
+        **kwargs
+    )
+

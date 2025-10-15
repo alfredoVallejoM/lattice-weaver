@@ -267,6 +267,34 @@ class HomotopyRules:
             sorted_nodes = sorted(in_degrees.items(), key=lambda x: x[1])
             return [node for node, _ in sorted_nodes]
     
+    def get_optimal_variable_order(self) -> List[str]:
+        """
+        Calcula un orden óptimo de variables basado en la conectividad de las restricciones.
+        
+        Prioriza variables que están involucradas en más restricciones o en restricciones
+        con dependencias críticas.
+        
+        Returns:
+            Lista ordenada de nombres de variables.
+        
+        Raises:
+            RuntimeError: Si las reglas no han sido precomputadas.
+        """
+        if not self._precomputed:
+            raise RuntimeError("Rules not precomputed. Call precompute_from_engine first.")
+
+        # Contar la frecuencia de cada variable en las restricciones
+        variable_counts: Dict[str, int] = {}
+        for constraint_id in self.dependency_graph.nodes:
+            for var in self.get_constraint_variables(constraint_id):
+                variable_counts[var] = variable_counts.get(var, 0) + 1
+
+        # Ordenar variables por frecuencia descendente (más restricciones primero)
+        # Esto es una heurística simple para MRV (Minimum Remaining Values) guiado por la estructura del problema.
+        ordered_variables = sorted(variable_counts.keys(), key=lambda var: variable_counts[var], reverse=True)
+        
+        return ordered_variables
+
     def get_constraint_variables(self, cid: str) -> Set[str]:
         """
         Retorna las variables involucradas en una restricción.
