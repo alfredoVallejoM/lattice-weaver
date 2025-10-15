@@ -1,7 +1,7 @@
 # Visión General del Proyecto LatticeWeaver
 
-**Fecha de Actualización:** 14 de Octubre de 2025
-**Versión del Repositorio:** 7.0-alpha (Unificada y Modular)
+**Fecha de Actualización:** 16 de Octubre de 2025
+**Versión del Repositorio:** 7.1-alpha (Unificada, Modular y con Testing Extensivo)
 
 ---
 
@@ -31,10 +31,13 @@ La arquitectura de LatticeWeaver se organiza en módulos interconectados, cada u
 *   **`formal`**: Implementación del motor de tipos cúbicos y Homotopy Type Theory (HoTT), incluyendo sintaxis, motor de inferencia y verificación de tipos, y su puente con CSPs.
 *   **`renormalization`**: Módulo para la renormalización computacional, que abarca el particionamiento de variables, la derivación de dominios y restricciones efectivas, y la construcción de jerarquías de abstracción multinivel.
 *   **`paging`**: Sistema de paginación y gestión de caché multinivel (L1, L2, L3) para optimizar el uso de memoria y el acceso a datos, crucial para manejar problemas de gran escala.
-*   **`fibration`**: Implementación del flujo de fibración, análisis de paisajes energéticos y optimizaciones relacionadas, fundamentales para la comprensión de la estructura de soluciones.
+*   **`fibration`**: Implementación completa del flujo de fibración con múltiples solvers (adaptativos, optimizados, incrementales), análisis de paisajes energéticos, sistema de benchmarking y cobertura de tests del 92%. Incluye integración con ArcEngine para propagación de restricciones y detección temprana de inconsistencias. **Última actualización:** 16 Oct 2025 - Merge seguro de feature/fibration-flow-core-refinement con 57 archivos nuevos y 137/140 tests pasando.
 *   **`ml`**: Una suite de mini-IAs diseñada para acelerar diversas operaciones del framework, como la predicción de costos, la guía de memoización, el análisis de flujo de información y la optimización de estrategias de búsqueda. Incluye 62 mini-IAs implementadas de un total de 120 planificadas.
 *   **`compiler_multiescala`**: El compilador multiescala que integra los conceptos de renormalización y abstracción para abordar problemas complejos de manera eficiente.
 *   **`validation`**: Módulos dedicados a la validación de soluciones y la verificación de la consistencia interna del sistema.
+*   **`arc_engine`**: Sistema completo de propagación de restricciones con Arc Consistency (AC-3), optimizaciones paralelas, Truth Maintenance System (TMS) y dominios optimizados. Restaurado e integrado completamente en main. **Última actualización:** 16 Oct 2025 - 15 módulos integrados.
+*   **`benchmarks`**: Suite completa de benchmarking para fibration flow, incluyendo comparaciones con estado del arte, problemas realistas (Job Shop Scheduling, Task Assignment) y análisis de rendimiento. **Última actualización:** 16 Oct 2025 - 8 benchmarks implementados.
+*   **`utils`**: Utilidades de rendimiento incluyendo JIT compiler, auto-profiler, vectorización NumPy, object pooling y lazy initialization. **Última actualización:** 16 Oct 2025 - 6 utilidades integradas.
 *   **`tracks`**: Directorio que alberga proyectos de investigación y desarrollo específicos, como el sistema Zettelkasten (`track-i-educational-multidisciplinary`) y el motor de inferencia (`docs/TRACK_D_INFERENCE_ENGINE_DESIGN.md`).
 
 ---
@@ -78,7 +81,14 @@ El **Track I: Educativo Multidisciplinar** es un proyecto continuo y de priorida
 
 Para garantizar la coherencia y la alta calidad en el desarrollo de LatticeWeaver, todos los agentes deben adherirse a un protocolo de trabajo estricto. Este protocolo se detalla en los siguientes documentos:
 
-*   **`PROTOCOLO_AGENTES_LATTICEWEAVER.md`**: Guía exhaustiva sobre el ciclo de vida de las tareas, incluyendo fases de diseño en profundidad, implementación, documentación, pruebas rigurosas, depuración, propuestas de mejora de rendimiento y el proceso de actualización segura del repositorio. Incluye directrices para el formato de commits y el uso de flags de estado.
+*   **`PROTOCOLO_AGENTES_LATTICEWEAVER.md` (v4.0)**: Guía exhaustiva sobre el ciclo de vida de las tareas, incluyendo:
+    *   **Fase 0 (NUEVA)**: Verificación obligatoria del estado del proyecto antes de iniciar cualquier tarea
+    *   **Protocolo de Merge Seguro**: Actualizaciones del repositorio mediante merge controlado con análisis de conflictos
+    *   **Documentación Centralizada**: Un documento único por tarea que evoluciona (NO múltiples versiones)
+    *   **Actualización Obligatoria**: PROJECT_OVERVIEW.md y README.md deben actualizarse después de cambios significativos
+    *   **Patrones de Diseño**: Aplicación obligatoria de patrones (Strategy, Factory, Adapter, etc.) para garantizar modularidad
+    *   **Verificación Post-Lectura**: Comprobar que el avance del proyecto queda completamente reflejado y centralizado
+    *   Incluye directrices para el formato de commits, resolución de errores y política de violaciones
 *   **`MASTER_DESIGN_PRINCIPLES.md`**: Establece los meta-principios de diseño fundamentales que deben guiar toda la programación y el diseño de soluciones en LatticeWeaver. Estos principios incluyen:
     *   **Dinamismo**: Adaptabilidad a cambios, clustering dinámico, renormalización.
     *   **Distribución/Paralelización**: Escalabilidad horizontal, arquitectura Ray, actores distribuidos.
@@ -132,7 +142,14 @@ La hoja de ruta actual se enfoca en la consolidación y estabilización del fram
 
 Para garantizar la coherencia y la alta calidad en el desarrollo de LatticeWeaver, todos los agentes deben adherirse a un protocolo de trabajo estricto. Este protocolo se detalla en los siguientes documentos:
 
-*   **`PROTOCOLO_AGENTES_LATTICEWEAVER.md`**: Guía exhaustiva sobre el ciclo de vida de las tareas, incluyendo fases de diseño en profundidad, implementación, documentación, pruebas rigurosas, depuración, propuestas de mejora de rendimiento y el proceso de actualización segura del repositorio. Incluye directrices para el formato de commits y el uso de flags de estado.
+*   **`PROTOCOLO_AGENTES_LATTICEWEAVER.md` (v4.0)**: Guía exhaustiva sobre el ciclo de vida de las tareas, incluyendo:
+    *   **Fase 0 (NUEVA)**: Verificación obligatoria del estado del proyecto antes de iniciar cualquier tarea
+    *   **Protocolo de Merge Seguro**: Actualizaciones del repositorio mediante merge controlado con análisis de conflictos
+    *   **Documentación Centralizada**: Un documento único por tarea que evoluciona (NO múltiples versiones)
+    *   **Actualización Obligatoria**: PROJECT_OVERVIEW.md y README.md deben actualizarse después de cambios significativos
+    *   **Patrones de Diseño**: Aplicación obligatoria de patrones (Strategy, Factory, Adapter, etc.) para garantizar modularidad
+    *   **Verificación Post-Lectura**: Comprobar que el avance del proyecto queda completamente reflejado y centralizado
+    *   Incluye directrices para el formato de commits, resolución de errores y política de violaciones
 *   **`MASTER_DESIGN_PRINCIPLES.md`**: Establece los meta-principios de diseño fundamentales que deben guiar toda la programación y el diseño de soluciones en LatticeWeaver. Estos principios incluyen:
     *   **Dinamismo**: Adaptabilidad a cambios, clustering dinámico, renormalización.
     *   **Distribución/Paralelización**: Escalabilidad horizontal, arquitectura Ray, actores distribuidos.
@@ -152,3 +169,44 @@ Invitamos a la comunidad a contribuir al desarrollo de LatticeWeaver. Antes de r
 ---
 
 **© 2025 LatticeWeaver Development Team**
+
+---
+
+## 📝 Cambios Recientes
+
+### v7.1-alpha (16 de Octubre, 2025)
+
+**Fibration Flow - Merge Seguro Completado:**
+- Integración completa de `feature/fibration-flow-core-refinement` mediante merge selectivo
+- 57 archivos nuevos añadidos (+17,079 líneas de código)
+- 137/140 tests pasando (97.8% de éxito)
+- Componentes integrados:
+  - ArcEngine completo (15 módulos)
+  - 8 solvers avanzados (adaptativos, optimizados, incrementales)
+  - 6 utilidades de rendimiento (JIT, profiler, vectorización)
+  - 8 benchmarks completos
+- Cobertura de tests: 44% → 92% (+48 puntos)
+- Documentación: Reporte de merge seguro, análisis de conflictos
+
+**Protocolo de Agentes v4.0:**
+- Añadida Fase 0: Verificación obligatoria del estado del proyecto
+- Protocolo de merge seguro como estándar
+- Gestión de documentación centralizada (documento único por tarea)
+- Actualización obligatoria de PROJECT_OVERVIEW.md y README.md
+- Patrones de diseño obligatorios para modularidad
+- Política estricta de violaciones del protocolo
+
+**Tests Extensivos:**
+- 117 tests unitarios nuevos para fibration flow
+- Fixtures reutilizables en conftest.py
+- Tests de heurísticas, modulación, estadísticas
+- Tests de integración con ArcEngine y HomotopyRules
+- Corrección de 2 bugs críticos en hacification_engine y fibration_search_solver
+
+---
+
+**Historial de Cambios Anteriores:**
+- v7.0-alpha (14 Oct 2025): Unificación y refactorización del proyecto
+- v6.x: Desarrollo de tracks específicos y mini-IAs
+- v5.x: Implementación de renormalización y paginación
+
