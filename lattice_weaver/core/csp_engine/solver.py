@@ -70,11 +70,78 @@ class CSPSolver:
         return True
 
     def _select_unassigned_variable(self, current_domains: Dict[str, List[Any]]) -> Optional[str]:
-        # Implementación simple: seleccionar la primera variable no asignada
-        for var in self.csp.variables:
-            if var not in self.assignment:
-                return var
-        return None
+        """
+        Selecciona la siguiente variable a asignar usando heurísticas MRV y Degree.
+        
+        MRV (Minimum Remaining Values): Selecciona la variable con menos valores legales.
+        Degree: Como desempate, selecciona la variable involucrada en más restricciones
+                con variables no asignadas.
+        
+        Args:
+            current_domains: Dominios actuales de todas las variables
+        
+        Returns:
+            Variable a asignar, o None si todas están asignadas
+        """
+        unassigned_vars = [v for v in self.csp.variables if v not in self.assignment]
+        if not unassigned_vars:
+            return None
+        
+        # Calcular degree para cada variable no asignada
+        degrees = {}
+        for var in unassigned_vars:
+            degree = 0
+            for constraint in self.csp.constraints:
+                if var in constraint.scope:
+                    # Contar cuántas otras variables no asignadas están en la misma restricción
+                    for other_var in constraint.scope:
+                        if other_var != var and other_var in unassigned_vars:
+                            degree += 1
+            degrees[var] = degree
+        
+        # Combinar MRV y Degree: priorizar MRV, luego Degree (mayor degree primero)
+        return min(unassigned_vars, key=lambda var: (len(current_domains[var]), -degrees[var]))
+    
+    def _order_domain_values(self, var: str, current_domains: Dict[str, List[Any]]) -> List[Any]:
+        """
+        Ordena los valores del dominio de una variable usando LCV.
+        
+        LCV (Least Constraining Value): Ordena valores para probar primero aquellos
+        que eliminan menos opciones de las variables vecinas.
+        
+        Args:
+            var: Variable cuyo dominio ordenar
+            current_domains: Dominios actuales de todas las variables
+        
+        Returns:
+            Lista de valores ordenados (menos restrictivos primero)
+        """
+        domain = current_domains[var]
+        
+        # Para cada valor, contar cuántos valores elimina de variables vecinas
+        value_constraints = []
+        for value in domain:
+            eliminated_count = 0
+            
+            # Revisar cada restricción que involucra a var
+            for constraint in self.csp.constraints:
+                if var in constraint.scope and len(constraint.scope) == 2:
+                    other_var = next((v for v in constraint.scope if v != var), None)
+                    if other_var and other_var not in self.assignment:
+                        # Contar cuántos valores de other_var son incompatibles con value
+                        for other_value in current_domains[other_var]:
+                            if var == list(constraint.scope)[0]:
+                                if not constraint.relation(value, other_value):
+                                    eliminated_count += 1
+                            else:
+                                if not constraint.relation(other_value, value):
+                                    eliminated_count += 1
+            
+            value_constraints.append((value, eliminated_count))
+        
+        # Ordenar por número de valores eliminados (menos eliminados primero)
+        value_constraints.sort(key=lambda x: x[1])
+        return [value for value, _ in value_constraints]
 
     def _backtrack(self, current_domains: Dict[str, List[Any]], all_solutions: bool, max_solutions: int) -> bool:
         self.stats.nodes_explored += 1
@@ -86,14 +153,17 @@ class CSPSolver:
             self.stats.solutions.append(solution)
             if self.tracer and self.tracer.enabled:
                 pass # No hay un método generico record_event para solution_found.
-            return all_solutions # Si se buscan todas las soluciones, continuar; si no, terminar
+            # Si no se buscan todas las soluciones, terminar (retornar True para propagar hacia arriba)
+            # Si se buscan todas, continuar (retornar False para seguir explorando)
+            return not all_solutions
 
         var = self._select_unassigned_variable(current_domains)
         if var is None:
             return True
 
-        original_domain = list(current_domains[var]) # Copia del dominio original
-        for value in original_domain:
+        # Usar LCV para ordenar valores del dominio
+        ordered_values = self._order_domain_values(var, current_domains)
+        for value in ordered_values:
             if self._is_consistent(var, value):
                 self.assignment[var] = value
                 if self.tracer and self.tracer.enabled:
