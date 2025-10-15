@@ -45,8 +45,11 @@ class SimpleMultiscaleCompiler(MultiscaleCompilerAPI):
                 # Esto implica encontrar todas las asignaciones consistentes dentro del subproblema del grupo
                 group_vars = list(component)
                 group_domains = {v: original_variables_domains[v] for v in group_vars}
-                group_constraints = [c for c in original_hierarchy.get_all_constraints_flat() 
-                                     if c.hardness == Hardness.HARD and all(v in group_vars for v in c.variables)]
+                group_constraints = []
+                for level_constraints in original_hierarchy.get_all_constraints().values():
+                    for c in level_constraints:
+                        if c.hardness == Hardness.HARD and all(v in group_vars for v in c.variables):
+                            group_constraints.append(c)
                 
                 # Encontrar todas las soluciones consistentes para el subproblema del grupo
                 consistent_assignments = self._find_consistent_assignments(group_vars, group_domains, group_constraints)
@@ -63,8 +66,8 @@ class SimpleMultiscaleCompiler(MultiscaleCompilerAPI):
         compilation_metadata["variable_mapping"] = variable_to_group_map
 
         # Paso 2: Traducir restricciones a la jerarquía optimizada
-        for level in ConstraintLevel:
-            for original_constraint in original_hierarchy.get_constraints_at_level(level):
+        for level_enum in original_hierarchy.constraints.keys():
+            for original_constraint in original_hierarchy.get_constraints_by_level(level_enum):
                 # Identificar las variables de la restricción en el nuevo espacio (super-variables o individuales)
                 new_scope_vars = sorted(list(set(variable_to_group_map[v] for v in original_constraint.variables)))
                 
@@ -89,30 +92,14 @@ class SimpleMultiscaleCompiler(MultiscaleCompilerAPI):
                     # Filtrar solo las variables que el predicado original necesita y que están en la asignación reconstruida
                     pred_args = {v: reconstructed_assignment[v] for v in original_vars if v in reconstructed_assignment}
                     
-                    # Si no todas las variables originales de la restricción están presentes en `pred_args`,
-                    # significa que la asignación parcial aún no es suficiente para evaluar esta restricción.
-                    # En este caso, se considera satisfecha temporalmente (comportamiento de CSP parcial).
+
+
                     if len(pred_args) < len(original_vars):
                         return True, 0.0 
 
-                    # Evaluar el predicado original con la asignación reconstruida
-                    # Evaluar el predicado original con la asignación reconstruida
-                    # El predicado original espera un diccionario de asignaciones.
-                    # Asegurarse de que el predicado original se llama con el diccionario `pred_args`.
-                    # El predicado original devuelve (bool, float) o solo bool.
-                    result = original_pred(pred_args)
-                    if isinstance(result, tuple) and len(result) == 2:
-                        return result
-                    elif isinstance(result, bool):
-                        return result, 0.0 if result else 1.0
-                    else:
-                        # Si el predicado original devuelve un valor numérico (ej. para soft constraints)
-                        try:
-                            violation = float(result)
-                            return (violation == 0.0, violation)
-                        except (ValueError, TypeError):
-                            print(f"Warning: Predicado original {original_pred.__name__} devolvió un tipo inesperado: {type(result)}")
-                            return False, 1.0 # Considerar violada en caso de tipo de retorno inesperado
+                    # El predicado original ahora siempre devuelve (bool, float) gracias a la refactorización de Constraint.
+                    satisfied, violation = original_pred(pred_args)
+                    return satisfied, violation
 
                 # Añadir la nueva restricción a la jerarquía optimizada
                 new_constraint = Constraint(
@@ -154,7 +141,7 @@ class SimpleMultiscaleCompiler(MultiscaleCompilerAPI):
         graph = defaultdict(set)
         all_vars = set(variables_domains.keys())
 
-        for constraint in hierarchy.get_constraints_at_level(ConstraintLevel.LOCAL):
+        for constraint in hierarchy.get_constraints_by_level(ConstraintLevel.LOCAL):
             if constraint.hardness == Hardness.HARD:
                 for i in range(len(constraint.variables)):
                     for j in range(i + 1, len(constraint.variables)):
