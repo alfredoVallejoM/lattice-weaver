@@ -66,3 +66,18 @@ class TestCSPToCubicalBridge:
 
         assert generated_predicates == expected_predicates
 
+    def test_translate_sum_constraint(self):
+        csp = CSP(variables=set(), domains=dict(), constraints=[])
+        csp.add_variable("X", [1, 2, 3])
+        csp.add_variable("Y", [1, 2, 3])
+        csp.add_constraint(SumConstraint(scope=frozenset({"X", "Y"}), target_sum=3))
+
+        bridge = CSPToCubicalBridge()
+        cubical_subtype = bridge.to_cubical(csp)
+
+        expected_sum_expression = CubicalArithmetic("sum", (VariableTerm("X"), VariableTerm("Y")))
+        expected_target_value = ValueTerm(3)
+        expected_predicate = CubicalComparison(expected_sum_expression, "==", expected_target_value)
+
+        assert isinstance(cubical_subtype.predicate, CubicalComparison)
+        assert cubical_subtype.predicate == expected_predicate

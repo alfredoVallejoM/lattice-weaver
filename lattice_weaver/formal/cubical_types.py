@@ -5,7 +5,7 @@ Este módulo define las clases base genéricas para el sistema de tipos cúbicos
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Tuple, Any, Optional, FrozenSet
+from typing import List, Tuple, Any, Optional, FrozenSet, Union
 from functools import lru_cache
 from dataclasses import dataclass, field
 
@@ -208,6 +208,46 @@ class CubicalAnd(CubicalPredicate):
 
     def _compute_string(self) -> str:
         return "(" + " & ".join(p.to_string() for p in self.predicates) + ")"
+
+
+@dataclass(frozen=True)
+class CubicalArithmetic(CubicalTerm):
+    """
+    Representa una expresión aritmética en el sistema cúbico.
+    Actualmente soporta solo la suma.
+    """
+    operation: str  # e.g., "sum"
+    terms: Tuple[CubicalTerm, ...]
+
+    def _compute_hash(self) -> int:
+        return hash((self.operation, frozenset(hash(t) for t in self.terms)))
+
+    def _compute_string(self) -> str:
+        sorted_terms = sorted(self.terms, key=lambda t: t.to_string())
+        if self.operation == "sum":
+            return f"({" + ".join(t.to_string() for t in sorted_terms)})"
+        return f"{self.operation}({\', \'.join(t.to_string() for t in sorted_terms)})"
+
+    def __post_init__(self):
+        # Asegurar que los términos se ordenen canónicamente para la creación del frozenset
+        canonical_terms_list = sorted(self.terms, key=lambda t: hash(t))
+        object.__setattr__(self, 'terms', tuple(canonical_terms_list))
+
+
+@dataclass(frozen=True)
+class CubicalComparison(CubicalPredicate):
+    """
+    Representa una comparación en el sistema cúbico (e.g., left == right).
+    """
+    left: CubicalTerm
+    operator: str  # e.g., "==", "<=", ">="
+    right: CubicalTerm
+
+    def _compute_hash(self) -> int:
+        return hash((hash(self.left), self.operator, hash(self.right)))
+
+    def _compute_string(self) -> str:
+        return f"({self.left.to_string()} {self.operator} {self.right.to_string()})"
 
 
 @dataclass(frozen=True)

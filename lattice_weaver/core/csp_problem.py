@@ -1,3 +1,4 @@
+
 # lattice_weaver/core/csp_problem.py
 
 """
@@ -39,40 +40,60 @@ class AllDifferentConstraint(Constraint):
     Representa una restricción AllDifferent en un CSP.
     Asegura que todas las variables en su scope tengan valores distintos.
     """
-    def __init__(self, scope: FrozenSet[str], name: Optional[str] = None, metadata: Dict[str, Any] = field(default_factory=dict)):
-        # Define la relación AllDifferent aquí mismo
+    def __post_init__(self):
         def alldiff_relation(*values) -> bool:
             return len(values) == len(set(values))
 
-        # Llama al constructor de la clase base Constraint con la relación definida
-        super().__init__(scope=scope, relation=alldiff_relation, name=name, metadata=metadata)
-
-        # Asegurar que el nombre sea descriptivo si no se proporciona
+        object.__setattr__(self, 'relation', alldiff_relation)
         if self.name is None:
             object.__setattr__(self, 'name', f"AllDifferent({' '.join(sorted(list(self.scope)))})")
 
-    # No necesitamos _alldifferent_relation como método separado si se define en __init__
-    # No necesitamos __post_init__ si Constraint ya lo maneja y no hay lógica adicional
-
     def __repr__(self) -> str:
         return f"AllDifferentConstraint(scope={self.scope}, name={self.name})"
+
+
+@dataclass(frozen=True)
+class SumConstraint:
     """
-    Representa una restricción en un CSP.
-    
-    Attributes:
-        scope: Un frozenset de nombres de variables involucradas en la restricción.
-        relation: Una función booleana que toma los valores de las variables
-                  en el orden de `scope` y retorna True si la restricción se satisface.
-        name: Nombre opcional de la restricción para depuración o trazabilidad.
-        metadata: Diccionario para almacenar metadatos adicionales sobre la restricción.
+    Representa una restricción de suma en un CSP.
+    Asegura que la suma de los valores de las variables en su scope sea igual a un target_sum.
+    Este dataclass contiene un objeto Constraint para manejar la lógica de la restricción.
     """
     scope: FrozenSet[str]
-    relation: Callable[..., bool]
+    target_sum: int
     name: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
+    _constraint: Constraint = field(init=False, repr=False)
+
+    def __post_init__(self):
+        def sum_relation(*values) -> bool:
+            return sum(values) == self.target_sum
+
+        # Determine the name for the internal Constraint object
+        # If name is not provided, generate a default name and set it for both SumConstraint and its internal Constraint
+        if self.name is None:
+            generated_name = f"Sum({{{', '.join(sorted(list(self.scope)))}}}) == {self.target_sum}"
+            object.__setattr__(self, 'name', generated_name)
+            constraint_name = generated_name
+        else:
+            constraint_name = self.name
+
+        # Create the internal Constraint object
+        object.__setattr__(self, '_constraint', Constraint(
+            scope=self.scope,
+            relation=sum_relation,
+            name=constraint_name,
+            metadata=self.metadata
+        ))
+
+    def __getattr__(self, name: str) -> Any:
+        # Delegate attribute access to the internal Constraint object
+        if name in ['scope', 'relation', 'name', 'metadata']:
+            return getattr(self._constraint, name)
+        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
     def __repr__(self) -> str:
-        return f"Constraint(scope={self.scope}, name={self.name or 'anonymous'})"
+        return f"SumConstraint(scope={self.scope}, target_sum={self.target_sum}, name={self.name})"
 
 
 @dataclass
@@ -102,17 +123,21 @@ class CSP:
         self.domains[name] = frozenset(domain)
 
     def add_constraint(self, constraint: Constraint):
-        for var in constraint.scope:
+        # If the constraint is a SumConstraint, add its internal Constraint object
+        if isinstance(constraint, SumConstraint):
+            actual_constraint = constraint._constraint
+        else:
+            actual_constraint = constraint
+
+        for var in actual_constraint.scope:
             if var not in self.variables:
                 raise ValueError(f"Constraint references unknown variable {var}.")
-        self.constraints.append(constraint)
+        self.constraints.append(actual_constraint)
 
     def __post_init__(self):
-        # Asegurar que todas las variables tienen un dominio
         for var in self.variables:
             if var not in self.domains:
                 raise ValueError(f"Variable {var} has no defined domain.")
-        # Asegurar que todas las restricciones referencian variables existentes
         for constraint in self.constraints:
             for var in constraint.scope:
                 if var not in self.variables:
@@ -120,10 +145,10 @@ class CSP:
 
     def __repr__(self) -> str:
         return (
-            f"CSP(name={self.name or 'anonymous'},\n"
-            f"  variables={self.variables},\n"
-            f"  domains={self.domains},\n"
-            f"  constraints={self.constraints}\n"
+            f"CSP(name={self.name or 'anonymous'}"
+            f",\n  variables={self.variables}"
+            f",\n  domains={self.domains}"
+            f",\n  constraints={self.constraints}\n"
             f")"
         )
 
@@ -149,25 +174,19 @@ def verify_solution(csp: CSP, assignment: Dict[str, Any]) -> bool:
     Returns:
         True si la asignación satisface todas las restricciones del CSP, False en caso contrario.
     """
-    # 1. Verificar que todas las variables del CSP están en la asignación
     if not csp.variables.issubset(assignment.keys()):
         return False
 
-    # 2. Verificar que los valores asignados están dentro de los dominios
     for var, value in assignment.items():
         if var in csp.domains and value not in csp.domains[var]:
             return False
 
-    # 3. Verificar que todas las restricciones se satisfacen
     for constraint in csp.constraints:
-        # Obtener los valores de las variables en el scope de la restricción
         try:
             values_in_scope = [assignment[var] for var in constraint.scope]
             if not constraint.relation(*values_in_scope):
                 return False
         except KeyError:
-            # Si alguna variable en el scope de la restricción no está en la asignación,
-            # la asignación no es completa para esta restricción.
             return False
             
     return True
@@ -187,25 +206,17 @@ def generate_nqueens(n: int, name: Optional[str] = None) -> CSP:
     domains = {f"Q{i}": frozenset(range(n)) for i in range(n)}
     constraints = []
 
-    # Restricciones de fila y columna (implícitas por el dominio y la asignación)
-    # Restricciones de diagonal
     for i in range(n):
         for j in range(i + 1, n):
             qi = f"Q{i}"
             qj = f"Q{j}"
 
-            # Las restricciones de fila y columna están implícitas por la asignación
-            # de una reina por fila (variable) y un valor único por columna (dominio).
-            # La restricción `val_i != val_j` asegura que no estén en la misma columna.
-
-            # No en la misma diagonal
             constraints.append(Constraint(
                 scope=frozenset({qi, qj}),
                 relation=lambda val_i, val_j, captured_diff=abs(i - j): abs(val_i - val_j) != captured_diff,
                 name=f"diag_{qi}_{qj}"
             ))
             
-            # No en la misma fila (explícitamente para el solver)
             constraints.append(Constraint(
                 scope=frozenset({qi, qj}),
                 relation=lambda val_i, val_j: val_i != val_j,
@@ -239,8 +250,6 @@ def generate_random_csp(num_vars: int, domain_size: int, num_constraints: int, n
     for i in range(min(num_constraints, len(all_pairs))):
         v1, v2 = all_pairs[i]
         
-        # Crear una restricción binaria aleatoria (ej. v1 != v2, v1 < v2, etc.)
-        # Para simplificar, usaremos solo v1 != v2
         constraints.append(Constraint(
             scope=frozenset({v1, v2}),
             relation=lambda x, y: x != y,

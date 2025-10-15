@@ -7,6 +7,7 @@ Contiene definiciones fundamentales para CSPs y otras estructuras.
 """
 
 from .csp_problem import (
+    SumConstraint,
     CSP,
     Constraint,
     is_satisfiable,
@@ -17,6 +18,7 @@ from .csp_problem import (
 )
 
 __all__ = [
+    'SumConstraint',
     'CSP',
     'Constraint',
     'is_satisfiable',

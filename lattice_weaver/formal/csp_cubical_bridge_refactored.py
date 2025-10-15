@@ -3,11 +3,12 @@ Refactorización del Puente CSP-Cúbico para la Arquitectura v8.0
 """
 
 from typing import Dict, Any, List, Tuple
-from ..core.csp_problem import CSP, Constraint, AllDifferentConstraint
+from ..core.csp_problem import CSP, Constraint, AllDifferentConstraint, SumConstraint
 from .cubical_types import (
     CubicalType, CubicalSubtype, CubicalSigmaType, 
     CubicalFiniteType, CubicalPredicate, CubicalTerm, 
-    VariableTerm, ValueTerm, CubicalNegation, CubicalAnd, CubicalPath
+    VariableTerm, ValueTerm, CubicalNegation, CubicalAnd, CubicalPath,
+    CubicalArithmetic, CubicalComparison
 )
 
 class CSPToCubicalBridge:
@@ -45,8 +46,11 @@ class CSPToCubicalBridge:
     def _translate_constraint(self, constraint: Constraint) -> CubicalPredicate:
         if isinstance(constraint, AllDifferentConstraint):
             return self._translate_alldifferent_constraint(constraint)
+        elif isinstance(constraint, SumConstraint):
+            return self._translate_sum_constraint(constraint)
         else:
-            # Placeholder para otros tipos de restricciones
+            # Por defecto, si no se reconoce la restricción, se asume que siempre es verdadera
+            # Esto debería ser mejorado para lanzar un error o manejar restricciones no soportadas explícitamente
             return CubicalPath(ValueTerm(True), ValueTerm(True))
 
     def _translate_alldifferent_constraint(self, constraint: AllDifferentConstraint) -> CubicalPredicate:
@@ -70,3 +74,21 @@ class CSPToCubicalBridge:
         # Combinamos todos los predicados de desigualdad con CubicalAnd
         return CubicalAnd(frozenset(inequality_predicates))
 
+    def _translate_sum_constraint(self, constraint: SumConstraint) -> CubicalPredicate:
+        # La traducción de SumConstraint es compleja y requiere un sistema de tipos cúbicos
+        # más avanzado que el actual para representar sumas y comparaciones.
+        # Por ahora, se retorna un predicado que siempre es verdadero, indicando que
+        # esta restricción no puede ser traducida directamente a los tipos cúbicos actuales.
+        # Esto es un placeholder y debe ser mejorado en futuras iteraciones del Gap 1.
+        # La representación de sumas y desigualdades complejas requeriría:
+        # 1. Un tipo CubicalArithmetic para representar operaciones (+, -, *, /).
+        # 2. Un tipo CubicalComparison para representar <, <=, >, >=.
+        # 3. Un sistema de reescritura para simplificar expresiones aritméticas.
+        # La restricción de suma (sum(vars) == target_sum) se traduce a:
+        # CubicalComparison(CubicalArithmetic("sum", (VariableTerm(v) for v in constraint.scope)), "==", ValueTerm(constraint.target_sum))
+        
+        sum_expression = CubicalArithmetic("sum", tuple(VariableTerm(var) for var in sorted(list(constraint.scope))))
+        target_value = ValueTerm(constraint.target_sum)
+        
+        return CubicalComparison(sum_expression, "==", target_value)
+	
