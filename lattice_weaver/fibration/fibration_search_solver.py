@@ -139,8 +139,8 @@ class FibrationSearchSolver:
             for const in self.hierarchy.get_constraints_at_level(ConstraintLevel.LOCAL) + \
                          self.hierarchy.get_constraints_at_level(ConstraintLevel.PATTERN) + \
                          self.hierarchy.get_constraints_at_level(ConstraintLevel.GLOBAL):
-                if const.hardness == Hardness.HARD and var in const.scope:
-                    for other_var in const.scope:
+                if const.hardness == Hardness.HARD and var in const.variables:
+                    for other_var in const.variables:
                         if other_var != var and other_var in unassigned_vars:
                             current_degree += 1
             
