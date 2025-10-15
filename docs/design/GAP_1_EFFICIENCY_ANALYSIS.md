@@ -42,17 +42,22 @@
 
 ## 3. Optimizaciones Implementadas
 
-1. **Inmutabilidad:** Uso de `frozenset` para garantizar hashability
-2. **Canonicalización:** Ordenación consistente de variables
-3. **Validación temprana:** Verificación de tamaños negativos en construcción
+1. **Inmutabilidad:** Uso de `frozenset` para garantizar hashability (en CSP)
+2. **Canonicalización:** Ordenación consistente de variables y componentes de tipos cúbicos
+3. **Validación temprana:** Verificación de tamaños negativos en construcción de tipos finitos
+4. **Caching de `__hash__` y `to_string`:** Implementado en `CubicalType` y subclases para evitar recálculos costosos.
+5. **Implementación de `__eq__`:** Para comparaciones eficientes de tipos cúbicos.
+
 
 ---
 
 ## 4. Optimizaciones Pendientes
 
-1. **Caché de traducciones:** Implementar LRU cache para traducciones repetidas
-2. **Lazy evaluation:** Postergar construcción de predicados hasta que sean necesarios
-3. **Pooling de objetos:** Reutilizar instancias de tipos cúbicos comunes
+1. **Caché de traducciones:** Implementar LRU cache para traducciones repetidas en `CSPToCubicalBridge`.
+2. **Lazy evaluation:** Postergar construcción de predicados complejos hasta que sean necesarios.
+3. **Pooling de objetos:** Reutilizar instancias de tipos cúbicos comunes para reducir la sobrecarga de memoria.
+4. **Optimización de `_translate_constraints`:** Mejorar la eficiencia de la traducción de restricciones complejas (actualmente un placeholder).
+
 
 ---
 
