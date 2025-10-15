@@ -15,16 +15,18 @@ from typing import Dict, List, Optional, Any, Tuple
 import heapq
 from dataclasses import dataclass, field
 from .constraint_hierarchy import ConstraintHierarchy, Hardness, ConstraintLevel
-from .energy_landscape_optimized import EnergyLandscapeOptimized, EnergyComponents
+from .energy_landscape_optimized import EnergyLandscapeOptimized
 
 
 @dataclass(order=True)
 class SearchState:
     """Estado en el espacio de búsqueda."""
-    energy: float
+    energy: Tuple[bool, float] # (all_hard_satisfied, total_energy)
     assignment: Dict[str, Any] = field(compare=False)
     domains: Dict[str, List[Any]] = field(compare=False)
     depth: int = field(compare=False)
+
+
 
 
 class OptimizationSolver:
@@ -90,9 +92,9 @@ class OptimizationSolver:
         Explora en anchura pero solo mantiene los estados más prometedores.
         """
         # Estado inicial
-        initial_energy = self.landscape.compute_energy({})
+        initial_satisfied, initial_total_energy = self.landscape.compute_energy({})
         beam = [SearchState(
-            energy=initial_energy.total_energy,
+            energy=(initial_satisfied, initial_total_energy),
             assignment={},
             domains=self.initial_domains.copy(),
             depth=0
@@ -117,7 +119,8 @@ class OptimizationSolver:
                     break
                 
                 # Calcular energía base
-                base_energy = self.landscape.compute_energy(state.assignment)
+                base_satisfied, base_total_energy = self.landscape.compute_energy(state.assignment)
+                base_energy = (base_satisfied, base_total_energy)
                 
                 # Calcular gradiente
                 gradient = self.landscape.compute_energy_gradient_optimized(
@@ -151,14 +154,14 @@ class OptimizationSolver:
                     
                     if new_domains is not None:
                         next_beam.append(SearchState(
-                            energy=energy,
+                            energy=(self.landscape.compute_energy(new_assignment)), # Recalcular para obtener (satisfied, total_energy)
                             assignment=new_assignment,
                             domains=new_domains,
                             depth=state.depth + 1
                         ))
             
             # Mantener solo los beam_width mejores estados
-            next_beam.sort(key=lambda s: s.energy)
+            next_beam.sort()
             beam = next_beam[:self.beam_width]
         
         return best_solution
@@ -172,7 +175,7 @@ class OptimizationSolver:
         best_solution = None
         best_energy = float('inf')
         
-        def backtrack(assignment: Dict, domains: Dict, current_energy: EnergyComponents):
+        def backtrack(assignment: Dict, domains: Dict, current_energy: Tuple[bool, float]):
             nonlocal best_solution, best_energy
             
             if self.nodes_explored >= max_nodes:
@@ -181,15 +184,15 @@ class OptimizationSolver:
             self.nodes_explored += 1
             
             # Poda: si la energía actual ya supera la mejor, no continuar
-            if current_energy.total_energy >= best_energy:
+            if current_energy[1] >= best_energy:
                 return
             
             # Solución completa
             if len(assignment) == len(self.variables):
                 if self._check_hard_constraints(assignment):
                     self.solutions_found += 1
-                    if current_energy.total_energy < best_energy:
-                        best_energy = current_energy.total_energy
+                    if current_energy[1] < best_energy:
+                        best_energy = current_energy[1]
                         best_solution = assignment.copy()
                 return
             
@@ -249,11 +252,11 @@ class OptimizationSolver:
             
             # Solución completa
             if len(assignment) == len(self.variables):
-                if self._check_hard_constraints(assignment):
+                all_hard_satisfied, total_energy = self.landscape.compute_energy(assignment)
+                if all_hard_satisfied:
                     self.solutions_found += 1
-                    energy = self.landscape.compute_energy(assignment).total_energy
-                    if energy < best_energy:
-                        best_energy = energy
+                    if total_energy < best_energy:
+                        best_energy = total_energy
                         best_solution = assignment.copy()
                 return
             
@@ -263,7 +266,8 @@ class OptimizationSolver:
                 return
             
             # Calcular gradiente
-            base_energy = self.landscape.compute_energy(assignment)
+            base_satisfied, base_total_energy = self.landscape.compute_energy(assignment)
+            base_energy = (base_satisfied, base_total_energy)
             gradient = self.landscape.compute_energy_gradient_optimized(
                 assignment, base_energy, var, domains[var]
             )
@@ -286,8 +290,12 @@ class OptimizationSolver:
         backtrack({}, self.initial_domains.copy())
         return best_solution
     
-    def _select_variable_mrv(self, assignment: Dict, domains: Dict) -> Optional[str]:
-        """Selecciona variable usando MRV."""
+    def _select_variable_mrv(self, 
+                            assignment: Dict[str, Any],
+                            domains: Dict[str, List[Any]]) -> Optional[str]:
+        """
+        Selecciona variable usando heurística MRV (Minimum Remaining Values).
+        """
         unassigned = [v for v in self.variables if v not in assignment]
         
         if not unassigned:
@@ -300,7 +308,7 @@ class OptimizationSolver:
         if len(mrv_vars) == 1:
             return mrv_vars[0]
         
-        # Tie-breaker: Degree
+        # Tie-breaker: Degree (más restricciones con variables no asignadas)
         degrees = {}
         for var in mrv_vars:
             constraints = self.hierarchy.get_constraints_involving(var)
@@ -311,9 +319,13 @@ class OptimizationSolver:
             degrees[var] = degree
         
         return max(degrees, key=degrees.get)
-    
-    def _propagate_constraints(self, assignment: Dict, domains: Dict) -> Optional[Dict]:
-        """Propaga restricciones HARD."""
+
+    def _propagate_constraints(self,
+                              assignment: Dict[str, Any],
+                              domains: Dict[str, List[Any]]) -> Optional[Dict[str, List[Any]]]:
+        """
+        Propaga restricciones para reducir dominios.
+        """
         new_domains = {var: list(domain) for var, domain in domains.items()}
         changed = True
         
@@ -324,65 +336,45 @@ class OptimizationSolver:
                 if var in assignment:
                     continue
                 
-                # Filtrar valores inconsistentes con restricciones HARD
+                # Filtrar valores inconsistentes
                 consistent_values = []
                 
                 for value in new_domains[var]:
+                    # Crear asignación temporal
                     temp_assignment = assignment.copy()
                     temp_assignment[var] = value
                     
-                    if self._is_consistent_hard(temp_assignment):
+                    # Verificar si es consistente con restricciones HARD
+                    if self._check_hard_constraints(temp_assignment):
                         consistent_values.append(value)
                 
+                # Si el dominio cambió, marcar como changed
                 if len(consistent_values) < len(new_domains[var]):
                     changed = True
                     new_domains[var] = consistent_values
                 
+                # Detección temprana de conflicto
                 if not new_domains[var]:
-                    return None
+                    return None  # Dominio vacío -> conflicto
         
         return new_domains
-    
-    def _is_consistent_hard(self, assignment: Dict) -> bool:
-        """Verifica consistencia con restricciones HARD."""
-        local_constraints = self.hierarchy.get_constraints_at_level(ConstraintLevel.LOCAL)
-        
-        for constraint in local_constraints:
-            if constraint.hardness != Hardness.HARD:
-                continue
-            
-            if not all(var in assignment for var in constraint.variables):
-                continue
-            
-            satisfied, violation = constraint.evaluate(assignment)
-            
-            if not satisfied or violation > 0:
-                return False
-        
-        return True
-    
-    def _check_hard_constraints(self, assignment: Dict) -> bool:
-        """Verifica que todas las restricciones HARD estén satisfechas."""
-        for level in ConstraintLevel:
-            constraints = self.hierarchy.get_constraints_at_level(level)
-            
-            for constraint in constraints:
-                if constraint.hardness != Hardness.HARD:
-                    continue
-                
-                satisfied, violation = constraint.evaluate(assignment)
-                
-                if not satisfied or violation > 0:
-                    return False
-        
-        return True
-    
+
+    def _check_hard_constraints(self, assignment: Dict[str, Any]) -> bool:
+        """
+        Verifica que todas las restricciones HARD estén satisfechas.
+        """
+        # Usar el método compute_energy de EnergyLandscapeOptimized para verificar hard constraints
+        all_hard_satisfied, _ = self.landscape.compute_energy(assignment, use_cache=False)
+        return all_hard_satisfied
+
     def get_statistics(self) -> Dict:
         """Devuelve estadísticas de la búsqueda."""
+        landscape_stats = self.landscape.get_cache_statistics()
+        
         return {
             'nodes_explored': self.nodes_explored,
             'solutions_found': self.solutions_found,
             'best_energy': self.best_energy,
-            'landscape_stats': self.landscape.get_cache_statistics()
+            'landscape_stats': landscape_stats
         }
 

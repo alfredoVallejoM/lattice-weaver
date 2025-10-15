@@ -1,5 +1,14 @@
 import abc
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Callable, Optional
+
+class ConstraintLevel:
+    LOCAL = "LOCAL"
+    PATTERN = "PATTERN"
+    GLOBAL = "GLOBAL"
+
+class Hardness:
+    HARD = "hard"
+    SOFT = "soft"
 
 class ConstraintHierarchyAPI(abc.ABC):
     """Interfaz abstracta para la jerarquía de restricciones de Fibration Flow.
@@ -9,19 +18,11 @@ class ConstraintHierarchyAPI(abc.ABC):
     """
 
     @abc.abstractmethod
-    def add_hard_constraint(self, constraint_expression: Any, level: str = "GLOBAL") -> None:
-        """Añade una restricción HARD a la jerarquía.
+    def add_constraint(self, constraint: 'Constraint') -> None:
+        """Añade una restricción a la jerarquía.
 
-        Las restricciones HARD deben ser satisfechas para que una solución sea válida.
-        Pueden ser añadidas a niveles como LOCAL, PATTERN o GLOBAL.
-        """
-        pass
-
-    @abc.abstractmethod
-    def add_soft_constraint(self, constraint_expression: Any, weight: float, level: str = "GLOBAL") -> None:
-        """Añade una restricción SOFT a la jerarquía con un peso dado.
-
-        Las restricciones SOFT contribuyen a la energía del sistema y se buscan minimizar.
+        Args:
+            constraint: Objeto Constraint a añadir.
         """
         pass
 
@@ -35,12 +36,12 @@ class ConstraintHierarchyAPI(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_constraints_by_level(self, level: str) -> List[Any]:
+    def get_constraints_by_level(self, level: str) -> List['Constraint']:
         """Retorna todas las restricciones (HARD y SOFT) para un nivel específico."""
         pass
 
     @abc.abstractmethod
-    def get_all_constraints(self) -> Dict[str, List[Any]]:
+    def get_all_constraints(self) -> Dict[str, List['Constraint']]:
         """Retorna todas las restricciones organizadas por nivel."""
         pass
 
@@ -54,77 +55,61 @@ class ConstraintHierarchyAPI(abc.ABC):
         """Carga la jerarquía de restricciones desde un formato JSON compatible."""
         pass
 
-# Placeholder para la implementación concreta de ConstraintHierarchy
-# Esta clase se refactorizará y se integrará con la ConstraintHierarchy existente
-# en lattice_weaver/fibration/constraint_hierarchy.py
-class ConcreteConstraintHierarchy(ConstraintHierarchyAPI):
-    def __init__(self):
-        self._hard_constraints = {"LOCAL": [], "PATTERN": [], "GLOBAL": []}
-        self._soft_constraints = {"LOCAL": [], "PATTERN": [], "GLOBAL": []}
+    @abc.abstractmethod
+    def add_level(self, level_name: str) -> None:
+        """Añade un nuevo nivel de restricción dinámicamente.
+        Args:
+            level_name: Nombre del nuevo nivel.
+        """
+        pass
 
-    def add_hard_constraint(self, constraint_expression: Any, level: str = "GLOBAL") -> None:
-        if level not in self._hard_constraints:
-            raise ValueError(f"Nivel de restricción HARD '{level}' no válido.")
-        self._hard_constraints[level].append(constraint_expression)
+    @abc.abstractmethod
+    def add_local_constraint(self,
+                            var1: str,
+                            var2: str,
+                            predicate: Callable[[Dict[str, Any]], bool],
+                            weight: float = 1.0,
+                            hardness: str = Hardness.HARD,
+                            metadata: Optional[Dict[str, Any]] = None) -> None:
+        """Añade una restricción local (binaria) a la jerarquía."""
+        pass
 
-    def add_soft_constraint(self, constraint_expression: Any, weight: float, level: str = "GLOBAL") -> None:
-        if level not in self._soft_constraints:
-            raise ValueError(f"Nivel de restricción SOFT '{level}' no válido.")
-        self._soft_constraints[level].append((constraint_expression, weight))
+    @abc.abstractmethod
+    def add_unary_constraint(self,
+                            variable: str,
+                            predicate: Callable[[Dict[str, Any]], bool],
+                            weight: float = 1.0,
+                            hardness: str = Hardness.HARD,
+                            metadata: Optional[Dict[str, Any]] = None) -> None:
+        """Añade una restricción unaria a la jerarquía."""
+        pass
 
-    def evaluate_solution(self, solution: Dict[str, Any]) -> Tuple[bool, float]:
-        all_hard_satisfied = True
-        total_energy = 0.0
+    @abc.abstractmethod
+    def add_pattern_constraint(self,
+                              variables: List[str],
+                              predicate: Callable[[Dict[str, Any]], bool],
+                              pattern_type: str = "custom",
+                              weight: float = 2.0,
+                              hardness: str = Hardness.HARD,
+                              metadata: Optional[Dict[str, Any]] = None) -> None:
+        """Añade una restricción de patrón a la jerarquía."""
+        pass
 
-        # Evaluar restricciones HARD
-        for level_constraints in self._hard_constraints.values():
-            for constraint in level_constraints:
-                # Aquí se necesitaría una lógica real para evaluar la expresión de la restricción
-                # Por ahora, simulamos una evaluación simple
-                if not self._simulate_hard_constraint_evaluation(constraint, solution):
-                    all_hard_satisfied = False
-                    break
-            if not all_hard_satisfied:
-                break
+    @abc.abstractmethod
+    def add_global_constraint(self,
+                             variables: List[str],
+                             predicate: Callable[[Dict[str, Any]], bool],
+                             weight: float = 5.0,
+                             hardness: str = Hardness.HARD,
+                             metadata: Optional[Dict[str, Any]] = None) -> None:
+        """Añade una restricción global a la jerarquía."""
+        pass
 
-        # Evaluar restricciones SOFT
-        for level_constraints in self._soft_constraints.values():
-            for constraint, weight in level_constraints:
-                # Aquí se necesitaría una lógica real para evaluar la expresión de la restricción
-                total_energy += self._simulate_soft_constraint_violation(constraint, solution) * weight
 
-        return all_hard_satisfied, total_energy
-
-    def get_constraints_by_level(self, level: str) -> List[Any]:
-        return self._hard_constraints.get(level, []) + [c[0] for c in self._soft_constraints.get(level, [])]
-
-    def get_all_constraints(self) -> Dict[str, List[Any]]:
-        all_constraints = {}
-        for level in self._hard_constraints:
-            all_constraints[level] = self.get_constraints_by_level(level)
-        return all_constraints
-
-    def to_json(self) -> Dict[str, Any]:
-        # Implementación placeholder para serialización
-        return {
-            "hard_constraints": {level: [str(c) for c in constraints] for level, constraints in self._hard_constraints.items()},
-            "soft_constraints": {level: [(str(c), w) for c, w in constraints] for level, constraints in self._soft_constraints.items()}
-        }
-
-    def from_json(self, json_data: Dict[str, Any]) -> None:
-        # Implementación placeholder para deserialización
-        # En una implementación real, esto necesitaría reconstruir los objetos de restricción
-        print("Deserialización placeholder: Los objetos de restricción no se reconstruyen completamente.")
-        self._hard_constraints = {level: [eval(c) for c in constraints] for level, constraints in json_data["hard_constraints"].items()}
-        self._soft_constraints = {level: [(eval(c), w) for c, w in constraints] for level, constraints in json_data["soft_constraints"].items()}
-
-    def _simulate_hard_constraint_evaluation(self, constraint: Any, solution: Dict[str, Any]) -> bool:
-        # Simulación: en una implementación real, esto evaluaría la expresión de la restricción
-        # Por ejemplo, si la restricción es una función lambda, se llamaría a esa función.
-        return True  # Asumimos que todas las HARD constraints son satisfechas por defecto en la simulación
-
-    def _simulate_soft_constraint_violation(self, constraint: Any, solution: Dict[str, Any]) -> float:
-        # Simulación: en una implementación real, esto calcularía la violación de la restricción
-        return 0.0  # Asumimos 0 violación por defecto en la simulación
-
+# La clase Constraint se moverá al archivo constraint_hierarchy.py
+# y se importará desde allí. Por ahora, se mantiene una definición mínima
+# para evitar errores de referencia circular si se importa ConstraintHierarchyAPI
+# en otros módulos que también necesiten Constraint.
+class Constraint:
+    pass
 

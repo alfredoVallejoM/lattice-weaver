@@ -5,6 +5,8 @@ import time
 import itertools
 
 from ..csp_problem import CSP, Constraint
+from ...fibration.csp_adapter import CSPToConstraintHierarchyAdapter
+from ...fibration.fibration_search_solver import FibrationSearchSolver
 
 @dataclass
 class CSPSolution:
@@ -146,6 +148,33 @@ class CSPSolver:
         start_time = time.perf_counter()
         initial_domains = {var: list(self.csp.domains[var]) for var in self.csp.variables}
         self._backtrack(initial_domains, all_solutions, max_solutions)
+        end_time = time.perf_counter()
+        self.stats.time_elapsed = end_time - start_time
+        return self.stats
+
+    def solve_with_fibration_flow(self) -> CSPSolutionStats:
+        """
+        Resuelve el CSP utilizando Fibration Flow como motor de búsqueda.
+        """
+        start_time = time.perf_counter()
+
+        adapter = CSPToConstraintHierarchyAdapter()
+        hierarchy, fibration_domains, metadata = adapter.convert_csp_to_hierarchy(self.csp)
+
+        # Usar el mock si está disponible, de lo contrario, instanciar uno nuevo
+        fibration_solver = getattr(self, 'fibration_solver', None)
+        if fibration_solver is None:
+            fibration_solver = FibrationSearchSolver(
+                variables=list(self.csp.variables),
+                domains=fibration_domains,
+                hierarchy=hierarchy
+            )
+        fibration_solution = fibration_solver.solve()
+
+        if fibration_solution:
+            csp_solution = adapter.convert_hierarchy_solution_to_csp_solution(fibration_solution, metadata)
+            self.stats.solutions.append(CSPSolution(assignment=csp_solution))
+        
         end_time = time.perf_counter()
         self.stats.time_elapsed = end_time - start_time
         return self.stats

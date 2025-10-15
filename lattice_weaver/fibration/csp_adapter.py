@@ -41,20 +41,20 @@ class CSPToConstraintHierarchyAdapter:
         for csp_constraint in csp.constraints:
             # Envolver la relación del CSP en un predicado compatible con ConstraintHierarchy
             def wrapped_predicate(assignment: Dict[str, Any], original_relation: Callable[..., bool] = csp_constraint.relation, scope: FrozenSet[str] = csp_constraint.scope) -> Tuple[bool, float]:
-                # Asegurarse de que todas las variables del scope estén en la asignación
-                if not scope.issubset(assignment.keys()):
-                    # Si no todas las variables están asignadas, no se puede evaluar completamente.
-                    # Se asume que no hay violación por el momento (comportamiento para asignaciones parciales).
-                    return True, 0.0
+                # El `predicate` es llamado por `Constraint.evaluate`, que ya filtra la asignación
+                # para que solo contenga las variables de la restricción y maneja asignaciones parciales.
+                # Aquí, usamos el `scope` capturado para asegurar el orden correcto de los argumentos.
+                # Se asume que `assignment` contiene todas las variables de `scope` que están asignadas.
+                ordered_scope = sorted(list(scope))
                 
-                # Asegurarse de que los valores se pasan a la relación en el orden correcto del scope
-                # El orden de los argumentos para la relación original debe coincidir con el orden en csp_constraint.scope
-                # El orden de los argumentos para la relación original debe coincidir con el orden en csp_constraint.scope.
-                # Dado que `csp_constraint.scope` es un `frozenset`, su iteración no garantiza un orden consistente.
-                # Para asegurar un orden predecible, ordenamos las variables del scope.
-                ordered_scope = sorted(list(csp_constraint.scope))
+                # Construir los argumentos para la `original_relation` en el orden correcto.
+                # Si alguna variable del scope no está en la asignación, significa que la restricción
+                # es parcial y `Constraint.evaluate` ya debería haberla marcado como no violada.
+                # Por lo tanto, si llegamos aquí, todas las variables del scope deberían estar en `assignment`.
                 values_in_scope = [assignment[var] for var in ordered_scope]
-                return original_relation(*values_in_scope)
+
+                satisfied = original_relation(*values_in_scope)
+                return satisfied, 0.0 if satisfied else 1.0
 
             # Crear la Constraint de Fibration Flow
             fibration_constraint = Constraint(
@@ -72,7 +72,7 @@ class CSPToConstraintHierarchyAdapter:
 
         # Los metadatos de mapeo son simples en este caso, ya que las variables no se transforman.
         compilation_metadata = {
-            "original_variables": list(csp.variables),
+            "original_variables": sorted(list(csp.variables)),
             "original_domains": {var: list(domain_set) for var, domain_set in csp.domains.items()}
         }
 
@@ -91,8 +91,5 @@ class CSPToConstraintHierarchyAdapter:
         Returns:
             Dict[str, Any]: La solución en el formato original de CSP.
         """
-        # En este adaptador simple, la solución de Fibration Flow ya está en el formato de CSP,
-        # ya que las variables no se agrupan ni se transforman.
-        # Los metadatos podrían usarse para validación si fuera necesario.
         return fibration_solution
 

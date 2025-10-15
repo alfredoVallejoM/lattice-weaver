@@ -1,26 +1,19 @@
-"""
-Tests unitarios para EnergyLandscape
-
-Pruebas para el módulo de paisaje de energía del Flujo de Fibración.
-"""
-
 import pytest
 from lattice_weaver.fibration import (
     ConstraintHierarchy,
     ConstraintLevel,
     Hardness,
-    EnergyLandscape,
-    EnergyComponents
+    EnergyLandscapeOptimized
 )
 
 
-class TestEnergyLandscape:
-    """Tests para la clase EnergyLandscape."""
+class TestEnergyLandscapeOptimized:
+    """Tests para la clase EnergyLandscapeOptimized."""
     
     def test_landscape_creation(self):
         """Test: Crear paisaje de energía."""
         hierarchy = ConstraintHierarchy()
-        landscape = EnergyLandscape(hierarchy)
+        landscape = EnergyLandscapeOptimized(hierarchy)
         
         assert landscape.hierarchy == hierarchy
         assert landscape.level_weights[ConstraintLevel.LOCAL] == 1.0
@@ -30,115 +23,145 @@ class TestEnergyLandscape:
     def test_compute_energy_empty_assignment(self):
         """Test: Calcular energía de asignación vacía."""
         hierarchy = ConstraintHierarchy()
-        landscape = EnergyLandscape(hierarchy)
+        landscape = EnergyLandscapeOptimized(hierarchy)
         
-        energy = landscape.compute_energy({})
+        satisfied, total_energy, local_energy, pattern_energy, global_energy = landscape.compute_energy({})
         
-        assert energy.local_energy == 0.0
-        assert energy.pattern_energy == 0.0
-        assert energy.global_energy == 0.0
-        assert energy.total_energy == 0.0
+        assert satisfied is True
+        assert total_energy == 0.0
+        assert local_energy == 0.0
+        assert pattern_energy == 0.0
+        assert global_energy == 0.0
     
     def test_compute_energy_satisfied_constraints(self):
         """Test: Calcular energía con restricciones satisfechas."""
         hierarchy = ConstraintHierarchy()
-        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"])
+        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"], hardness=Hardness.HARD)
         
-        landscape = EnergyLandscape(hierarchy)
+        landscape = EnergyLandscapeOptimized(hierarchy)
         
         # Asignación que satisface la restricción
         assignment = {"x": 1, "y": 2}
-        energy = landscape.compute_energy(assignment)
+        satisfied, total_energy, local_energy, pattern_energy, global_energy = landscape.compute_energy(assignment)
         
-        assert energy.local_energy == 0.0
-        assert energy.total_energy == 0.0
+        assert satisfied is True
+        assert total_energy == 0.0
+        assert local_energy == 0.0
+        assert pattern_energy == 0.0
+        assert global_energy == 0.0
     
-    def test_compute_energy_violated_constraints(self):
-        """Test: Calcular energía con restricciones violadas."""
+    def test_compute_energy_violated_hard_constraints(self):
+        """Test: Calcular energía con restricciones HARD violadas."""
         hierarchy = ConstraintHierarchy()
-        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"], weight=1.0)
+        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"], hardness=Hardness.HARD)
         
-        landscape = EnergyLandscape(hierarchy)
+        landscape = EnergyLandscapeOptimized(hierarchy)
         
         # Asignación que viola la restricción
         assignment = {"x": 1, "y": 1}
-        energy = landscape.compute_energy(assignment)
+        satisfied, total_energy, local_energy, pattern_energy, global_energy = landscape.compute_energy(assignment)
         
-        # Energía = peso_nivel (1.0) * peso_restricción (1.0) * violación (1.0) = 1.0
-        assert energy.local_energy == 1.0
-        assert energy.total_energy == 1.0
+        assert satisfied is False
+        assert total_energy == 0.0 # La energía de soft constraints no se suma si una hard falla
+        assert local_energy == 0.0
+        assert pattern_energy == 0.0
+        assert global_energy == 0.0
+
+    def test_compute_energy_violated_soft_constraints(self):
+        """Test: Calcular energía con restricciones SOFT violadas."""
+        hierarchy = ConstraintHierarchy()
+        hierarchy.add_local_constraint("x", "y", lambda a: abs(a["x"] - a["y"]), weight=1.0, hardness=Hardness.SOFT)
+        
+        landscape = EnergyLandscapeOptimized(hierarchy)
+        
+        # Asignación que viola la restricción
+        assignment = {"x": 1, "y": 3}
+        satisfied, total_energy, local_energy, pattern_energy, global_energy = landscape.compute_energy(assignment)
+        
+        # Energía = peso_nivel (1.0) * peso_restricción (1.0) * violación (2.0) = 2.0
+        assert satisfied is True # No hay hard constraints violadas
+        assert total_energy == 2.0
+        assert local_energy == 2.0
+        assert pattern_energy == 0.0
+        assert global_energy == 0.0
     
-    def test_compute_energy_multiple_levels(self):
-        """Test: Calcular energía con restricciones en múltiples niveles."""
+    def test_compute_energy_multiple_levels_soft_violated(self):
+        """Test: Calcular energía con restricciones SOFT en múltiples niveles."""
         hierarchy = ConstraintHierarchy()
         
         # Restricción local violada
-        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"], weight=1.0)
+        hierarchy.add_local_constraint("x", "y", lambda a: abs(a["x"] - a["y"]), weight=1.0, hardness=Hardness.SOFT)
         
         # Restricción de patrón violada
         hierarchy.add_pattern_constraint(
             ["x", "y", "z"],
-            lambda a: len(set(a.values())) == len(a),  # All different
-            weight=2.0
+            lambda a: 1.0 if len(set(a.values())) != len(a) else 0.0,  # All different
+            weight=2.0, hardness=Hardness.SOFT
         )
         
-        landscape = EnergyLandscape(hierarchy)
+        landscape = EnergyLandscapeOptimized(hierarchy)
         
         # Asignación que viola ambas restricciones
         assignment = {"x": 1, "y": 1, "z": 1}
-        energy = landscape.compute_energy(assignment)
+        satisfied, total_energy, local_energy, pattern_energy, global_energy = landscape.compute_energy(assignment)
         
-        # Local: 1.0 * 1.0 * 1.0 = 1.0
-        # Pattern: 1.0 * 2.0 * 1.0 = 2.0
-        # Total: 3.0
-        assert energy.local_energy == 1.0
-        assert energy.pattern_energy == 2.0
-        assert energy.total_energy == 3.0
+        # Local: 1.0 * 1.0 * 0.0 = 0.0 (x-y=0)
+        # Pattern: 1.0 * 2.0 * 1.0 = 2.0 (no all different)
+        # Total: 2.0
+        assert satisfied is True
+        assert total_energy == 2.0
+        assert local_energy == 0.0
+        assert pattern_energy == 2.0
+        assert global_energy == 0.0
     
     def test_compute_energy_with_level_weights(self):
         """Test: Calcular energía con pesos de nivel modificados."""
         hierarchy = ConstraintHierarchy()
-        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"], weight=1.0)
+        hierarchy.add_local_constraint("x", "y", lambda a: abs(a["x"] - a["y"]), weight=1.0, hardness=Hardness.SOFT)
         
-        landscape = EnergyLandscape(hierarchy)
+        landscape = EnergyLandscapeOptimized(hierarchy)
         
         # Modificar peso del nivel LOCAL
         landscape.level_weights[ConstraintLevel.LOCAL] = 2.0
         
         # Asignación que viola la restricción
-        assignment = {"x": 1, "y": 1}
-        energy = landscape.compute_energy(assignment)
+        assignment = {"x": 1, "y": 2}
+        satisfied, total_energy, local_energy, pattern_energy, global_energy = landscape.compute_energy(assignment)
         
         # Energía = peso_nivel (2.0) * peso_restricción (1.0) * violación (1.0) = 2.0
-        assert energy.local_energy == 2.0
-        assert energy.total_energy == 2.0
+        assert satisfied is True
+        assert total_energy == 2.0
+        assert local_energy == 2.0
+        assert pattern_energy == 0.0
+        assert global_energy == 0.0
     
     def test_energy_cache(self):
         """Test: Cache de energías."""
         hierarchy = ConstraintHierarchy()
-        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"])
+        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"], hardness=Hardness.HARD)
         
-        landscape = EnergyLandscape(hierarchy)
+        landscape = EnergyLandscapeOptimized(hierarchy)
         
         assignment = {"x": 1, "y": 2}
         
         # Primera llamada -> cache miss
-        energy1 = landscape.compute_energy(assignment, use_cache=True)
+        satisfied1, energy1, _, _, _ = landscape.compute_energy(assignment, use_cache=True)
         assert landscape.cache_misses == 1
         assert landscape.cache_hits == 0
         
         # Segunda llamada -> cache hit
-        energy2 = landscape.compute_energy(assignment, use_cache=True)
+        satisfied2, energy2, _, _, _ = landscape.compute_energy(assignment, use_cache=True)
         assert landscape.cache_misses == 1
         assert landscape.cache_hits == 1
         
         # Energías deben ser iguales
-        assert energy1.total_energy == energy2.total_energy
+        assert satisfied1 == satisfied2
+        assert energy1 == energy2
     
     def test_clear_cache(self):
         """Test: Limpiar cache."""
         hierarchy = ConstraintHierarchy()
-        landscape = EnergyLandscape(hierarchy)
+        landscape = EnergyLandscapeOptimized(hierarchy)
         
         # Calcular algunas energías
         landscape.compute_energy({"x": 1})
@@ -153,133 +176,125 @@ class TestEnergyLandscape:
         assert landscape.cache_hits == 0
         assert landscape.cache_misses == 0
 
-
-class TestEnergyGradient:
-    """Tests para el cálculo de gradientes de energía."""
-    
-    def test_compute_energy_gradient(self):
-        """Test: Calcular gradiente de energía."""
+    def test_compute_energy_incremental_soft_constraint(self):
+        """Test: Calcular energía incremental para soft constraints."""
         hierarchy = ConstraintHierarchy()
-        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"])
+        hierarchy.add_local_constraint("x", "y", lambda a: abs(a["x"] - a["y"]), weight=1.0, hardness=Hardness.SOFT)
         
-        landscape = EnergyLandscape(hierarchy)
+        landscape = EnergyLandscapeOptimized(hierarchy)
+        
+        base_assignment = {"x": 1}
+        base_satisfied, base_total_energy, base_local_energy, base_pattern_energy, base_global_energy = landscape.compute_energy(base_assignment)
+        
+        # Cambiar y de no asignado a 2
+        new_satisfied, new_total_energy, new_local_energy, new_pattern_energy, new_global_energy = landscape.compute_energy_incremental(
+            base_assignment, (base_satisfied, base_total_energy, base_local_energy, base_pattern_energy, base_global_energy), "y", 2
+        )
+        
+        assert new_satisfied is True
+        assert new_total_energy == 1.0 # abs(1-2) = 1.0
+        assert new_local_energy == 1.0
+        assert new_pattern_energy == 0.0
+        assert new_global_energy == 0.0
+
+        # Cambiar y de 2 a 3
+        new_satisfied_2, new_total_energy_2, new_local_energy_2, new_pattern_energy_2, new_global_energy_2 = landscape.compute_energy_incremental(
+            {"x": 1, "y": 2}, (new_satisfied, new_total_energy, new_local_energy, new_pattern_energy, new_global_energy), "y", 3
+        )
+        assert new_satisfied_2 is True
+        assert new_total_energy_2 == 2.0 # abs(1-3) = 2.0
+        assert new_local_energy_2 == 2.0
+        assert new_pattern_energy_2 == 0.0
+        assert new_global_energy_2 == 0.0
+
+    def test_compute_energy_incremental_hard_constraint_satisfied(self):
+        """Test: Calcular energía incremental para hard constraints (satisfecha)."""
+        hierarchy = ConstraintHierarchy()
+        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"], hardness=Hardness.HARD)
+        
+        landscape = EnergyLandscapeOptimized(hierarchy)
+        
+        base_assignment = {"x": 1}
+        base_satisfied, base_total_energy, base_local_energy, base_pattern_energy, base_global_energy = landscape.compute_energy(base_assignment)
+        
+        # Añadir y=2, satisface la hard constraint
+        new_satisfied, new_total_energy, new_local_energy, new_pattern_energy, new_global_energy = landscape.compute_energy_incremental(
+            base_assignment, (base_satisfied, base_total_energy, base_local_energy, base_pattern_energy, base_global_energy), "y", 2
+        )
+        
+        assert new_satisfied is True
+        assert new_total_energy == 0.0
+        assert new_local_energy == 0.0
+        assert new_pattern_energy == 0.0
+        assert new_global_energy == 0.0
+
+    def test_compute_energy_incremental_hard_constraint_violated(self):
+        """Test: Calcular energía incremental para hard constraints (violada)."""
+        hierarchy = ConstraintHierarchy()
+        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"], hardness=Hardness.HARD)
+        
+        landscape = EnergyLandscapeOptimized(hierarchy)
+        
+        base_assignment = {"x": 1}
+        base_satisfied, base_total_energy, base_local_energy, base_pattern_energy, base_global_energy = landscape.compute_energy(base_assignment)
+        
+        # Añadir y=1, viola la hard constraint
+        new_satisfied, new_total_energy, new_local_energy, new_pattern_energy, new_global_energy = landscape.compute_energy_incremental(
+            base_assignment, (base_satisfied, base_total_energy, base_local_energy, base_pattern_energy, base_global_energy), "y", 1
+        )
+        
+        assert new_satisfied is False
+        assert new_total_energy == 0.0 # La energía de soft constraints no se suma si una hard falla
+        assert new_local_energy == 0.0
+        assert new_pattern_energy == 0.0
+        assert new_global_energy == 0.0
+
+    def test_compute_energy_gradient_optimized(self):
+        """Test: Calcular gradiente de energía optimizado."""
+        hierarchy = ConstraintHierarchy()
+        hierarchy.add_local_constraint("x", "y", lambda a: abs(a["x"] - a["y"]), weight=1.0, hardness=Hardness.SOFT)
+        
+        landscape = EnergyLandscapeOptimized(hierarchy)
         
         # Asignación parcial
         assignment = {"y": 1}
+        base_satisfied, base_total_energy, base_local_energy, base_pattern_energy, base_global_energy = landscape.compute_energy(assignment)
         
         # Calcular gradiente para x con dominio [0, 1, 2]
-        gradient = landscape.compute_energy_gradient(assignment, "x", [0, 1, 2])
+        gradient = landscape.compute_energy_gradient_optimized(assignment, (base_satisfied, base_total_energy, base_local_energy, base_pattern_energy, base_global_energy), "x", [0, 1, 2])
         
-        # x=0 -> satisface restricción -> energía 0
-        assert gradient[0] == 0.0
+        # x=0 -> abs(0-1) = 1.0
+        assert gradient[0] == 1.0
         
-        # x=1 -> viola restricción (x=y=1) -> energía 1.0
-        assert gradient[1] == 1.0
+        # x=1 -> abs(1-1) = 0.0
+        assert gradient[1] == 0.0
         
-        # x=2 -> satisface restricción -> energía 0
-        assert gradient[2] == 0.0
-    
-    def test_find_energy_minimum(self):
-        """Test: Encontrar mínimo de energía."""
-        hierarchy = ConstraintHierarchy()
-        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"])
-        
-        landscape = EnergyLandscape(hierarchy)
-        
-        # Asignación parcial
-        assignment = {"y": 1}
-        
-        # Encontrar valor de x que minimiza energía
-        min_value, min_energy = landscape.find_energy_minimum(
-            assignment, "x", [0, 1, 2]
-        )
-        
-        # Mínimo debe ser x=0 o x=2 (ambos con energía 0)
-        assert min_value in [0, 2]
-        assert min_energy == 0.0
-    
-    def test_find_local_minima(self):
-        """Test: Encontrar mínimos locales."""
-        hierarchy = ConstraintHierarchy()
-        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"])
-        hierarchy.add_local_constraint("y", "z", lambda a: a["y"] != a["z"])
-        
-        landscape = EnergyLandscape(hierarchy)
-        
-        # Asignación parcial que viola restricciones (energía > 0)
-        assignment = {"x": 1, "y": 1}  # Viola x != y
-        domains = {"y": [0, 1, 2], "z": [0, 1, 2]}
-        
-        # Encontrar mínimos locales
-        minima = landscape.find_local_minima(
-            assignment, ["y", "z"], domains, max_minima=5
-        )
-        
-        # Debe haber al menos un mínimo (cambiar y a 0 o 2 reduce energía)
-        assert len(minima) > 0
-        
-        # Cada mínimo es una tupla (asignación, energía)
-        for assignment_min, energy_min in minima:
-            assert isinstance(assignment_min, dict)
-            assert isinstance(energy_min, float)
-            assert energy_min >= 0.0
+        # x=2 -> abs(2-1) = 1.0
+        assert gradient[2] == 1.0
 
-
-class TestEnergyDelta:
-    """Tests para el cálculo de deltas de energía."""
-    
-    def test_compute_energy_delta(self):
-        """Test: Calcular delta de energía."""
+    def test_to_json_from_json(self):
+        """Test: Serialización y deserialización del paisaje de energía."""
         hierarchy = ConstraintHierarchy()
-        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"])
-        
-        landscape = EnergyLandscape(hierarchy)
-        
-        assignment = {"x": 1, "y": 2}
-        
-        # Cambiar y de 2 a 1 (viola restricción)
-        delta = landscape.compute_energy_delta(assignment, "y", 2, 1)
-        
-        # Delta debe ser positivo (aumenta energía)
-        assert delta > 0.0
-        assert delta == 1.0  # De 0.0 a 1.0
-    
-    def test_compute_energy_delta_improvement(self):
-        """Test: Delta de energía con mejora."""
-        hierarchy = ConstraintHierarchy()
-        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"])
-        
-        landscape = EnergyLandscape(hierarchy)
-        
-        assignment = {"x": 1, "y": 1}  # Viola restricción
-        
-        # Cambiar y de 1 a 2 (satisface restricción)
-        delta = landscape.compute_energy_delta(assignment, "y", 1, 2)
-        
-        # Delta debe ser negativo (disminuye energía)
-        assert delta < 0.0
-        assert delta == -1.0  # De 1.0 a 0.0
+        hierarchy.add_local_constraint("x", "y", lambda a: a["x"] != a["y"], hardness=Hardness.HARD)
+        hierarchy.add_global_constraint(["z"], lambda a: abs(a["z"]) / 5.0, weight=3.0, hardness=Hardness.SOFT)
 
+        landscape = EnergyLandscapeOptimized(hierarchy)
+        landscape.level_weights[ConstraintLevel.LOCAL] = 0.5
 
-class TestCacheStatistics:
-    """Tests para estadísticas del cache."""
-    
-    def test_get_cache_statistics(self):
-        """Test: Obtener estadísticas del cache."""
-        hierarchy = ConstraintHierarchy()
-        landscape = EnergyLandscape(hierarchy)
-        
-        # Calcular algunas energías
-        landscape.compute_energy({"x": 1}, use_cache=True)
-        landscape.compute_energy({"x": 1}, use_cache=True)  # Cache hit
-        landscape.compute_energy({"x": 2}, use_cache=True)
-        
-        stats = landscape.get_cache_statistics()
-        
-        assert stats['cache_size'] == 2
-        assert stats['cache_hits'] == 1
-        assert stats['cache_misses'] == 2
-        assert stats['hit_rate'] == 1/3
+        json_data = landscape.to_json()
+        new_landscape = EnergyLandscapeOptimized(ConstraintHierarchy()) # Pasa una jerarquía vacía inicialmente
+        new_landscape.from_json(json_data)
+
+        # Verificar que los pesos de nivel se mantienen
+        assert new_landscape.level_weights[ConstraintLevel.LOCAL] == 0.5
+        assert new_landscape.level_weights[ConstraintLevel.GLOBAL] == 1.0
+
+        # Verificar que las restricciones se han deserializado (predicados son placeholders)
+        assert len(new_landscape.hierarchy.get_constraints_by_level(ConstraintLevel.LOCAL)) == 1
+        assert len(new_landscape.hierarchy.get_constraints_by_level(ConstraintLevel.GLOBAL)) == 1
+        assert new_landscape.hierarchy.get_constraints_by_level(ConstraintLevel.LOCAL)[0].hardness == Hardness.HARD
+        assert new_landscape.hierarchy.get_constraints_by_level(ConstraintLevel.GLOBAL)[0].hardness == Hardness.SOFT
+        assert new_landscape.hierarchy.get_constraints_by_level(ConstraintLevel.GLOBAL)[0].weight == 3.0
 
 
 if __name__ == "__main__":

@@ -205,7 +205,7 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
         """
         return self.constraints.get(level, [])
 
-    def get_all_constraints(self) -> Dict[str, List[Constraint]]:
+    def get_all_constraints(self, only_non_empty: bool = False) -> Dict[str, List[Constraint]]:
         """
         Recupera todas las restricciones organizadas por el nombre de su nivel.
 
@@ -217,6 +217,8 @@ class ConstraintHierarchy(ConstraintHierarchyAPI):
         for level_enum in self.constraints.keys():
             level_name = level_enum.value if isinstance(level_enum, ConstraintLevel) else level_enum
             all_constraints[level_name] = self.get_constraints_by_level(level_enum)
+        if only_non_empty:
+            return {k: v for k, v in all_constraints.items() if v}
         return all_constraints
 
     def to_json(self) -> Dict[str, Any]:

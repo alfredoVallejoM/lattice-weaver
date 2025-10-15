@@ -56,8 +56,20 @@ from .fibration_search_solver import (
 )
 from .fibration_search_solver_api import FibrationSearchSolverAPI
 
+from .simple_multiscale_compiler import (
+    SimpleMultiscaleCompiler
+)
+
 from .hill_climbing_solver import (
     HillClimbingFibrationSolver
+)
+
+from .csp_adapter import (
+    CSPToConstraintHierarchyAdapter
+)
+
+from .constraint_hierarchy_to_csp_adapter import (
+    ConstraintHierarchyToCSPAdapter
 )
 
 __all__ = [
@@ -80,10 +92,15 @@ __all__ = [
     'FibrationSearchSolver',
     'FibrationSearchSolverAPI',
     'HillClimbingFibrationSolver',
+    'SimpleMultiscaleCompiler',
 
     # Hacification
     'HacificationEngine',
     'HacificationResult',
+
+    # Adapters
+    'CSPToConstraintHierarchyAdapter',
+    'ConstraintHierarchyToCSPAdapter',
 
     # Landscape Modulation
     'LandscapeModulator',

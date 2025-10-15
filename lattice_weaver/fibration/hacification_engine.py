@@ -3,13 +3,13 @@ from collections import deque
 from dataclasses import dataclass
 
 from .constraint_hierarchy import ConstraintHierarchy, ConstraintLevel, Hardness
-from .energy_landscape_optimized import EnergyLandscapeOptimized, EnergyComponents
+from .energy_landscape_optimized import EnergyLandscapeOptimized
 
 @dataclass
 class HacificationResult:
     is_coherent: bool
     level_results: Dict[ConstraintLevel, bool]
-    energy: EnergyComponents
+    energy: Tuple[bool, float]
     violated_constraints: List[str]
     has_hard_violation: bool
 
@@ -25,17 +25,27 @@ class HacificationEngine:
         }
 
     def hacify(self, assignment: Dict[str, Any], strict: bool = True) -> HacificationResult:
-        energy_components = self.landscape.compute_energy(assignment)
+        all_hard_satisfied, total_energy, local_energy, pattern_energy, global_energy = self.landscape.compute_energy(assignment)
         level_results = {}
         all_violated_constraints = []
         has_hard_violation = False
 
         for level in ConstraintLevel:
-            level_energy = getattr(energy_components, f"{level.name.lower()}_energy")
+            # Para la hacificación, necesitamos el desglose de energía por nivel.
+            # La función compute_energy de EnergyLandscapeOptimized ahora devuelve (all_hard_satisfied, total_energy).
+            # Necesitamos re-evaluar la energía por nivel aquí o modificar compute_energy para devolver el desglose.
+            # Por simplicidad, y dado que la hacificación necesita el desglose, vamos a re-calcularlo aquí.
+
+
+            level_energy = {
+                ConstraintLevel.LOCAL: local_energy,
+                ConstraintLevel.PATTERN: pattern_energy,
+                ConstraintLevel.GLOBAL: global_energy
+            }[level]
             threshold = self.energy_thresholds.get(level, 0.0)
             level_has_hard_violation = False
 
-            for constraint in self.hierarchy.get_constraints_at_level(level):
+            for constraint in self.hierarchy.get_constraints_by_level(level):
                 satisfied, violation = constraint.evaluate(assignment)
                 if not satisfied or violation > 0:
                     constraint_name = constraint.metadata.get("name", "unnamed")
@@ -54,7 +64,7 @@ class HacificationEngine:
         return HacificationResult(
             is_coherent=is_coherent,
             level_results=level_results,
-            energy=energy_components,
+            energy=(all_hard_satisfied, total_energy),
             violated_constraints=list(set(all_violated_constraints)),
             has_hard_violation=has_hard_violation
         )
@@ -72,9 +82,9 @@ class HacificationEngine:
         # Inicializar la cola de arcos para AC-3. Aquí, nos centramos en los arcos que involucran a 'variable'
         # y las restricciones HARD que la afectan.
         queue = deque()
-        for const in self.hierarchy.get_constraints_at_level(ConstraintLevel.LOCAL) + \
-                     self.hierarchy.get_constraints_at_level(ConstraintLevel.PATTERN) + \
-                     self.hierarchy.get_constraints_at_level(ConstraintLevel.GLOBAL):
+        for const in self.hierarchy.get_constraints_by_level(ConstraintLevel.LOCAL) + \
+                     self.hierarchy.get_constraints_by_level(ConstraintLevel.PATTERN) + \
+                     self.hierarchy.get_constraints_by_level(ConstraintLevel.GLOBAL):
                 if const.hardness == Hardness.HARD and variable in const.variables:
                     for other_var in const.variables:
                         if other_var != variable and other_var not in base_assignment:
@@ -88,9 +98,9 @@ class HacificationEngine:
                 if not temp_domains[var_i]: # Dominio vacío, no hay soluciones
                     return []
                 # Si el dominio de var_i fue revisado, añadir arcos relacionados a la cola
-                for const_k in self.hierarchy.get_constraints_at_level(ConstraintLevel.LOCAL) + \
-                               self.hierarchy.get_constraints_at_level(ConstraintLevel.PATTERN) + \
-                               self.hierarchy.get_constraints_at_level(ConstraintLevel.GLOBAL):
+                for const_k in self.hierarchy.get_constraints_by_level(ConstraintLevel.LOCAL) + \
+                               self.hierarchy.get_constraints_by_level(ConstraintLevel.PATTERN) + \
+                               self.hierarchy.get_constraints_by_level(ConstraintLevel.GLOBAL):
                         if const_k.hardness == Hardness.HARD and var_i in const_k.variables:
                             for var_k in const_k.variables:
                                 if var_k != var_i and var_k not in base_assignment:

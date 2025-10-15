@@ -15,7 +15,8 @@ from typing import Dict, List, Optional, Any, Tuple
 import heapq
 from dataclasses import dataclass
 from .constraint_hierarchy import ConstraintHierarchy, Hardness, ConstraintLevel
-from .energy_landscape_optimized import EnergyLandscapeOptimized, EnergyComponents
+from .energy_landscape_optimized import EnergyLandscapeOptimized
+
 
 
 @dataclass
@@ -23,11 +24,12 @@ class SearchNode:
     """Nodo en el árbol de búsqueda."""
     assignment: Dict[str, Any]
     domains: Dict[str, List[Any]]  # Dominios reducidos
-    energy: float
+    energy: Tuple[bool, float] # (all_hard_satisfied, total_energy)
     depth: int
     
     def __lt__(self, other):
-        return self.energy < other.energy
+        # Comparar por energía total (segundo elemento de la tupla)
+        return self.energy[1] < other.energy[1]
 
 
 class CoherenceSolverOptimized:
@@ -109,12 +111,9 @@ class CoherenceSolverOptimized:
         # Verificar si es solución completa
         if len(assignment) == len(self.variables):
             # Verificar que todas las restricciones HARD están satisfechas
-            energy = self.landscape.compute_energy(assignment)
+            all_hard_satisfied, total_energy = self.landscape.compute_energy(assignment)
             
-            # Solo restricciones HARD deben tener energía 0
-            hard_satisfied = self._check_hard_constraints(assignment)
-            
-            if hard_satisfied:
+            if all_hard_satisfied:
                 return assignment
             return None
         
@@ -130,7 +129,8 @@ class CoherenceSolverOptimized:
             return None
         
         # Calcular energía base para cálculo incremental
-        base_energy = self.landscape.compute_energy(assignment, use_cache=True)
+        base_satisfied, base_total_energy = self.landscape.compute_energy(assignment, use_cache=True)
+        base_energy = (base_satisfied, base_total_energy)
         
         # OPTIMIZACIÓN: Calcular gradiente de forma optimizada
         gradient = self.landscape.compute_energy_gradient_optimized(
@@ -239,12 +239,27 @@ class CoherenceSolverOptimized:
             min_energy = sorted_values[0][1]
             
             # Si la mínima energía es 0, ser estricto
-            if min_energy == 0.0:
-                threshold = 0.5  # Tolerar solo pequeñas violaciones SOFT
-            else:
-                threshold = min_energy + 1.0
-            
-            pruned = [v for v, e in sorted_values if e <= threshold]
+            # Aquí `e` es la energía total, que incluye soft constraints.
+            # Si `min_energy` es 0, significa que todas las soft constraints también están satisfechas.
+            # Si hay soft constraints, podemos tolerar un pequeño aumento de energía.
+            # La lógica de poda debe ser más sofisticada para manejar HARD y SOFT de forma correcta.
+            # Por ahora, si hay soft constraints, permitimos cualquier valor que no viole HARD constraints
+            # y ordenamos por energía total.
+            # La función `compute_energy_gradient_optimized` ya devuelve la energía total.
+            # La `pruned_values` debería considerar `all_hard_satisfied` también.
+            # Por simplicidad, si hay soft constraints, se devuelven todos los valores ordenados por energía.
+            # Si no hay soft constraints, solo los que tienen energía 0.
+            # Si hay restricciones HARD, solo se consideran los valores que las satisfacen (energía 0 para HARD)
+            # Si no hay restricciones HARD violadas, entonces se ordenan por energía total (incluyendo SOFT)
+            # La función compute_energy_gradient_optimized ya devuelve la energía total.
+            # Aquí, `e` es la energía total para la asignación con ese valor.
+            # Si `all_hard_satisfied` es False para un valor, ese valor no debe ser considerado.
+            # La `compute_energy_gradient_optimized` ya debería filtrar esto, pero para mayor seguridad:
+            # La lógica de `_prune_values` debería recibir el gradiente y el estado de `all_hard_satisfied`.
+            # Por ahora, asumimos que el gradiente ya refleja la energía total, y que los valores con energía alta
+            # (debido a violaciones HARD) ya están penalizados.
+            # Simplificamos a devolver todos los valores ordenados por energía, y el solver se encargará de las HARD.
+            pruned = [v for v, e in sorted_values]
         
         return pruned
     
@@ -307,23 +322,9 @@ class CoherenceSolverOptimized:
         Returns:
             True si es consistente
         """
-        # Solo verificar restricciones HARD en nivel LOCAL
-        local_constraints = self.hierarchy.get_constraints_at_level(ConstraintLevel.LOCAL)
-        
-        for constraint in local_constraints:
-            if constraint.hardness != Hardness.HARD:
-                continue
-            
-            # Solo evaluar si todas las variables están asignadas
-            if not all(var in assignment for var in constraint.variables):
-                continue
-            
-            satisfied, violation = constraint.evaluate(assignment)
-            
-            if not satisfied or violation > 0:
-                return False
-        
-        return True
+        # Usar el método evaluate_solution de EnergyLandscapeOptimized para verificar hard constraints
+        all_hard_satisfied, _ = self.landscape.compute_energy(assignment, use_cache=False)
+        return all_hard_satisfied
     
     def _check_hard_constraints(self, assignment: Dict[str, Any]) -> bool:
         """
@@ -335,19 +336,9 @@ class CoherenceSolverOptimized:
         Returns:
             True si todas las HARD están satisfechas
         """
-        for level in ConstraintLevel:
-            constraints = self.hierarchy.get_constraints_at_level(level)
-            
-            for constraint in constraints:
-                if constraint.hardness != Hardness.HARD:
-                    continue
-                
-                satisfied, violation = constraint.evaluate(assignment)
-                
-                if not satisfied or violation > 0:
-                    return False
-        
-        return True
+        # Usar el método evaluate_solution de EnergyLandscapeOptimized para verificar hard constraints
+        all_hard_satisfied, _ = self.landscape.compute_energy(assignment, use_cache=False)
+        return all_hard_satisfied
     
     def get_statistics(self) -> Dict:
         """Devuelve estadísticas de la búsqueda."""
