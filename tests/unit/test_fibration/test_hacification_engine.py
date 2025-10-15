@@ -9,6 +9,8 @@ from lattice_weaver.fibration import (
     HacificationEngine,
     HacificationResult
 )
+from lattice_weaver.arc_engine.core import ArcEngine # Importar ArcEngine
+from lattice_weaver.arc_engine.csp_solver import CSPProblem, CSPSolver # Importar CSPProblem y CSPSolver
 
 # --- Fixtures para un problema simple --- #
 
@@ -40,7 +42,9 @@ def simple_landscape(simple_hierarchy):
 
 @pytest.fixture
 def hacification_engine(simple_hierarchy, simple_landscape):
-    return HacificationEngine(simple_hierarchy, simple_landscape)
+    # Crear una instancia de ArcEngine para pasar al HacificationEngine
+    arc_engine_instance = ArcEngine()
+    return HacificationEngine(simple_hierarchy, simple_landscape, arc_engine_instance)
 
 # --- Tests para HacificationEngine --- #
 
@@ -137,7 +141,8 @@ def test_filter_coherent_extensions(hacification_engine):
         metadata={"name": "Q0_ne_Q1"}
     )
     landscape_hard_only = EnergyLandscapeOptimized(hierarchy_hard_only)
-    hacification_engine_hard_only = HacificationEngine(hierarchy_hard_only, landscape_hard_only)
+    arc_engine_hard_only = ArcEngine()
+    hacification_engine_hard_only = HacificationEngine(hierarchy_hard_only, landscape_hard_only, arc_engine_hard_only)
     
     coherent_values_hard_only = hacification_engine_hard_only.filter_coherent_extensions(base_assignment, variable, domain, strict=True)
     assert coherent_values_hard_only == [1, 2, 3] # Q0=0, Q1=0 violates HARD

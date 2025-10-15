@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(name)s:%(messag
 from .domains import create_optimal_domain, Domain
 from .constraints import Constraint
 from .ac31 import revise_with_last_support
-from ..core.csp_engine.tms import create_tms, TruthMaintenanceSystem # Importar TMS
+from .tms import create_tms, TruthMaintenanceSystem # Importar TMS
 
 class ArcEngine:
     """
@@ -17,7 +17,7 @@ class ArcEngine:
     This is Layer 0 of the LatticeWeaver architecture.
     """
 
-    def __init__(self, parallel: bool = False, parallel_mode: str = 'thread', use_tms: bool = False):
+    def __init__(self, parallel: bool = False, parallel_mode: str = 'thread', use_tms: bool = False, use_homotopy: bool = False):
         """
         Initializes the ArcEngine.
 
@@ -33,9 +33,11 @@ class ArcEngine:
         self.parallel = parallel
         self.parallel_mode = parallel_mode
         self.use_tms = use_tms
+        self.use_homotopy = use_homotopy
 
         # Data structure for AC-3.1 last support optimization
         self.last_support: Dict[Tuple[str, str, Any], Any] = {}
+        self._relation_registry: Dict[str, Callable] = {} # Registro para funciones de relación dinámicas
         
         # Truth Maintenance System (optional)
         self.tms: Optional[TruthMaintenanceSystem] = None
@@ -85,8 +87,10 @@ class ArcEngine:
         if cid is None:
             cid = f"{var1}_{var2}"
         if cid in self.constraints:
-            raise ValueError(f"Constraint ID '{cid}' already exists.")
+            raise ValueError(f"Constraint ID \'{cid}\' already exists.")
         
+        if relation_name not in self._relation_registry:
+            raise ValueError(f"Relation \'{relation_name}\' not registered. Please use register_relation() first.")       
         # La función de relación ya debe estar registrada y su nombre pasado como relation_name
         # No es necesario registrarla aquí de nuevo, solo usar el nombre proporcionado.
         
@@ -102,6 +106,18 @@ class ArcEngine:
         self.constraints[cid] = Constraint(var1, var2, relation_name, metadata=metadata)
 
         self.graph.add_edge(var1, var2, cid=cid)
+
+    def register_relation(self, name: str, func: Callable[[Any, Any, Dict[str, Any]], bool]):
+        """
+        Registers a custom relation function with a given name.
+
+        :param name: The name of the relation.
+        :param func: The callable function for the relation. It should accept
+                     two values (val1, val2) and a metadata dictionary, and return a boolean.
+        """
+        if name in self._relation_registry:
+            raise ValueError(f"Relation \'{name}\' is already registered.")
+        self._relation_registry[name] = func
 
     def enforce_arc_consistency(self) -> bool:
         """
@@ -138,8 +154,13 @@ class ArcEngine:
 
             # The core of the AC-3.1 algorithm
             constraint = self.constraints[constraint_id]
-            from .constraints import get_relation
-            relation_func = get_relation(constraint.relation_name)
+            relation_func = self._relation_registry.get(constraint.relation_name)
+            if relation_func is None:
+                from .constraints import get_relation
+                relation_func = get_relation(constraint.relation_name)
+            
+            if relation_func is None:
+                raise ValueError(f"Relation \'{constraint.relation_name}\' not found in registry or default relations.")
 
             revised, removed_values = revise_with_last_support(self, xi, xj, constraint_id, relation_func=relation_func, metadata=constraint.metadata)
 
