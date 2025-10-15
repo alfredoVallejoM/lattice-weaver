@@ -206,7 +206,7 @@ class FibrationSearchSolverEnhanced:
         for value in ordered_values:
             # Registrar decisión en TMS
             if self.use_tms and self.arc_engine.tms:
-                self.arc_engine.tms.record_decision(var, value, decision_level)
+                self.arc_engine.tms.record_decision(var, value)
             
             # Hacer asignación (sin copia)
             assignment[var] = value
