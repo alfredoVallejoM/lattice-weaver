@@ -8,6 +8,7 @@ y mejoran el rendimiento del solver.
 import pytest
 from lattice_weaver.core.csp_problem import CSP, Constraint
 from lattice_weaver.core.csp_engine.solver import CSPSolver
+from lattice_weaver.core.csp_engine.strategies import MRVDegreeSelector, LCVOrderer
 
 
 class TestMRVHeuristic:
@@ -26,7 +27,8 @@ class TestMRVHeuristic:
             constraints=[]
         )
         
-        solver = CSPSolver(csp)
+        # Usar MRVDegreeSelector explícitamente
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         current_domains = {
             'A': [1, 2, 3],
             'B': [1],
@@ -52,7 +54,7 @@ class TestMRVHeuristic:
             ]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         current_domains = {
             'A': [1, 2],
             'B': [1, 2],
@@ -78,7 +80,7 @@ class TestMRVHeuristic:
             ]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         # Simular que X=1 ya está asignado
         solver.assignment['X'] = 1
         
@@ -116,7 +118,7 @@ class TestDegreeHeuristic:
             ]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         current_domains = {
             'A': [1, 2],
             'B': [1, 2],
@@ -144,7 +146,7 @@ class TestDegreeHeuristic:
             ]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         solver.assignment['A'] = 1  # A ya asignada
         
         current_domains = {
@@ -174,7 +176,7 @@ class TestLCVHeuristic:
             ]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         current_domains = {
             'A': [1, 2, 3],
             'B': [1, 2, 3]
@@ -204,7 +206,7 @@ class TestLCVHeuristic:
             ]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         current_domains = {
             'X': [1, 2],
             'Y': [1, 2],
@@ -231,7 +233,7 @@ class TestLCVHeuristic:
             ]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         solver.assignment['B'] = 1  # B ya asignada
         
         current_domains = {
@@ -259,7 +261,7 @@ class TestIntegrationHeuristics:
             # Si no está disponible o la API es diferente, skip
             pytest.skip(f"NQueensProblem no disponible o API diferente: {e}")
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         stats = solver.solve(all_solutions=False, max_solutions=1)
         
         assert len(stats.solutions) >= 1, "Debe encontrar al menos una solución"
@@ -283,7 +285,7 @@ class TestIntegrationHeuristics:
             ]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         stats = solver.solve(all_solutions=False, max_solutions=1)
         
         assert len(stats.solutions) == 1, "Debe encontrar una solución"
@@ -315,7 +317,7 @@ class TestIntegrationHeuristics:
             ]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         stats = solver.solve(all_solutions=False, max_solutions=1)
         
         # Con heurísticas, este problema debe resolver rápidamente
@@ -336,7 +338,7 @@ class TestIntegrationHeuristics:
             ]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         stats = solver.solve(all_solutions=False, max_solutions=1)
         
         assert len(stats.solutions) == 0, "No debe encontrar soluciones"
@@ -354,7 +356,7 @@ class TestEdgeCases:
             constraints=[]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         stats = solver.solve(all_solutions=False, max_solutions=1)
         
         assert len(stats.solutions) == 1
@@ -372,7 +374,7 @@ class TestEdgeCases:
             constraints=[]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         current_domains = {'A': [1], 'B': []}
         
         # No debe crashear, debe manejar el dominio vacío
@@ -390,7 +392,7 @@ class TestEdgeCases:
             constraints=[]
         )
         
-        solver = CSPSolver(csp)
+        solver = CSPSolver(csp, variable_selector=MRVDegreeSelector())
         solver.assignment = {'A': 1, 'B': 2}
         
         current_domains = {'A': [1], 'B': [2]}
