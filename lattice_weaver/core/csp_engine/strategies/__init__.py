@@ -52,6 +52,26 @@ try:
 except ImportError:
     _PHASE3_AVAILABLE = False
 
+# Estrategias Topológicas (Fase 4)
+try:
+    from .topology_guided import (
+        TopologyGuidedSelector,
+        ComponentBasedSelector
+    )
+    _PHASE4_TOPO_AVAILABLE = True
+except ImportError:
+    _PHASE4_TOPO_AVAILABLE = False
+
+# Estrategias Híbridas Multiescala (Fase 4)
+try:
+    from .hybrid_multiescala import (
+        HybridFCATopologySelector,
+        AdaptiveMultiscaleSelector
+    )
+    _PHASE4_HYBRID_AVAILABLE = True
+except ImportError:
+    _PHASE4_HYBRID_AVAILABLE = False
+
 
 __all__ = [
     # Interfaces
@@ -79,4 +99,18 @@ if _PHASE3_AVAILABLE:
         'FCAGuidedSelector',
         'FCAOnlySelector',
         'FCAClusterSelector',
+    ])
+
+# Añadir estrategias topológicas de Fase 4 si están disponibles
+if _PHASE4_TOPO_AVAILABLE:
+    __all__.extend([
+        'TopologyGuidedSelector',
+        'ComponentBasedSelector',
+    ])
+
+# Añadir estrategias híbridas de Fase 4 si están disponibles
+if _PHASE4_HYBRID_AVAILABLE:
+    __all__.extend([
+        'HybridFCATopologySelector',
+        'AdaptiveMultiscaleSelector',
     ])
