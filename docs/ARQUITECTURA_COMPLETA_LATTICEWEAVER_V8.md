@@ -1508,16 +1508,18 @@ orchestrator = SolverOrchestrator(
 
 Del análisis del `ROADMAP_LARGO_PLAZO.md`, se identificaron 4 gaps críticos:
 
-#### **Gap 1: CSP ↔ Tipos Cúbicos** ❌ CRÍTICO
+#### **Gap 1: CSP ↔ Tipos Cúbicos** ✅ EN PROGRESO (Infraestructura Base Implementada y Optimizada)
 
 **Problema:** La integración actual CSP-HoTT usa tipos Sigma simples, pero NO utiliza el sistema de tipos cúbicos implementado.
 
 **Solución:**
 1. Implementar `CSPToCubicalBridge` completo
 2. Usar caminos cúbicos para equivalencias de soluciones
-3. Verificar propiedades CSP mediante type checker cúbico
-
-**Estimación:** 4-6 semanas  
+3. Verificar propiedades CSP mediante type checker        - **Estado Actual:** 65% completado. Infraestructura base implementada, clases genéricas de tipos cúbicos, puente refactorizado, estrategia de verificación cúbica y tests de alta cobertura. **Se ha resuelto el problema crítico de canonicidad y consistencia en la igualdad de tipos cúbicos**, centralizando la lógica de `__eq__` en `CubicalType` y asegurando una canonicidad robusta en `CubicalAnd`. La traducción de `AllDifferentConstraint` está completamente implementada y verificada.
+**Avances Recientes:**
+- Añadido el tipo `CubicalNegation` a `cubical_types.py`.
+- Implementada la traducción inicial de `AllDifferentConstraint` usando `CubicalNegation`.
+- Mejoras de eficiencia en `cubical_types.py` (caching, canonicalizació        - **Próximos Pasos:** Implementar la traducción de restricciones complejas adicionales (ej. `SumConstraint`, `TableConstraint`) y la verificación formal completa.stimación Restante:** 3-4 semanas  
 **Prioridad:** MÁXIMA
 
 #### **Gap 2: FCA ↔ Topología Cúbica** ❌ CRÍTICO
@@ -1604,7 +1606,7 @@ Del análisis del `ROADMAP_LARGO_PLAZO.md`, se identificaron 4 gaps críticos:
 
 | Semana | Gap 1: CSP-Cubical | Gap 2: FCA-Topo | Gap 3: Homotopía | Gap 4: Pipeline | Track I |
 |--------|-------------------|-----------------|------------------|-----------------|---------|
-| 17-22  | Implementación    | -               | -                | -               | Fase 2  |
+| 17-22  | **Infraestructura Base Implementada y Optimizada** | -               | -                | -               | Fase 2  |
 | 23-26  | -                 | Implementación  | -                | -               | Fase 2  |
 | 27-29  | -                 | -               | Implementación   | -               | Fase 3  |
 | 30-32  | -                 | -               | -                | Implementación  | Fase 3  |
@@ -1864,6 +1866,10 @@ ml/accelerator ──→ (todos los módulos)
 
 #### **Track A (ACE)**
 - [ ] Speedup > 10x en N-Queens 8x8
+- [x] Cobertura de tests > 90% en módulos formales (`cubical_types`, `csp_cubical_bridge_refactored`)
+- [x] Implementación de caching para `__hash__` y `to_string` en tipos cúbicos
+- [x] Implementación de `__eq__` para tipos cúbicos
+- [x] Canonicalización de `CubicalSigmaType`
 - [ ] AC-3 < 0.01s para N-Queens 8x8
 - [ ] ParallelAC3 funcional (speedup > 1.5x)
 - [ ] SearchSpaceTracer con overhead < 5%

@@ -7,7 +7,7 @@ from ..core.csp_problem import CSP, Constraint, AllDifferentConstraint
 from .cubical_types import (
     CubicalType, CubicalSubtype, CubicalSigmaType, 
     CubicalFiniteType, CubicalPredicate, CubicalTerm, 
-    VariableTerm, ValueTerm, CubicalNegation
+    VariableTerm, ValueTerm, CubicalNegation, CubicalAnd, CubicalPath
 )
 
 class CSPToCubicalBridge:
@@ -33,50 +33,40 @@ class CSPToCubicalBridge:
         for constraint in csp.constraints:
             predicates.append(self._translate_constraint(constraint))
         
-        # TODO: Implementar una forma de combinar múltiples predicados en uno solo.
-        # Por ahora, devolvemos el primero si existe.
-        if predicates:
+        # Combina todos los predicados en un único CubicalAnd.
+        # Si no hay predicados, retorna un predicado que siempre es verdadero.
+        if not predicates:
+            return CubicalPath(ValueTerm(True), ValueTerm(True))
+        elif len(predicates) == 1:
             return predicates[0]
         else:
-            return CubicalPredicate(ValueTerm(True), ValueTerm(True))
+            return CubicalAnd(frozenset(predicates))
 
     def _translate_constraint(self, constraint: Constraint) -> CubicalPredicate:
         if isinstance(constraint, AllDifferentConstraint):
             return self._translate_alldifferent_constraint(constraint)
         else:
             # Placeholder para otros tipos de restricciones
-            return CubicalPredicate(ValueTerm(True), ValueTerm(True))
+            return CubicalPath(ValueTerm(True), ValueTerm(True))
 
     def _translate_alldifferent_constraint(self, constraint: AllDifferentConstraint) -> CubicalPredicate:
-        # Esto es una simplificación. Una traducción completa requeriría
-        # un predicado más complejo que compare todos los pares de variables.
-        # Por ahora, creamos un predicado que compara las dos primeras variables.
-        if len(constraint.scope) < 2:
-            return CubicalPredicate(ValueTerm(True), ValueTerm(True))
-        
-        var1 = VariableTerm(sorted(list(constraint.scope))[0])
-        var2 = VariableTerm(sorted(list(constraint.scope))[1])
-        
         # Para AllDifferent, necesitamos que todos los pares de variables sean diferentes.
         # Esto se traduce en una conjunción de negaciones de predicados de igualdad.
-        # Por simplicidad, aquí creamos un predicado de desigualdad para cada par.
-        # Una implementación más robusta podría requerir un tipo de conjunción (AndType).
-        
         # Creamos una lista de predicados de desigualdad para cada par de variables.
-        # Esto es una simplificación, ya que AllDifferent implica n*(n-1)/2 desigualdades.
-        # Por ahora, solo representamos la desigualdad entre los dos primeros para ilustrar.
         
-        # TODO: Implementar un tipo de conjunción (CubicalAnd) para combinar múltiples predicados.
-        # Por ahora, solo devolvemos la negación de la igualdad entre los dos primeros si existen.
-        
-        if len(constraint.scope) < 2:
-            return CubicalPredicate(ValueTerm(True), ValueTerm(True)) # O un tipo de error
-        
-        # Creamos un predicado de igualdad entre las dos primeras variables
-        # Usamos sorted(list(constraint.scope)) para asegurar un orden consistente
         scope_list = sorted(list(constraint.scope))
-        equality_predicate = CubicalPredicate(VariableTerm(scope_list[0]), VariableTerm(scope_list[1]))
+        inequality_predicates = []
+        for i in range(len(scope_list)):
+            for j in range(i + 1, len(scope_list)):
+                var1 = VariableTerm(scope_list[i])
+                var2 = VariableTerm(scope_list[j])
+                equality_predicate = CubicalPath(var1, var2)
+                inequality_predicates.append(CubicalNegation(equality_predicate))
         
-        # Devolvemos la negación de este predicado de igualdad
-        return CubicalNegation(equality_predicate)
+        # Si no hay predicados (menos de 2 variables), retornamos un predicado verdadero
+        if not inequality_predicates:
+            return CubicalPath(ValueTerm(True), ValueTerm(True))
+
+        # Combinamos todos los predicados de desigualdad con CubicalAnd
+        return CubicalAnd(frozenset(inequality_predicates))
 

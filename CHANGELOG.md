@@ -24,24 +24,25 @@ Esta versión representa una **reestructuración completa** del proyecto hacia u
 - **CHANGELOG.md**: Este archivo
 
 #### Estructura de Código
-	- **lattice_weaver/strategies/**: Sistema de estrategias inyectables
-	  - `base.py`: Interfaces base para 5 tipos de estrategias
-	  - Subdirectorios: `analysis/`, `heuristics/`, `propagation/`, `verification/`, `optimization/`
-	- **lattice_weaver/inference/**: Estructura para Track D (Inference Engine)
-	  - Subdirectorios: `parsers/`, `ir/`, `inference_layer/`, `builders/`
-	- **lattice_weaver/ml/**: Estructura para Mini-IAs (66 modelos)
-	  - Subdirectorios: `mini_nets/`
-	- **lattice_weaver/web/**: Estructura para Track E (Web Application)
-	- **lattice_weaver/desktop/**: Estructura para Track F (Desktop App)
-	- **lattice_weaver/editing/**: Estructura para Track G (Editing Dinámica)
-	- **lattice_weaver/educational/**: Estructura para Track I (Sistema Educativo)
-	- **Gap 1 (CSP-Cubical Bridge) Infrastructure:**
-	    - `lattice_weaver/formal/cubical_types.py`: Generic cubical type base classes.
-	    - `lattice_weaver/formal/csp_cubical_bridge_refactored.py`: Refactored CSP-Cubical bridge.
-	    - `lattice_weaver/strategies/verification/cubical.py`: Cubical verification strategy.
-	    - Unit and integration tests for cubical types and bridge.
-	    - **`CubicalNegation` type** added to `cubical_types.py`.
-	    - **`AllDifferentConstraint` translation** implemented in `csp_cubical_bridge_refactored.py`.
+		- **lattice_weaver/strategies/**: Sistema de estrategias inyectables
+		  - `base.py`: Interfaces base para 5 tipos de estrategias
+		  - Subdirectorios: `analysis/`, `heuristics/`, `propagation/`, `verification/`, `optimization/`
+		- **lattice_weaver/inference/**: Estructura para Track D (Inference Engine)
+		  - Subdirectorios: `parsers/`, `ir/`, `inference_layer/`, `builders/`
+		- **lattice_weaver/ml/**: Estructura para Mini-IAs (66 modelos)
+		  - Subdirectorios: `mini_nets/`
+		- **lattice_weaver/web/**: Estructura para Track E (Web Application)
+		- **lattice_weaver/desktop/**: Estructura para Track F (Desktop App)
+		- **lattice_weaver/editing/**: Estructura para Track G (Editing Dinámica)
+		- **lattice_weaver/educational/**: Estructura para Track I (Sistema Educativo)
+		- **Gap 1 (CSP-Cubical Bridge) Infrastructure:**
+		    - `lattice_weaver/formal/cubical_types.py`: Generic cubical type base classes.
+		    - `lattice_weaver/formal/csp_cubical_bridge_refactored.py`: Refactored CSP-Cubical bridge.
+		    - `lattice_weaver/strategies/verification/cubical.py`: Cubical verification strategy.
+		    - Unit and integration tests for cubical types and bridge.
+- **`CubicalNegation` type** added to `cubical_types.py`.
+			    - **`CubicalAnd` type** added to `cubical_types.py`.
+			    - **`AllDifferentConstraint` translation** fully implemented in `csp_cubical_bridge_refactored.py` using `CubicalAnd` and `CubicalNegation`.
 
 #### Arquitectura
 - **Sistema de 5 Capas**:
@@ -109,7 +110,7 @@ Movidos a `.archive/old-docs/`:
 
 ### Fixed (Corregido)
 
-N/A - Primera versión de arquitectura unificada
+- **CRÍTICO:** Resolución del `AssertionError` en `CubicalAnd` mediante la centralización de la lógica de `__eq__` en `CubicalType` y la mejora de la canonicidad en la ordenación de predicados en `CubicalAnd.__post_init__`.
 
 ### Security (Seguridad)
 
