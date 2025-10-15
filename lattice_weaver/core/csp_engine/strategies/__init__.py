@@ -7,35 +7,76 @@ de estrategias para selección de variables y ordenamiento de valores en el CSPS
 Las estrategias permiten modularizar y hacer intercambiables las heurísticas de búsqueda,
 facilitando la experimentación con diferentes enfoques y preparando el terreno para
 integración de técnicas avanzadas (ML, análisis estructural, etc.).
+
+Incluye estrategias básicas (Fase 2) y estrategias guiadas por FCA (Fase 3).
 """
 
 from .base import VariableSelector, ValueOrderer
-from .variable_selectors import (
-    FirstUnassignedSelector,
-    MRVSelector,
-    DegreeSelector,
-    MRVDegreeSelector
-)
-from .value_orderers import (
-    NaturalOrderer,
-    LCVOrderer,
-    RandomOrderer
-)
+
+# Estrategias básicas (Fase 2)
+try:
+    from .variable_selectors import (
+        FirstUnassignedSelector,
+        MRVSelector,
+        DegreeSelector,
+        MRVDegreeSelector
+    )
+    from .value_orderers import (
+        NaturalOrderer,
+        LCVOrderer,
+        RandomOrderer
+    )
+    _PHASE2_AVAILABLE = True
+except ImportError:
+    _PHASE2_AVAILABLE = False
+    # Fallback: definir FirstUnassignedSelector y NaturalOrderer básicos
+    class FirstUnassignedSelector(VariableSelector):
+        def select(self, csp, assignment, current_domains):
+            for var in csp.variables:
+                if var not in assignment:
+                    return var
+            return None
+    
+    class NaturalOrderer(ValueOrderer):
+        def order(self, var, csp, assignment, current_domains):
+            return list(current_domains[var])
+
+# Estrategias FCA (Fase 3)
+try:
+    from .fca_guided import (
+        FCAGuidedSelector,
+        FCAOnlySelector,
+        FCAClusterSelector
+    )
+    _PHASE3_AVAILABLE = True
+except ImportError:
+    _PHASE3_AVAILABLE = False
+
 
 __all__ = [
-    # Interfaces base
+    # Interfaces
     'VariableSelector',
     'ValueOrderer',
     
-    # Selectores de variables
+    # Estrategias básicas (siempre disponibles)
     'FirstUnassignedSelector',
-    'MRVSelector',
-    'DegreeSelector',
-    'MRVDegreeSelector',
-    
-    # Ordenadores de valores
     'NaturalOrderer',
-    'LCVOrderer',
-    'RandomOrderer',
 ]
 
+# Añadir estrategias de Fase 2 si están disponibles
+if _PHASE2_AVAILABLE:
+    __all__.extend([
+        'MRVSelector',
+        'DegreeSelector',
+        'MRVDegreeSelector',
+        'LCVOrderer',
+        'RandomOrderer',
+    ])
+
+# Añadir estrategias de Fase 3 si están disponibles
+if _PHASE3_AVAILABLE:
+    __all__.extend([
+        'FCAGuidedSelector',
+        'FCAOnlySelector',
+        'FCAClusterSelector',
+    ])
