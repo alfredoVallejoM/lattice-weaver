@@ -16,8 +16,7 @@ from .solver import (
     CSPSolver as AdaptiveConsistencyEngine,
     CSPSolver as AC3Solver,
     CSPSolutionStats as SolutionStats,
-    CSPSolution,
-    solve_csp
+    CSPSolution
 )
 from ..csp_problem import CSP as CSPProblem
 
@@ -31,9 +30,6 @@ __all__ = [
     'SolutionStats',
     'CSPProblem',
     'CSPSolution',
-    'Constraint',
-
-
-    'solve_csp'
+    'Constraint'
 ]
 
