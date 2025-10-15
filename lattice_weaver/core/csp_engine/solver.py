@@ -5,6 +5,8 @@ import time
 import itertools
 
 from ..csp_problem import CSP, Constraint
+from .strategies import VariableSelector, ValueOrderer
+from .strategies import FirstUnassignedSelector, NaturalOrderer
 
 @dataclass
 class CSPSolution:
@@ -32,11 +34,28 @@ class CSPSolver:
     """
 
 
-    def __init__(self, csp: CSP, tracer: Optional[ExecutionTracer] = None):
+    def __init__(self, 
+                 csp: CSP, 
+                 tracer: Optional[ExecutionTracer] = None,
+                 variable_selector: Optional[VariableSelector] = None,
+                 value_orderer: Optional[ValueOrderer] = None):
+        """
+        Inicializa el CSPSolver.
+        
+        Args:
+            csp: El problema CSP a resolver
+            tracer: Tracer opcional para debugging/análisis
+            variable_selector: Estrategia para seleccionar variables (default: FirstUnassignedSelector)
+            value_orderer: Estrategia para ordenar valores (default: NaturalOrderer)
+        """
         self.csp = csp
         self.assignment: Dict[str, Any] = {}
         self.stats = CSPSolutionStats()
         self.tracer = tracer
+        
+        # Estrategias modulares (usar defaults si no se especifican)
+        self.variable_selector = variable_selector or FirstUnassignedSelector()
+        self.value_orderer = value_orderer or NaturalOrderer()
 
         if self.tracer and self.tracer.enabled:
             pass # No hay un método generico record_event. Se puede registrar un evento de inicialización si es necesario, o simplemente omitirlo.
@@ -70,11 +89,29 @@ class CSPSolver:
         return True
 
     def _select_unassigned_variable(self, current_domains: Dict[str, List[Any]]) -> Optional[str]:
-        # Implementación simple: seleccionar la primera variable no asignada
-        for var in self.csp.variables:
-            if var not in self.assignment:
-                return var
-        return None
+        """
+        Selecciona la siguiente variable a asignar usando la estrategia configurada.
+        
+        Args:
+            current_domains: Dominios actuales de todas las variables
+        
+        Returns:
+            Nombre de la variable a asignar, o None si todas están asignadas
+        """
+        return self.variable_selector.select(self.csp, self.assignment, current_domains)
+    
+    def _order_domain_values(self, var: str, current_domains: Dict[str, List[Any]]) -> List[Any]:
+        """
+        Ordena los valores del dominio de una variable usando la estrategia configurada.
+        
+        Args:
+            var: Variable cuyo dominio ordenar
+            current_domains: Dominios actuales de todas las variables
+        
+        Returns:
+            Lista de valores ordenados según la estrategia
+        """
+        return self.value_orderer.order(var, self.csp, self.assignment, current_domains)
 
     def _backtrack(self, current_domains: Dict[str, List[Any]], all_solutions: bool, max_solutions: int) -> bool:
         self.stats.nodes_explored += 1
@@ -92,8 +129,10 @@ class CSPSolver:
         if var is None:
             return True
 
-        original_domain = list(current_domains[var]) # Copia del dominio original
-        for value in original_domain:
+        # Ordenar valores del dominio según la estrategia configurada
+        ordered_values = self._order_domain_values(var, current_domains)
+        
+        for value in ordered_values:
             if self._is_consistent(var, value):
                 self.assignment[var] = value
                 if self.tracer and self.tracer.enabled:
