@@ -23,6 +23,7 @@ from typing import Dict, List, Set, Any, Optional, Callable
 from dataclasses import dataclass, field
 import logging
 
+from .cubical_types import CubicalType, CubicalFiniteType, CubicalSigmaType, CubicalPredicate, CubicalSubtype, CubicalTerm, VariableTerm, ValueTerm
 from .cubical_syntax import (
     Type, SigmaType, Universe, TypeVar, PathType,
     Term, Var, Pair, UnitType, Unit
@@ -36,7 +37,7 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 @dataclass(frozen=True)
-class FiniteType(Type):
+class FiniteType(CubicalFiniteType):
     """
     Tipo finito con un conjunto explícito de valores.
     
@@ -77,7 +78,7 @@ class FiniteType(Type):
 
 
 @dataclass(frozen=True)
-class PropositionType(Type):
+class PropositionType(CubicalPredicate):
     """
     Tipo proposición representando una restricción CSP.
     
