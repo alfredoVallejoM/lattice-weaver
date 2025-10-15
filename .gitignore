@@ -19,20 +19,12 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
 
 # Virtual environments
 venv/
-env/
 ENV/
-venv-*/
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.hypothesis/
+env/
+.venv
 
 # IDEs
 .vscode/
@@ -42,43 +34,39 @@ htmlcov/
 *~
 .DS_Store
 
-# Jupyter
-.ipynb_checkpoints/
-*.ipynb
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# ML models
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.pkl
+models/checkpoints/
+models/trained/
 
 # Logs
 *.log
 logs/
 
-# Temporary files
-*.tmp
-*.bak
-*.orig
-temp/
-tmp/
-
-# Node.js (for frontend)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Build artifacts
-*.tar.gz
-*.zip
-!track-*.tar.gz
-
-# Agent status (keep structure, ignore runtime data)
-.agent-status/*.json
-!.agent-status/.gitkeep
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
 
 # Documentation builds
 docs/_build/
-docs/api/_autosummary/
+site/
 
-# OS
-Thumbs.db
+# Temporary files
+*.tmp
+*.bak
+*.swp
+.cache/
 
-
-# GitHub credentials (never commit)
-.github_credentials
+# Archive (mantener en repo pero ignorar cambios)
+# .archive/ está versionado pero no se trackean cambios activos
