@@ -119,56 +119,9 @@ Invitamos a la comunidad a contribuir al desarrollo de LatticeWeaver. Antes de r
 
 **© 2025 LatticeWeaver Development Team**
 
-La hoja de ruta actual se enfoca en la consolidación y estabilización del framework, con las siguientes fases priorizadas:
 
-1.  **Unificación y Limpieza (Prioridad MÁXIMA)**:
-    *   Consolidar todo el código valioso en una única rama `main`.
-    *   Eliminar redundancias y duplicados (en curso, con avances significativos en la eliminación de tests antiguos y módulos obsoletos).
-    *   Crear una documentación y visión unificada (en curso, con actualizaciones en `PROJECT_OVERVIEW.md` e `INDEX.md`).
 
-2.  **Refactorización y Optimización**:
-    *   Mejorar la calidad del código, la eficiencia y el rendimiento de los módulos existentes.
-    *   Aplicar los principios de diseño para asegurar la generalidad, modularidad y automatización de patrones.
 
-3.  **Integración Funcional**:
-    *   Asegurar que todos los módulos interactúen correctamente y que las funcionalidades avanzadas (ML, tipos cúbicos) estén plenamente operativas y bien acopladas.
-
-4.  **Expansión y Nuevas Funcionalidades**:
-    *   Desarrollar nuevas capacidades y explorar áreas de investigación adicionales, como el Motor Simbólico, ConsensusEngine, GeodesicNavigator y ModalReasoner.
-
----
-
-## 🤝 Protocolo de Colaboración para Agentes
-
-Para garantizar la coherencia y la alta calidad en el desarrollo de LatticeWeaver, todos los agentes deben adherirse a un protocolo de trabajo estricto. Este protocolo se detalla en los siguientes documentos:
-
-*   **`PROTOCOLO_AGENTES_LATTICEWEAVER.md` (v4.0)**: Guía exhaustiva sobre el ciclo de vida de las tareas, incluyendo:
-    *   **Fase 0 (NUEVA)**: Verificación obligatoria del estado del proyecto antes de iniciar cualquier tarea
-    *   **Protocolo de Merge Seguro**: Actualizaciones del repositorio mediante merge controlado con análisis de conflictos
-    *   **Documentación Centralizada**: Un documento único por tarea que evoluciona (NO múltiples versiones)
-    *   **Actualización Obligatoria**: PROJECT_OVERVIEW.md y README.md deben actualizarse después de cambios significativos
-    *   **Patrones de Diseño**: Aplicación obligatoria de patrones (Strategy, Factory, Adapter, etc.) para garantizar modularidad
-    *   **Verificación Post-Lectura**: Comprobar que el avance del proyecto queda completamente reflejado y centralizado
-    *   Incluye directrices para el formato de commits, resolución de errores y política de violaciones
-*   **`MASTER_DESIGN_PRINCIPLES.md`**: Establece los meta-principios de diseño fundamentales que deben guiar toda la programación y el diseño de soluciones en LatticeWeaver. Estos principios incluyen:
-    *   **Dinamismo**: Adaptabilidad a cambios, clustering dinámico, renormalización.
-    *   **Distribución/Paralelización**: Escalabilidad horizontal, arquitectura Ray, actores distribuidos.
-    *   **No Redundancia/Canonicalización**: Evitar duplicidades, caché de isomorfismo, memoización, PEC.
-    *   **Aprovechamiento de la Información**: Maximizar el uso de datos, no-good learning, KnowledgeSheaf.
-    *   **Gestión de Memoria Eficiente**: Minimizar el consumo, object pooling, poda.
-    *   **Economía Computacional**: Optimización de recursos.
-
-Se espera que los agentes realicen diseños en profundidad absoluta, comenten el código exhaustivamente, prueben a fondo sus implementaciones y propongan mejoras de rendimiento alineadas con estos principios.
-
----
-
-## Contribución
-
-Invitamos a la comunidad a contribuir al desarrollo de LatticeWeaver. Antes de realizar cualquier contribución, por favor, consulte los documentos `PROTOCOLO_AGENTES_LATTICEWEAVER.md` y `MASTER_DESIGN_PRINCIPLES.md` para asegurar la alineación con los estándares y la visión del proyecto. Sus aportaciones son esenciales para el éxito y la evolución de este framework.
-
----
-
-**© 2025 LatticeWeaver Development Team**
 
 ---
 
