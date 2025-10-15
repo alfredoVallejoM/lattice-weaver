@@ -3,9 +3,9 @@ Tests de integración para el puente CSP-Cúbico.
 """
 
 import pytest
-from lattice_weaver.core.csp_problem import CSP, Constraint
+from lattice_weaver.core.csp_problem import CSP, Constraint, AllDifferentConstraint
 from lattice_weaver.formal.csp_cubical_bridge_refactored import CSPToCubicalBridge
-from lattice_weaver.formal.cubical_types import CubicalSubtype, CubicalSigmaType
+from lattice_weaver.formal.cubical_types import CubicalSubtype, CubicalSigmaType, CubicalNegation, CubicalPredicate, VariableTerm, ValueTerm
 
 class TestCSPToCubicalBridge:
     def test_translate_simple_csp(self):
@@ -21,6 +21,9 @@ class TestCSPToCubicalBridge:
         assert isinstance(cubical_type, CubicalSubtype)
         assert isinstance(cubical_type.base_type, CubicalSigmaType)
         assert len(cubical_type.base_type.components) == 2
+        # El predicado es un placeholder, así que esperamos el valor por defecto
+        expected_predicate = CubicalPredicate(ValueTerm(True), ValueTerm(True))
+        assert str(cubical_type.predicate) == str(expected_predicate)
 
     def test_translate_search_space(self):
         csp = CSP(
@@ -38,4 +41,18 @@ class TestCSPToCubicalBridge:
         assert sizes['A'] == 2
         assert sizes['B'] == 3
         assert sizes['C'] == 1
+
+    def test_translate_alldifferent_constraint(self):
+        csp = CSP(variables=set(), domains=dict(), constraints=[])
+        csp.add_variable("A", [1, 2])
+        csp.add_variable("B", [1, 2])
+        csp.add_variable("C", [1, 2])
+        csp.add_constraint(AllDifferentConstraint(["A", "B", "C"]))
+
+        bridge = CSPToCubicalBridge()
+        cubical_subtype = bridge.to_cubical(csp)
+
+        # Esperamos una negación de la igualdad entre las dos primeras variables
+        expected_predicate = CubicalNegation(CubicalPredicate(VariableTerm("A"), VariableTerm("B")))
+        assert str(cubical_subtype.predicate) == str(expected_predicate)
 

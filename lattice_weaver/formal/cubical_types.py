@@ -9,6 +9,10 @@ from typing import List, Tuple, Any, Optional
 from functools import lru_cache
 
 class CubicalType(ABC):
+    """Clase base abstracta para cualquier tipo en el sistema cúbico.
+
+    Implementa caching para hash y representación en string para mejorar la eficiencia.
+    """
     _cached_hash: Optional[int] = None
     _cached_string: Optional[str] = None
 
@@ -39,6 +43,13 @@ class CubicalType(ABC):
         return hash(self) == hash(other) and self.to_string() == other.to_string()
 
 class CubicalFiniteType(CubicalType):
+    """Representa un tipo finito, equivalente a `Fin(n)` en HoTT.
+
+    Usado para representar los dominios de las variables del CSP.
+
+    Attributes:
+        size: El número de elementos en el tipo.
+    """
     def __init__(self, size: int):
         if size < 0:
             raise ValueError("El tamaño de un tipo finito no puede ser negativo.")
@@ -53,6 +64,14 @@ class CubicalFiniteType(CubicalType):
         return f"Fin({self.size})"
 
 class CubicalSigmaType(CubicalType):
+    """Representa un tipo producto dependiente (Sigma), análogo a una tupla con nombre.
+
+    Usado para representar el espacio de búsqueda completo del CSP (el producto
+    cartesiano de todos los dominios).
+
+    Attributes:
+        components: Una lista de tuplas (nombre, tipo) que definen el producto.
+    """
     def __init__(self, components: List[Tuple[str, CubicalType]]):
         # Asegurar orden canónico para hashing
         self.components = sorted(components, key=lambda x: x[0])
@@ -67,9 +86,22 @@ class CubicalSigmaType(CubicalType):
         return f"Σ({comp_str})"
 
 class CubicalTerm(ABC):
+    """Clase base para un término o habitante de un tipo cúbico.
+    
+    Representa un valor concreto, como una asignación de variables o una solución.
+    """
     pass
 
 class CubicalPredicate(CubicalType):
+    """Representa un predicado sobre un tipo, como una igualdad o una restricción.
+
+    En HoTT, esto es en sí mismo un tipo. Si el tipo está habitado, el predicado
+    se considera verdadero.
+
+    Attributes:
+        left: El término izquierdo de la igualdad.
+        right: El término derecho de la igualdad.
+    """
     def __init__(self, left: CubicalTerm, right: CubicalTerm):
         self.left = left
         self.right = right
@@ -83,6 +115,16 @@ class CubicalPredicate(CubicalType):
         return f"Path({self.left}, {self.right})"
 
 class CubicalSubtype(CubicalType):
+    """Representa un subtipo, definido por un tipo base y un predicado.
+
+    Análogo a `{ x: A | P(x) }`.
+    Usado para representar el espacio de soluciones: el subconjunto del espacio
+    de búsqueda que satisface todas las restricciones.
+
+    Attributes:
+        base_type: El tipo original (ej. el espacio de búsqueda completo).
+        predicate: El predicado que los habitantes del subtipo deben cumplir.
+    """
     def __init__(self, base_type: CubicalType, predicate: CubicalPredicate):
         self.base_type = base_type
         self.predicate = predicate
@@ -95,7 +137,27 @@ class CubicalSubtype(CubicalType):
     def _compute_string(self) -> str:
         return f"{{ {self.base_type.to_string()} | {self.predicate.to_string()} }}"
 
+class CubicalNegation(CubicalType):
+    """Representa la negación de un tipo o predicado.
+
+    Si un tipo `A` es habitado, `Negation(A)` no lo es.
+
+    Attributes:
+        negated_type: El tipo o predicado a negar.
+    """
+    def __init__(self, negated_type: CubicalType):
+        self.negated_type = negated_type
+        self._cached_hash = None
+        self._cached_string = None
+
+    def _compute_hash(self) -> int:
+        return hash(( "Negation", hash(self.negated_type) ))
+
+    def _compute_string(self) -> str:
+        return f"¬({self.negated_type.to_string()})"
+
 class VariableTerm(CubicalTerm):
+    """Un término que representa una variable en el contexto cúbico."""
     _cached_hash: Optional[int] = None
 
     def __init__(self, name: str):
@@ -116,6 +178,7 @@ class VariableTerm(CubicalTerm):
         return self.name == other.name
 
 class ValueTerm(CubicalTerm):
+    """Un término que representa un valor concreto en el contexto cúbico."""
     _cached_hash: Optional[int] = None
 
     def __init__(self, value: Any):

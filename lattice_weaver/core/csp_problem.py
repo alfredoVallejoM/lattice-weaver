@@ -12,9 +12,50 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, FrozenSet, List, Set, Tuple, Callable, Optional
 import itertools
 
-
 @dataclass(frozen=True)
 class Constraint:
+    """
+    Representa una restricción en un CSP.
+    
+    Attributes:
+        scope: Un frozenset de nombres de variables involucradas en la restricción.
+        relation: Una función booleana que toma los valores de las variables
+                  en el orden de `scope` y retorna True si la restricción se satisface.
+        name: Nombre opcional de la restricción para depuración o trazabilidad.
+        metadata: Diccionario para almacenar metadatos adicionales sobre la restricción.
+    """
+    scope: FrozenSet[str]
+    relation: Callable[..., bool]
+    name: Optional[str] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def __repr__(self) -> str:
+        return f"Constraint(scope={self.scope}, name={self.name or 'anonymous'})"
+
+
+@dataclass(frozen=True)
+class AllDifferentConstraint(Constraint):
+    """
+    Representa una restricción AllDifferent en un CSP.
+    Asegura que todas las variables en su scope tengan valores distintos.
+    """
+    def __init__(self, scope: FrozenSet[str], name: Optional[str] = None, metadata: Dict[str, Any] = field(default_factory=dict)):
+        # Define la relación AllDifferent aquí mismo
+        def alldiff_relation(*values) -> bool:
+            return len(values) == len(set(values))
+
+        # Llama al constructor de la clase base Constraint con la relación definida
+        super().__init__(scope=scope, relation=alldiff_relation, name=name, metadata=metadata)
+
+        # Asegurar que el nombre sea descriptivo si no se proporciona
+        if self.name is None:
+            object.__setattr__(self, 'name', f"AllDifferent({' '.join(sorted(list(self.scope)))})")
+
+    # No necesitamos _alldifferent_relation como método separado si se define en __init__
+    # No necesitamos __post_init__ si Constraint ya lo maneja y no hay lógica adicional
+
+    def __repr__(self) -> str:
+        return f"AllDifferentConstraint(scope={self.scope}, name={self.name})"
     """
     Representa una restricción en un CSP.
     
@@ -48,11 +89,23 @@ class CSP:
         name: Nombre opcional del CSP.
         metadata: Diccionario para almacenar metadatos adicionales sobre el CSP.
     """
-    variables: Set[str]
-    domains: Dict[str, FrozenSet[Any]]
-    constraints: List[Constraint]
+    variables: Set[str] = field(default_factory=set)
+    domains: Dict[str, FrozenSet[Any]] = field(default_factory=dict)
+    constraints: List[Constraint] = field(default_factory=list)
     name: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def add_variable(self, name: str, domain: List[Any]):
+        if name in self.variables:
+            raise ValueError(f"Variable {name} already exists.")
+        self.variables.add(name)
+        self.domains[name] = frozenset(domain)
+
+    def add_constraint(self, constraint: Constraint):
+        for var in constraint.scope:
+            if var not in self.variables:
+                raise ValueError(f"Constraint references unknown variable {var}.")
+        self.constraints.append(constraint)
 
     def __post_init__(self):
         # Asegurar que todas las variables tienen un dominio
