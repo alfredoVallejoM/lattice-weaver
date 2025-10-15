@@ -10,7 +10,7 @@ Componentes principales:
 - EnergyLandscape: Paisaje de energía del espacio de búsqueda
 - HacificationEngine: Motor de hacificación (binding multinivel)
 - LandscapeModulator: Modulación dinámica del paisaje
-- CoherenceSolver: Solver integrado
+- FibrationSearchSolver: Solver integrado
 
 Autor: Manus AI (basado en TFM de Alfredo Vallejo Martín)
 Fecha: 14 de Octubre de 2025
@@ -23,15 +23,12 @@ from .constraint_hierarchy import (
     ConstraintLevel,
     Hardness
 )
-
-from .energy_landscape import (
-    EnergyLandscape,
-    EnergyComponents
-)
+from .constraint_hierarchy_api import ConstraintHierarchyAPI
 
 from .energy_landscape_optimized import (
     EnergyLandscapeOptimized
 )
+from .energy_landscape_api import EnergyLandscapeAPI
 
 from .coherence_solver_optimized import (
     CoherenceSolverOptimized
@@ -39,10 +36,6 @@ from .coherence_solver_optimized import (
 
 from .optimization_solver import (
     OptimizationSolver
-)
-
-from .simple_optimization_solver import (
-    SimpleOptimizationSolver
 )
 
 from .hacification_engine import (
@@ -61,6 +54,7 @@ from .landscape_modulator import (
 from .fibration_search_solver import (
     FibrationSearchSolver
 )
+from .fibration_search_solver_api import FibrationSearchSolverAPI
 
 from .hill_climbing_solver import (
     HillClimbingFibrationSolver
@@ -72,19 +66,19 @@ __all__ = [
     'Constraint',
     'ConstraintLevel',
     'Hardness',
+    'ConstraintHierarchyAPI',
     
     # Energy Landscape
-    'EnergyLandscape',
-    'EnergyComponents',
+    'EnergyLandscapeOptimized',
+    'EnergyLandscapeAPI',
     
     # Optimized Components
-    'EnergyLandscapeOptimized',
     'CoherenceSolverOptimized',
     
     # Optimization
     'OptimizationSolver',
-    'SimpleOptimizationSolver',
     'FibrationSearchSolver',
+    'FibrationSearchSolverAPI',
     'HillClimbingFibrationSolver',
 
     # Hacification
