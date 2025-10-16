@@ -1,6 +1,6 @@
 import pytest
 from typing import Dict, List, Any
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
 
 from lattice_weaver.fibration import (
     ConstraintHierarchy,
@@ -45,10 +45,11 @@ def hacification_engine(simple_hierarchy, simple_landscape):
 
 @pytest.fixture
 def mock_arc_engine():
-    mock = Mock(spec=['reset', 'enforce_arc_consistency', 'add_variable'])
+    mock = MagicMock(spec=['reset', 'enforce_arc_consistency', 'add_variable', 'tms'])
     mock.reset.return_value = None
     mock.enforce_arc_consistency.return_value = True # Simular que es consistente
     mock.add_variable.return_value = None
+    mock.tms = MagicMock() # Asegurar que el mock de ArcEngine tenga un atributo tms
     return mock
 
 # --- Tests para HacificationEngine --- #
@@ -137,12 +138,14 @@ def test_arc_engine_init_disabled(simple_hierarchy, simple_landscape, mock_arc_e
     engine = HacificationEngine(simple_hierarchy, simple_landscape, arc_engine=mock_arc_engine, use_arc_engine=False)
     assert not engine._use_arc_engine
     assert engine._arc_engine == mock_arc_engine
+    assert hasattr(engine._arc_engine, 'tms')
 
 def test_arc_engine_init_enabled(simple_hierarchy, simple_landscape, mock_arc_engine):
     """Verifica que se puede habilitar el uso de ArcEngine."""
     engine = HacificationEngine(simple_hierarchy, simple_landscape, arc_engine=mock_arc_engine, use_arc_engine=True)
     assert engine._use_arc_engine
     assert engine._arc_engine == mock_arc_engine
+    assert hasattr(engine._arc_engine, 'tms')
 
 def test_hacify_delegates_to_original_when_arc_engine_disabled(hacification_engine, mocker):
     """Verifica que se llama a _hacify_original cuando ArcEngine está deshabilitado."""

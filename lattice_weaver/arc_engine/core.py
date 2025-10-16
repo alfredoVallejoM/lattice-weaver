@@ -46,6 +46,17 @@ class ArcEngine:
             # Establecer el callback para restaurar dominios
             self.tms.set_domain_restore_callback(self._restore_domain_value)
 
+    def reset(self):
+        """
+        Resets the ArcEngine to its initial state, clearing all variables, constraints, and graph.
+        """
+        self.variables = {}
+        self.constraints = {}
+        self.graph = nx.Graph()
+        self.last_support = {}
+        if self.tms:
+            self.tms.reset()
+
     def _restore_domain_value(self, variable_name: str, value_to_restore: Any):
         """
         Callback para restaurar un valor en el dominio de una variable.

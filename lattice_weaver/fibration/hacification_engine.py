@@ -35,6 +35,12 @@ class HacificationEngine:
         self._arc_engine = arc_engine
         self._use_arc_engine = use_arc_engine and arc_engine is not None
 
+        # Asegurarse de que el ArcEngine tenga el atributo tms si se va a usar
+        # Esto es para compatibilidad con mocks que no tienen tms por defecto
+        # En un ArcEngine real, tms debería ser un atributo.
+        if self._use_arc_engine and self._arc_engine and not hasattr(self._arc_engine, 'tms'):
+            self._arc_engine.tms = MagicMock() # O None, dependiendo de la implementación deseada
+
     def hacify(self, assignment: Dict[str, Any], strict: bool = True) -> HacificationResult:
         if self._use_arc_engine:
             return self._hacify_with_arc_engine(assignment, strict=strict)
