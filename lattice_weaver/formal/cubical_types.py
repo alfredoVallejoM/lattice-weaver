@@ -225,8 +225,8 @@ class CubicalArithmetic(CubicalTerm):
     def _compute_string(self) -> str:
         sorted_terms = sorted(self.terms, key=lambda t: t.to_string())
         if self.operation == "sum":
-            return f"({' + '.join(t.to_string() for t in sorted_terms)})""
-        return f"{self.operation}({\', \'.join(t.to_string() for t in sorted_terms)})"
+            return f"({' + '.join(t.to_string() for t in sorted_terms)})"
+        return f"{self.operation}({', '.join(t.to_string() for t in sorted_terms)})"
 
     def __post_init__(self):
         # Asegurar que los términos se ordenen canónicamente para la creación del frozenset
