@@ -3,10 +3,19 @@ from lattice_weaver.core.csp_engine.tracing import ExecutionTracer, TraceEvent
 from dataclasses import dataclass, field
 import time
 import itertools
+import warnings
 
 from ..csp_problem import CSP, Constraint
 from .strategies import VariableSelector, ValueOrderer
 from .strategies import FirstUnassignedSelector, NaturalOrderer
+
+try:
+    from ...arc_engine.core import ArcEngine
+    from ...arc_engine.domains import create_optimal_domain # Necesario para actualizar dominios
+    ARC_ENGINE_AVAILABLE = True
+except ImportError as e:
+    warnings.warn(f"ArcEngine o sus dependencias no disponibles: {e}. Las funcionalidades de ArcEngine no estarán activas.", ImportWarning)
+    ARC_ENGINE_AVAILABLE = False
 
 @dataclass
 class CSPSolution:
@@ -31,14 +40,17 @@ class CSPSolver:
     """
     Un solver básico para Problemas de Satisfacción de Restricciones (CSP).
     Implementa un algoritmo de backtracking con forward checking.
+    
+    Puede usar opcionalmente ArcEngine para propagación AC-3.1 optimizada.
     """
-
 
     def __init__(self, 
                  csp: CSP, 
                  tracer: Optional[ExecutionTracer] = None,
                  variable_selector: Optional[VariableSelector] = None,
-                 value_orderer: Optional[ValueOrderer] = None):
+                 value_orderer: Optional[ValueOrderer] = None,
+                 use_arc_engine: bool = False,  # NUEVO parámetro
+                 parallel: bool = False):        # NUEVO parámetro
         """
         Inicializa el CSPSolver.
         
@@ -47,6 +59,8 @@ class CSPSolver:
             tracer: Tracer opcional para debugging/análisis
             variable_selector: Estrategia para seleccionar variables (default: FirstUnassignedSelector)
             value_orderer: Estrategia para ordenar valores (default: NaturalOrderer)
+            use_arc_engine: Si True, usa ArcEngine para AC-3.1 optimizado
+            parallel: Si True y use_arc_engine=True, habilita paralelización
         """
         self.csp = csp
         self.assignment: Dict[str, Any] = {}
@@ -56,9 +70,81 @@ class CSPSolver:
         # Estrategias modulares (usar defaults si no se especifican)
         self.variable_selector = variable_selector or FirstUnassignedSelector()
         self.value_orderer = value_orderer or NaturalOrderer()
-
+        
+        # NUEVO: Configurar ArcEngine si está disponible y solicitado
+        self.arc_engine = None
+        if use_arc_engine:
+            if not ARC_ENGINE_AVAILABLE:
+                warnings.warn(
+                    "ArcEngine no disponible. Usando AC-3 básico.",
+                    RuntimeWarning
+                )
+            else:
+                self.arc_engine = ArcEngine(parallel=parallel, use_tms=False)
+                self._setup_arc_engine()
+        
         if self.tracer and self.tracer.enabled:
             pass # No hay un método generico record_event. Se puede registrar un evento de inicialización si es necesario, o simplemente omitirlo.
+
+    def _setup_arc_engine(self):
+        """
+        Configura ArcEngine con el CSP actual.
+        Convierte la representación CSP a la API incremental de ArcEngine.
+        """
+        if self.arc_engine is None:
+            return
+        
+        # Añadir variables
+        for var in self.csp.variables:
+            self.arc_engine.add_variable(var, self.csp.domains[var])
+        
+        # Registrar y añadir restricciones
+        for idx, constraint in enumerate(self.csp.constraints):
+            if len(constraint.scope) == 2:
+                var1, var2 = list(constraint.scope)
+                
+                # ArcEngine requiere un 'relation_name' para la función y un 'cid' para la instancia de la restricción.
+                # Ambos deben ser únicos en sus respectivos contextos dentro de ArcEngine.
+
+                # Generar un nombre único para la función de relación si no se proporciona uno en la restricción original
+                relation_func_name_base = constraint.name if constraint.name else f"rel_func_{idx}_{var1}_{var2}"
+                
+                # Asegurarse de que el nombre de la función de relación sea único para el registro de ArcEngine
+                unique_relation_func_name = relation_func_name_base
+                rel_func_counter = 0
+                while unique_relation_func_name in self.arc_engine._relation_registry:
+                    unique_relation_func_name = f"{relation_func_name_base}_{rel_func_counter}"
+                    rel_func_counter += 1
+
+                # Wrapper que adapta la signatura de la función de relación del CSP a la de ArcEngine
+                def make_relation_wrapper(original_relation):
+                    def wrapper(val1, val2, metadata):
+                        return original_relation(val1, val2)
+                    return wrapper
+                
+                # Solo registrar la relación si no ha sido registrada ya (por su nombre único)
+                if unique_relation_func_name not in self.arc_engine._relation_registry:
+                    self.arc_engine.register_relation(
+                        unique_relation_func_name, 
+                        make_relation_wrapper(constraint.relation)
+                    )
+
+                # Generar un ID único para la instancia de la restricción (cid)
+                # Usamos el nombre de la restricción del CSP si existe, o un ID basado en el índice y un hash
+                constraint_instance_id_base = constraint.name if constraint.name else f"constraint_instance_{idx}_{var1}_{var2}_{hash(constraint.relation)}"
+                
+                # Asegurarse de que el cid sea único para la instancia de restricción en ArcEngine
+                unique_cid = constraint_instance_id_base
+                cid_counter = 0
+                while unique_cid in self.arc_engine.constraints:
+                    unique_cid = f"{constraint_instance_id_base}_{cid_counter}"
+                    cid_counter += 1
+
+                self.arc_engine.add_constraint(var1, var2, unique_relation_func_name, cid=unique_cid)
+            elif len(constraint.scope) == 1:
+                # ArcEngine no maneja restricciones unarias directamente en add_constraint
+                # Se asume que el dominio inicial ya las satisface o se manejarán en _is_consistent
+                pass
 
     def _is_consistent(self, var: str, value: Any) -> bool:
         for constraint in self.csp.constraints:
@@ -159,6 +245,80 @@ class CSPSolver:
 
         return False
 
+    def enforce_arc_consistency(self) -> bool:
+        """
+        Implementa el algoritmo AC-3 (o AC-3.1 si ArcEngine está activo).
+        Retorna True si el CSP es consistente, False si se detecta inconsistencia.
+        """
+        if self.arc_engine is not None:
+            # Usar AC-3.1 optimizado de ArcEngine
+            # Necesitamos actualizar los dominios del ArcEngine con el estado actual del CSP
+            # y luego obtener los dominios reducidos de vuelta.
+            # Esto es una simplificación, en un caso real, ArcEngine debería operar sobre
+            # una copia de los dominios o tener un mecanismo de rollback.
+            for var in self.csp.variables:
+                # ArcEngine no tiene set_domain. La forma correcta de actualizar su dominio
+                # es usar el método `intersect` si el dominio del CSP se ha reducido.
+                # Si el dominio del CSP se ha expandido o es completamente diferente, la forma
+                # más segura (aunque potencialmente ineficiente) es recrear la variable en ArcEngine.
+                # Para esta integración inicial, asumimos que los dominios solo se reducen.
+                current_csp_domain_list = list(self.csp.domains[var])
+                self.arc_engine.variables[var].intersect(current_csp_domain_list)
+
+            is_consistent = self.arc_engine.enforce_arc_consistency()
+            if is_consistent:
+                # Actualizar los dominios del CSP con los dominios reducidos por ArcEngine
+                for var in self.csp.variables:
+                    self.csp.domains[var] = self.arc_engine.variables[var].get_values()
+            return is_consistent
+        else:
+            # Usar AC-3 básico (implementación actual)
+            return self._enforce_ac3_basic()
+
+    def _enforce_ac3_basic(self) -> bool:
+        """
+        Implementación AC-3 básica (código actual).
+        Se mantiene como fallback.
+        """
+        queue = []
+        for constraint in self.csp.constraints:
+            if len(constraint.scope) == 2:
+                var_i, var_j = list(constraint.scope)
+                queue.append((var_i, var_j, constraint))
+                queue.append((var_j, var_i, constraint))
+
+        while queue:
+            var_i, var_j, constraint = queue.pop(0)
+            if self._revise(var_i, var_j, constraint):
+                if not self.csp.domains[var_i]:
+                    return False
+                for neighbor_constraint in self.csp.constraints:
+                    if len(neighbor_constraint.scope) == 2:
+                        n_var1, n_var2 = list(neighbor_constraint.scope)
+                        if n_var2 == var_i and n_var1 != var_j:
+                            queue.append((n_var1, n_var2, neighbor_constraint))
+                        elif n_var1 == var_i and n_var2 != var_j:
+                            queue.append((n_var2, n_var1, neighbor_constraint))
+        return True
+
+    def _revise(self, var_i: str, var_j: str, constraint: Constraint) -> bool:
+        revised = False
+        new_domain_i = []
+        for x in self.csp.domains[var_i]:
+            # Check if there is any value y in domain of var_j that satisfies the constraint
+            satisfies = False
+            for y in self.csp.domains[var_j]:
+                if (var_i == list(constraint.scope)[0] and constraint.relation(x, y)) or \
+                   (var_i == list(constraint.scope)[1] and constraint.relation(y, x)):
+                    satisfies = True
+                    break
+            if satisfies:
+                new_domain_i.append(x)
+            else:
+                revised = True
+        self.csp.domains[var_i] = new_domain_i
+        return revised
+
     def _forward_check(self, var: str, value: Any, domains: Dict[str, List[Any]]) -> Optional[Dict[str, List[Any]]]:
         # Para cada restricción que involucra a 'var' y otra variable no asignada 'other_var'
         for constraint in self.csp.constraints:
@@ -169,7 +329,7 @@ class CSPSolver:
                     original_other_domain = list(domains[other_var])
                     domains[other_var] = [ 
                         other_value for other_value in original_other_domain
-                        if (var == list(constraint.scope)[0] and constraint.relation(value, other_value)) or
+                        if (var == list(constraint.scope)[0] and constraint.relation(value, other_value)) or\
                            (var == list(constraint.scope)[1] and constraint.relation(other_value, value))
                     ]
                     if not domains[other_var]: # Si el dominio de other_var se vacía
@@ -192,10 +352,29 @@ class CSPSolver:
         start_time = time.time()
         
         # Inicializar dominios
-        current_domains = {var: list(self.csp.domains[var]) for var in self.csp.variables}
+        # Se hace una copia profunda para que los cambios en los dominios no afecten al CSP original
+        initial_domains = {var: list(self.csp.domains[var]) for var in self.csp.variables}
         
+        # Aplicar consistencia de arcos inicial si ArcEngine está activo
+        if self.arc_engine is not None:
+            # Necesitamos una copia del CSP para el ArcEngine para no modificar el original
+            # antes de la llamada a solve, y para que el ArcEngine pueda operar sobre él.
+            # Esto es una simplificación, idealmente ArcEngine debería trabajar con su propia
+            # representación interna de dominios y variables.
+            # Para la llamada inicial a enforce_arc_consistency, necesitamos que ArcEngine
+            # opere sobre los dominios iniciales del CSP. Ya hemos configurado ArcEngine
+            # con estos dominios en _setup_arc_engine().
+            # No necesitamos un CSP temporal ni un solver temporal aquí.
+            # Simplemente llamamos a enforce_arc_consistency en el self.arc_engine.
+            if not self.arc_engine.enforce_arc_consistency():
+                self.stats.time_elapsed = time.time() - start_time
+                return self.stats # No hay soluciones si es inconsistente desde el principio
+            
+            # Actualizar los dominios iniciales con los reducidos por ArcEngine
+            initial_domains = {var: list(self.arc_engine.variables[var].get_values()) for var in self.csp.variables}
+
         # Ejecutar backtracking
-        self._backtrack(current_domains, all_solutions, max_solutions)
+        self._backtrack(initial_domains, all_solutions, max_solutions)
         
         # Registrar tiempo de ejecución
         self.stats.time_elapsed = time.time() - start_time

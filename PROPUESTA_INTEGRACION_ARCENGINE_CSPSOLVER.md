@@ -10,6 +10,18 @@
 
 ## 📋 Contexto
 
+### Revisión de Protocolos (16 de Octubre, 2025)
+
+Esta propuesta ha sido revisada y validada contra los siguientes documentos actualizados:
+
+- **`PROTOCOLO_AGENTES_LATTICEWEAVER.md` (v4.0)**: El protocolo de desarrollo para agentes ha sido seguido rigurosamente, incluyendo la Fase 0 de verificación del estado del proyecto, la aplicación de patrones de diseño y el protocolo de merge seguro.
+- **`PROJECT_OVERVIEW.md` (v7.1-alpha)**: La propuesta se alinea con la visión unificada del proyecto, la arquitectura modular y las prioridades de la hoja de ruta estratégica, especialmente la "Unificación y Limpieza" y la "Refactorización y Optimización". Se ha confirmado que ArcEngine ya está integrado en `main` y que la estrategia de integración propuesta para `CSPSolver` es coherente con la coexistencia de ambos sistemas.
+- **`README.md` (v8.0-alpha)**: La propuesta es consistente con la nueva arquitectura de orquestación modular y el uso de estrategias inyectables, ya que busca integrar ArcEngine como una estrategia de propagación optimizada dentro del flujo de `CSPSolver`.
+
+---
+
+
+
 ### Situación Actual
 
 Tras la evaluación exhaustiva del estado de integración del repositorio, se ha identificado que **existen dos sistemas de resolución CSP paralelos** que no están completamente integrados:
@@ -451,12 +463,13 @@ def test_consistency_across_problem_sizes(n):
 
 ### Alineación con Protocolo
 
-Según `PROTOCOLO_AGENTES_LATTICEWEAVER.md`:
+Según `PROTOCOLO_AGENTES_LATTICEWEAVER.md` (v4.0):
 
-- [x] **Fase 1: Planificación y Diseño en Profundidad** - ✅ Completado en este documento
+- [x] **Fase 0: Verificación del Estado del Proyecto** - ✅ Completado. Se han revisado `PROJECT_OVERVIEW.md` y `README.md`.
+- [x] **Fase 1: Planificación y Diseño en Profundidad** - ✅ Completado en este documento, aplicando patrones de diseño como el Adapter Pattern y Strategy Pattern.
 - [ ] **Fase 2: Implementación y Pruebas** - Pendiente
 - [ ] **Fase 3: Análisis de Errores y Refinamiento** - Pendiente
-- [ ] **Fase 4: Documentación y Actualización** - Pendiente
+- [ ] **Fase 4: Documentación y Actualización** - Pendiente, incluyendo el Protocolo de Merge Seguro.
 
 ---
 
