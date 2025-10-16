@@ -11,11 +11,11 @@ import pytest
 from lattice_weaver.formal.symmetry_extractor import (
     SymmetryExtractor,
     Symmetry,
-    SymmetryGroup,
-    create_symmetry_extractor
+    SymmetryGroup
 )
 from lattice_weaver.core.csp_problem import CSP, Constraint
 from lattice_weaver.formal.csp_cubical_bridge import CSPToCubicalBridge
+from tests.utils.csp_factory import create_simple_csp_bridge
 
 
 class TestSymmetry:
@@ -124,7 +124,7 @@ class TestSymmetryExtractorConstruction:
         )
         bridge = CSPToCubicalBridge(csp_problem=csp)
         
-        extractor = create_symmetry_extractor(bridge)
+        extractor = SymmetryExtractor(bridge)
         
         assert isinstance(extractor, SymmetryExtractor)
 
@@ -151,8 +151,8 @@ class TestVariableSymmetries:
         """Test: Problema con simetrías."""
         # CSP simétrico: todas las variables tienen el mismo dominio
         bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {1, 2}},
+            variables=["X", "Y"],
+            domains={"X": {1, 2}, "Y": {1, 2}},
             constraints=[]
         )
         extractor = SymmetryExtractor(bridge)
@@ -219,8 +219,8 @@ class TestEquivalenceClasses:
     def test_get_equivalence_classes_no_symmetries(self):
         """Test: Clases de equivalencia sin simetrías."""
         bridge = create_simple_csp_bridge(
-            variables=['X', 'Y'],
-            domains={'X': {1, 2}, 'Y': {3, 4}},  # Dominios diferentes
+            variables=["X", "Y"],
+            domains={"X": {1, 2}, "Y": {3, 4}},  # Dominios diferentes
             constraints=[]
         )
         extractor = SymmetryExtractor(bridge)
@@ -283,8 +283,8 @@ class TestSymmetryAnalysis:
     def test_analyze_symmetry_structure(self):
         """Test: Analizar estructura de simetrías."""
         bridge = create_simple_csp_bridge(
-            variables=['X', 'Y', 'Z'],
-            domains={'X': {1, 2}, 'Y': {1, 2}, 'Z': {3, 4}},
+            variables=["X", "Y", "Z"],
+            domains={"X": {1, 2}, "Y": {1, 2}, "Z": {3, 4}},
             constraints=[]
         )
         extractor = SymmetryExtractor(bridge)
@@ -352,8 +352,8 @@ class TestStringRepresentation:
     def test_repr_representation(self):
         """Test: Representación detallada de SymmetryExtractor."""
         bridge = create_simple_csp_bridge(
-            variables=['X'],
-            domains={'X': {1, 2}},
+            variables=["X"],
+            domains={"X": {1, 2}},
             constraints=[]
         )
         extractor = SymmetryExtractor(bridge)

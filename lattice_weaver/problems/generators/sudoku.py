@@ -190,7 +190,8 @@ class SudokuProblem(ProblemFamily):
             for col in range(size):
                 var_name = f'C_{row}_{col}'
                 domain = list(range(1, size + 1))  # Dígitos [1, size]
-                engine.variables[var_name] = domain
+                engine.variables.add(var_name)
+                engine.domains[var_name] = domain
         
         logger.debug(f'Añadidas {size*size} variables')
         
@@ -252,11 +253,11 @@ class SudokuProblem(ProblemFamily):
             for row, col in clue_cells:
                 var_name = f'C_{row}_{col}'
                 # Obtener el dominio actual del ArcEngine
-                current_domain_values = list(engine.variables[var_name])
+                current_domain_values = list(engine.domains[var_name])
                 if current_domain_values:
                     clue_value = random.choice(current_domain_values)
                     # Reducir el dominio a un solo valor
-                    engine.variables[var_name] = [clue_value]
+                    engine.domains[var_name] = [clue_value]
                     logger.debug(f'Pista en {var_name}: {clue_value}')
         
         logger.info(f'Problema Sudoku generado: {size}x{size}, {n_clues} pistas')

@@ -39,7 +39,11 @@ from .generators import (
     NQueensProblem,
     GraphColoringProblem,
     SudokuProblem,
+    MapColoringProblem,
 )
+
+
+
 
 __all__ = [
     'ProblemFamily',
@@ -50,6 +54,7 @@ __all__ = [
     'NQueensProblem',
     'GraphColoringProblem',
     'SudokuProblem',
+    'MapColoringProblem',
 ]
 
 __version__ = '1.0.0'

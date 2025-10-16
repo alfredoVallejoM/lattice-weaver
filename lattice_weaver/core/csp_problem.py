@@ -28,7 +28,7 @@ class Constraint:
     scope: FrozenSet[str]
     relation: Callable[..., bool]
     name: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+
 
     def __repr__(self) -> str:
         return f"Constraint(scope={self.scope}, name={self.name or 'anonymous'})"
@@ -62,7 +62,7 @@ class SumConstraint:
     scope: FrozenSet[str]
     target_sum: int
     name: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+
     _constraint: Constraint = field(init=False, repr=False)
 
     def __post_init__(self):
@@ -83,12 +83,12 @@ class SumConstraint:
             scope=self.scope,
             relation=sum_relation,
             name=constraint_name,
-            metadata=self.metadata
+
         ))
 
     def __getattr__(self, name: str) -> Any:
         # Delegate attribute access to the internal Constraint object
-        if name in ['scope', 'relation', 'name', 'metadata']:
+        if name in ['scope', 'relation', 'name']:
             return getattr(self._constraint, name)
         raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
@@ -114,7 +114,7 @@ class CSP:
     domains: Dict[str, FrozenSet[Any]] = field(default_factory=dict)
     constraints: List[Constraint] = field(default_factory=list)
     name: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+
 
     def add_variable(self, name: str, domain: List[Any]):
         if name in self.variables:

@@ -12,9 +12,7 @@ from lattice_weaver.formal.cubical_csp_type import (
     CubicalCSPType,
     FiniteType,
     PropositionType,
-    UnitType,
-    create_finite_type,
-    create_proposition
+    UnitType
 )
 
 
@@ -330,23 +328,6 @@ class TestCubicalCSPType:
         solution = {'X': 1, 'Y': 2, 'Z': 1}
         assert csp_type.verify_solution(solution) is False
 
-
-class TestUtilityFunctions:
-    """Tests para funciones de utilidad."""
-    
-    def test_create_finite_type_function(self):
-        """Test: Función create_finite_type."""
-        ft = create_finite_type("TestDomain", {1, 2, 3})
-        assert ft.name == "TestDomain"
-        assert len(ft.values) == 3
-    
-    def test_create_proposition_function(self):
-        """Test: Función create_proposition."""
-        prop = create_proposition("test_prop", ["X", "Y"], lambda x, y: x != y)
-        assert prop.constraint_name == "test_prop"
-        assert prop.variables == ("X", "Y")
-        assert prop.check(1, 2) is True
-        assert prop.check(1, 1) is False
 
 
 if __name__ == '__main__':

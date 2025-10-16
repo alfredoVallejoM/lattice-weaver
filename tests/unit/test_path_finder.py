@@ -13,6 +13,7 @@ from lattice_weaver.formal.path_finder import (
     SolutionPath,
     create_path_finder
 )
+from tests.utils.csp_factory import create_simple_csp_bridge
 from lattice_weaver.core.csp_problem import CSP, Constraint
 from lattice_weaver.formal.csp_cubical_bridge import CSPToCubicalBridge
 

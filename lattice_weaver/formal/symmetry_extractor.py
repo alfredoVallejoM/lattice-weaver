@@ -166,11 +166,10 @@ class SymmetryExtractor:
         Examples:
             >>> symmetries = extractor.extract_variable_symmetries()
         """
-        cubical_type = self.bridge.cubical_type
-        if cubical_type is None:
+        # Acceder a las variables directamente del CSP, ya que las simetrías se definen sobre el CSP original
+        variables = self.bridge.csp_problem.variables
+        if not variables:
             return []
-        
-        variables = cubical_type.variables
         symmetries = []
         
         # Caso simple: variables con dominios idénticos
@@ -207,15 +206,14 @@ class SymmetryExtractor:
         Returns:
             Diccionario: dominio → lista de variables
         """
-        cubical_type = self.bridge.cubical_type
-        if cubical_type is None:
-            return {}
-        
+        # Agrupar variables por dominio idéntico directamente del CSP
         domain_groups = defaultdict(list)
         
-        for var in cubical_type.variables:
-            domain = cubical_type.domain_types[var]
-            domain_key = frozenset(domain.values)
+        for var in self.bridge.csp_problem.variables:
+            # Acceder al dominio de la variable directamente del CSP
+            # self.bridge.csp_problem.domains es un diccionario de var_name -> frozenset
+            domain_values = self.bridge.csp_problem.domains[var]
+            domain_key = domain_values # Ya es un frozenset, usarlo directamente como clave
             domain_groups[domain_key].append(var)
         
         return dict(domain_groups)
@@ -230,14 +228,11 @@ class SymmetryExtractor:
         Returns:
             True si preserva restricciones
         """
-        cubical_type = self.bridge.cubical_type
-        if cubical_type is None:
-            return False
-        
+        # Las restricciones se verifican sobre el CSP original, no sobre el tipo cúbico
         mapping_dict = dict(mapping)
         
         # Para cada restricción, verificar si se preserva bajo la permutación
-        for constraint in cubical_type.constraint_props:
+        for constraint in self.bridge.csp_problem.constraints:
             vars_original = constraint.variables
             
             # Aplicar permutación a las variables
@@ -266,12 +261,8 @@ class SymmetryExtractor:
         Returns:
             True si existe restricción equivalente
         """
-        cubical_type = self.bridge.cubical_type
-        if cubical_type is None:
-            return False
-        
-        # Buscar restricción que involucre las variables permutadas
-        for constraint in cubical_type.constraint_props:
+        # Buscar restricción que involucre las variables permutadas en el CSP original
+        for constraint in self.bridge.csp_problem.constraints:
             if tuple(constraint.variables) == vars_permuted:
                 # Verificar si la relación es la misma
                 # (simplificación: asumimos que sí si las variables coinciden)
@@ -324,67 +315,43 @@ class SymmetryExtractor:
             
         Returns:
             Lista de clases de equivalencia
-            
-        Examples:
-            >>> classes = extractor.get_equivalence_classes(all_solutions)
-            >>> print(f"Clases de equivalencia: {len(classes)}")
         """
+        if not solutions:
+            return []
+        
         group = self.extract_all_symmetries()
         
-        # Conjunto de soluciones ya asignadas a una clase
-        assigned = set()
+        # Normalizar soluciones a frozenset para poder añadirlas a un set
+        normalized_solutions = {
+            frozenset(sol.items()) for sol in solutions
+        }
+        
         classes = []
         
-        for solution in solutions:
-            solution_frozen = frozenset(solution.items())
+        while normalized_solutions:
+            # Tomar una solución como representante
+            representative = normalized_solutions.pop()
             
-            if solution_frozen in assigned:
-                continue
+            # Generar todas las soluciones simétricas
+            symmetric_class = {representative}
             
-            # Generar clase de equivalencia aplicando todas las simetrías
-            equiv_class = group.apply_all_to_solution(solution)
-            equiv_class.add(solution_frozen)
+            # Aplicar todas las simetrías al representante
+            for symmetry in group.symmetries:
+                transformed = symmetry.apply_to_solution(dict(representative))
+                transformed_frozen = frozenset(transformed.items())
+                
+                if transformed_frozen in normalized_solutions:
+                    symmetric_class.add(transformed_frozen)
+                    normalized_solutions.remove(transformed_frozen)
             
-            classes.append(equiv_class)
-            assigned.update(equiv_class)
+            classes.append(symmetric_class)
         
-        logger.info(
-            f"Agrupadas {len(solutions)} soluciones en {len(classes)} clases"
-        )
+        logger.info(f"Encontradas {len(classes)} clases de equivalencia")
         return classes
     
-    def get_representative_solutions(
-        self,
-        solutions: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
+    def count_unique_solutions(self, solutions: List[Dict[str, Any]]) -> int:
         """
-        Obtiene representantes de cada clase de equivalencia.
-        
-        Args:
-            solutions: Lista de soluciones
-            
-        Returns:
-            Lista de soluciones representantes
-            
-        Examples:
-            >>> representatives = extractor.get_representative_solutions(all_sols)
-        """
-        classes = self.get_equivalence_classes(solutions)
-        
-        representatives = []
-        for equiv_class in classes:
-            # Tomar el primer elemento como representante
-            representative = dict(next(iter(equiv_class)))
-            representatives.append(representative)
-        
-        return representatives
-    
-    def count_unique_solutions(
-        self,
-        solutions: List[Dict[str, Any]]
-    ) -> int:
-        """
-        Cuenta soluciones únicas módulo simetrías.
+        Cuenta el número de soluciones únicas (no simétricas).
         
         Args:
             solutions: Lista de soluciones
@@ -392,38 +359,51 @@ class SymmetryExtractor:
         Returns:
             Número de soluciones únicas
         """
+        return len(self.get_equivalence_classes(solutions))
+    
+    def get_representative_solutions(self, solutions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Obtiene una solución representante de cada clase de equivalencia.
+        
+        Args:
+            solutions: Lista de soluciones
+            
+        Returns:
+            Lista de soluciones representantes
+        """
         classes = self.get_equivalence_classes(solutions)
-        return len(classes)
+        representatives = []
+        
+        for cls in classes:
+            # Tomar el primer elemento como representante
+            representative_frozen = next(iter(cls))
+            representatives.append(dict(representative_frozen))
+        
+        return representatives
     
     def analyze_symmetry_structure(self) -> Dict[str, Any]:
         """
-        Analiza la estructura de simetrías del problema.
+        Analiza la estructura del grupo de simetrías.
         
         Returns:
-            Diccionario con análisis:
-            - symmetry_count: Número de simetrías
-            - symmetry_types: Tipos de simetrías encontradas
-            - domain_groups: Grupos de variables por dominio
-            
-        Examples:
-            >>> analysis = extractor.analyze_symmetry_structure()
-            >>> print(analysis)
+            Diccionario con análisis de la estructura
         """
         group = self.extract_all_symmetries()
-        domain_groups = self._group_variables_by_domain()
         
-        symmetry_types = defaultdict(int)
-        for sym in group.symmetries:
-            symmetry_types[sym.type_] += 1
-        
-        return {
-            'symmetry_count': group.order,
-            'symmetry_types': dict(symmetry_types),
-            'domain_groups': {
-                str(k): v for k, v in domain_groups.items()
-            },
-            'has_symmetries': group.order > 0
+        analysis = {
+            'order': group.order,
+            'types': defaultdict(int),
+            'variable_symmetries': []
         }
+        
+        for sym in group.symmetries:
+            analysis['types'][sym.type_] += 1
+            
+            if sym.type_ == 'variable':
+                analysis['variable_symmetries'].append(dict(sym.mapping))
+        
+        logger.info(f"Análisis de simetrías: {analysis}")
+        return analysis
     
     def clear_cache(self):
         """Limpia la caché de simetrías."""
@@ -432,98 +412,75 @@ class SymmetryExtractor:
     
     def __str__(self) -> str:
         """Representación en string."""
-        return "SymmetryExtractor"
+        return f"SymmetryExtractor(bridge={self.bridge})"
     
     def __repr__(self) -> str:
         """Representación detallada."""
-        group = self._symmetry_cache
-        if group:
-            return f"SymmetryExtractor(symmetries_cached={group.order})"
-        return "SymmetryExtractor(no_cache)"
+        cache_status = "cached" if self._symmetry_cache else "not cached"
+        return f"<SymmetryExtractor bridge={self.bridge!r} cache={cache_status}>"
 
 
 # ============================================================================
-# Funciones de Utilidad
+# Funciones de Utilidad (ejemplos)
 # ============================================================================
 
-def create_symmetry_extractor(bridge: CSPToCubicalBridge) -> SymmetryExtractor:
-    """
-    Crea un SymmetryExtractor desde un bridge.
+if __name__ == '__main__':
+    # Configuración de logging para pruebas
+    logging.basicConfig(level=logging.INFO)
     
-    Args:
-        bridge: Bridge CSP-Cubical
+    # Ejemplo de uso con un CSP simple
+    from lattice_weaver.core.csp_problem import CSP, Constraint
+    from lattice_weaver.arc_engine.core import ArcEngine
     
-    Returns:
-        SymmetryExtractor configurado
-    """
-    return SymmetryExtractor(bridge)
-
-
-# ============================================================================
-# Ejemplo de Uso
-# ============================================================================
-
-def example_usage():
-    """
-    Ejemplo de uso de SymmetryExtractor.
-    """
-    from .csp_cubical_bridge import create_simple_csp_bridge
+    # Crear un CSP simple con simetría
+    csp = CSP()
+    csp.variables = {'x', 'y', 'z'}
+    csp.domains = {
+        'x': [1, 2],
+        'y': [1, 2],
+        'z': [3, 4]
+    }
+    csp.constraints = [
+        Constraint(scope=['x', 'y'], relation=lambda a, b: a != b, name='not_equal')
+    ]
     
-    logger.info("=== Ejemplo de SymmetryExtractor ===")
-    
-    # Crear bridge con CSP simétrico (N-Queens simplificado)
-    bridge = create_simple_csp_bridge(
-        variables=['Q1', 'Q2', 'Q3'],
-        domains={'Q1': {1, 2, 3}, 'Q2': {1, 2, 3}, 'Q3': {1, 2, 3}},
-        constraints=[
-            ('Q1', 'Q2', lambda x, y: x != y),
-            ('Q2', 'Q3', lambda x, y: x != y),
-            ('Q1', 'Q3', lambda x, y: x != y)
-        ]
-    )
-    
-    # Crear extractor
-    extractor = SymmetryExtractor(bridge)
-    
-    logger.info(f"Extractor: {extractor}")
+    # Crear bridge
+    engine = ArcEngine(csp)
+    bridge = CSPToCubicalBridge(engine)
     
     # Extraer simetrías
-    var_symmetries = extractor.extract_variable_symmetries()
-    logger.info(f"Simetrías de variables: {len(var_symmetries)}")
-    for i, sym in enumerate(var_symmetries[:5], 1):
-        logger.info(f"  {i}. {sym}")
+    extractor = SymmetryExtractor(bridge)
+    symmetries = extractor.extract_variable_symmetries()
+    
+    print("\n--- Simetrías de Variables ---")
+    for sym in symmetries:
+        print(sym)
     
     # Analizar estructura
     analysis = extractor.analyze_symmetry_structure()
-    logger.info(f"Análisis de estructura:")
-    for key, value in analysis.items():
-        logger.info(f"  {key}: {value}")
+    print("\n--- Análisis de Estructura ---")
+    print(analysis)
     
-    # Ejemplo de soluciones
+    # Ejemplo con soluciones
     solutions = [
-        {'Q1': 1, 'Q2': 2, 'Q3': 3},
-        {'Q1': 2, 'Q2': 1, 'Q3': 3},
-        {'Q1': 3, 'Q2': 2, 'Q3': 1}
+        {'x': 1, 'y': 2, 'z': 3},
+        {'x': 2, 'y': 1, 'z': 3},
+        {'x': 1, 'y': 2, 'z': 4},
+        {'x': 2, 'y': 1, 'z': 4}
     ]
     
-    logger.info(f"\nSoluciones de ejemplo: {len(solutions)}")
-    
-    # Agrupar en clases de equivalencia
+    print(f"\n--- Clases de Equivalencia (para {len(solutions)} soluciones) ---")
     classes = extractor.get_equivalence_classes(solutions)
-    logger.info(f"Clases de equivalencia: {len(classes)}")
+    for i, cls in enumerate(classes):
+        print(f"Clase {i+1}:")
+        for sol in cls:
+            print(f"  {dict(sol)}")
     
-    # Obtener representantes
+    print(f"\nNúmero de soluciones únicas: {extractor.count_unique_solutions(solutions)}")
+    
+    print("\n--- Soluciones Representantes ---")
     representatives = extractor.get_representative_solutions(solutions)
-    logger.info(f"Representantes: {len(representatives)}")
-    for i, rep in enumerate(representatives, 1):
-        logger.info(f"  {i}. {rep}")
-    
-    # Contar soluciones únicas
-    unique_count = extractor.count_unique_solutions(solutions)
-    logger.info(f"Soluciones únicas (módulo simetrías): {unique_count}")
+    for sol in representatives:
+        print(sol)
 
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    example_usage()
 

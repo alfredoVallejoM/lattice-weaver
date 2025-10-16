@@ -95,7 +95,7 @@ class CSPToCubicalBridge:
         variables = list(self.csp_problem.variables)
         domains = {}
         for var_name, domain in self.csp_problem.domains.items():
-            domains[var_name] = set(domain)
+              domains[var_name] = frozenset(domain)
         
         # Extraer restricciones
         constraints = []
@@ -301,7 +301,9 @@ class CSPToCubicalBridge:
         # Hash basado en dominios (valores actuales)
         domain_tuples = []
         for var_name in sorted(self.csp_problem.variables):
-            domain = self.csp_problem.domains[var_name]
+            # Acceder al dominio a través de la variable en ArcEngine
+            # Acceder al dominio directamente del diccionario de dominios del CSP
+            domain = self.csp_problem.domains.get(var_name, frozenset())
             domain_values = tuple(sorted(list(domain), key=lambda x: (type(x).__name__, str(x))))
             domain_tuples.append((var_name, domain_values))
         domain_tuple = tuple(domain_tuples)

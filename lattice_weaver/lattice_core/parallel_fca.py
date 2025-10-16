@@ -108,7 +108,7 @@ class ParallelFCABuilder:
         return {
             'objects': frozenset(context.objects),
             'attributes': frozenset(context.attributes),
-            'incidence': frozenset(context.incidence),
+            'incidence': frozenset(context.incidences),
             # Precalcular mapeos para eficiencia
             'obj_to_attrs': {
                 obj: frozenset(context.get_object_attributes(obj))

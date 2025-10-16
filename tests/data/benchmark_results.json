@@ -2,8 +2,8 @@
   {
     "problem_name": "N-Reinas (n=4)",
     "algorithm": "Backtracking",
-    "time_ms": 0.10575300257187337,
-    "memory_mb": 0.00164031982421875,
+    "time_ms": 0.11015799827873707,
+    "memory_mb": 0.00156402587890625,
     "nodes_explored": 9,
     "backtracks": 4,
     "solutions_found": 1,
@@ -13,8 +13,8 @@
   {
     "problem_name": "N-Reinas (n=4)",
     "algorithm": "Backtracking",
-    "time_ms": 0.10196899529546499,
-    "memory_mb": 0.00164031982421875,
+    "time_ms": 0.10354799451306462,
+    "memory_mb": 0.00156402587890625,
     "nodes_explored": 9,
     "backtracks": 4,
     "solutions_found": 1,
@@ -24,8 +24,8 @@
   {
     "problem_name": "N-Reinas (n=4)",
     "algorithm": "Backtracking",
-    "time_ms": 0.09513600525679067,
-    "memory_mb": 0.00164031982421875,
+    "time_ms": 0.0978479947661981,
+    "memory_mb": 0.00156402587890625,
     "nodes_explored": 9,
     "backtracks": 4,
     "solutions_found": 1,
@@ -35,8 +35,8 @@
   {
     "problem_name": "N-Reinas (n=4)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.2613100004964508,
-    "memory_mb": 0.004730224609375,
+    "time_ms": 0.26867199630942196,
+    "memory_mb": 0.0047760009765625,
     "nodes_explored": 7,
     "backtracks": 2,
     "solutions_found": 1,
@@ -46,8 +46,8 @@
   {
     "problem_name": "N-Reinas (n=4)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.4800419992534444,
-    "memory_mb": 0.004730224609375,
+    "time_ms": 0.2599360013846308,
+    "memory_mb": 0.0047760009765625,
     "nodes_explored": 7,
     "backtracks": 2,
     "solutions_found": 1,
@@ -57,8 +57,8 @@
   {
     "problem_name": "N-Reinas (n=4)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.2620800005388446,
-    "memory_mb": 0.0045623779296875,
+    "time_ms": 0.2584470057627186,
+    "memory_mb": 0.0047760009765625,
     "nodes_explored": 7,
     "backtracks": 2,
     "solutions_found": 1,
@@ -68,8 +68,8 @@
   {
     "problem_name": "N-Reinas (n=4)",
     "algorithm": "AC-3",
-    "time_ms": 1.721671003906522,
-    "memory_mb": 0.0050506591796875,
+    "time_ms": 1.7718929884722456,
+    "memory_mb": 0.00533294677734375,
     "nodes_explored": 5,
     "backtracks": 0,
     "solutions_found": 1,
@@ -79,8 +79,8 @@
   {
     "problem_name": "N-Reinas (n=4)",
     "algorithm": "AC-3",
-    "time_ms": 1.774908996594604,
-    "memory_mb": 0.00499725341796875,
+    "time_ms": 1.7944720020750538,
+    "memory_mb": 0.005279541015625,
     "nodes_explored": 5,
     "backtracks": 0,
     "solutions_found": 1,
@@ -90,8 +90,8 @@
   {
     "problem_name": "N-Reinas (n=4)",
     "algorithm": "AC-3",
-    "time_ms": 1.7387539992341772,
-    "memory_mb": 0.00499725341796875,
+    "time_ms": 1.8033700034720823,
+    "memory_mb": 0.005279541015625,
     "nodes_explored": 5,
     "backtracks": 0,
     "solutions_found": 1,
@@ -101,8 +101,8 @@
   {
     "problem_name": "N-Reinas (n=6)",
     "algorithm": "Backtracking",
-    "time_ms": 0.5125329989823513,
-    "memory_mb": 0.0016937255859375,
+    "time_ms": 0.5452580080600455,
+    "memory_mb": 0.00183868408203125,
     "nodes_explored": 32,
     "backtracks": 25,
     "solutions_found": 1,
@@ -112,8 +112,8 @@
   {
     "problem_name": "N-Reinas (n=6)",
     "algorithm": "Backtracking",
-    "time_ms": 0.515400999574922,
-    "memory_mb": 0.0016937255859375,
+    "time_ms": 0.5357799964258447,
+    "memory_mb": 0.00183868408203125,
     "nodes_explored": 32,
     "backtracks": 25,
     "solutions_found": 1,
@@ -123,8 +123,8 @@
   {
     "problem_name": "N-Reinas (n=6)",
     "algorithm": "Backtracking",
-    "time_ms": 0.5088459947728552,
-    "memory_mb": 0.0016937255859375,
+    "time_ms": 0.563863999559544,
+    "memory_mb": 0.00183868408203125,
     "nodes_explored": 32,
     "backtracks": 25,
     "solutions_found": 1,
@@ -134,8 +134,8 @@
   {
     "problem_name": "N-Reinas (n=6)",
     "algorithm": "Forward Checking",
-    "time_ms": 1.2243570017744787,
-    "memory_mb": 0.01157379150390625,
+    "time_ms": 1.3196270010666922,
+    "memory_mb": 0.01178741455078125,
     "nodes_explored": 20,
     "backtracks": 13,
     "solutions_found": 1,
@@ -145,8 +145,8 @@
   {
     "problem_name": "N-Reinas (n=6)",
     "algorithm": "Forward Checking",
-    "time_ms": 1.2565350043587387,
-    "memory_mb": 0.0115203857421875,
+    "time_ms": 1.2190870038466528,
+    "memory_mb": 0.0117340087890625,
     "nodes_explored": 20,
     "backtracks": 13,
     "solutions_found": 1,
@@ -156,8 +156,8 @@
   {
     "problem_name": "N-Reinas (n=6)",
     "algorithm": "Forward Checking",
-    "time_ms": 1.2035569961881265,
-    "memory_mb": 0.0115203857421875,
+    "time_ms": 1.2248749990249053,
+    "memory_mb": 0.0117340087890625,
     "nodes_explored": 20,
     "backtracks": 13,
     "solutions_found": 1,
@@ -167,8 +167,8 @@
   {
     "problem_name": "N-Reinas (n=6)",
     "algorithm": "AC-3",
-    "time_ms": 10.591063997708261,
-    "memory_mb": 0.01113128662109375,
+    "time_ms": 12.640007000300102,
+    "memory_mb": 0.01141357421875,
     "nodes_explored": 8,
     "backtracks": 1,
     "solutions_found": 1,
@@ -178,7 +178,18 @@
   {
     "problem_name": "N-Reinas (n=6)",
     "algorithm": "AC-3",
-    "time_ms": 10.526935002417304,
+    "time_ms": 12.14507399708964,
+    "memory_mb": 0.01136016845703125,
+    "nodes_explored": 8,
+    "backtracks": 1,
+    "solutions_found": 1,
+    "success": true,
+    "error_message": null
+  },
+  {
+    "problem_name": "N-Reinas (n=6)",
+    "algorithm": "AC-3",
+    "time_ms": 11.102486998424865,
     "memory_mb": 0.011077880859375,
     "nodes_explored": 8,
     "backtracks": 1,
@@ -187,20 +198,9 @@
     "error_message": null
   },
   {
-    "problem_name": "N-Reinas (n=6)",
-    "algorithm": "AC-3",
-    "time_ms": 10.51708500017412,
-    "memory_mb": 0.011077880859375,
-    "nodes_explored": 8,
-    "backtracks": 1,
-    "solutions_found": 1,
-    "success": true,
-    "error_message": null
-  },
-  {
     "problem_name": "N-Reinas (n=8)",
     "algorithm": "Backtracking",
-    "time_ms": 3.330921994347591,
+    "time_ms": 3.4414690017001703,
     "memory_mb": 0.0020751953125,
     "nodes_explored": 114,
     "backtracks": 105,
@@ -211,7 +211,7 @@
   {
     "problem_name": "N-Reinas (n=8)",
     "algorithm": "Backtracking",
-    "time_ms": 3.290904001914896,
+    "time_ms": 3.526461005094461,
     "memory_mb": 0.0020751953125,
     "nodes_explored": 114,
     "backtracks": 105,
@@ -222,7 +222,7 @@
   {
     "problem_name": "N-Reinas (n=8)",
     "algorithm": "Backtracking",
-    "time_ms": 3.286061000835616,
+    "time_ms": 3.324926001369022,
     "memory_mb": 0.0020751953125,
     "nodes_explored": 114,
     "backtracks": 105,
@@ -233,7 +233,7 @@
   {
     "problem_name": "N-Reinas (n=8)",
     "algorithm": "Forward Checking",
-    "time_ms": 4.95891800528625,
+    "time_ms": 5.609130996163003,
     "memory_mb": 0.02169036865234375,
     "nodes_explored": 53,
     "backtracks": 44,
@@ -244,7 +244,7 @@
   {
     "problem_name": "N-Reinas (n=8)",
     "algorithm": "Forward Checking",
-    "time_ms": 4.882560002442915,
+    "time_ms": 5.435163009678945,
     "memory_mb": 0.021636962890625,
     "nodes_explored": 53,
     "backtracks": 44,
@@ -255,7 +255,7 @@
   {
     "problem_name": "N-Reinas (n=8)",
     "algorithm": "Forward Checking",
-    "time_ms": 4.871288998401724,
+    "time_ms": 5.695707004633732,
     "memory_mb": 0.021636962890625,
     "nodes_explored": 53,
     "backtracks": 44,
@@ -266,7 +266,7 @@
   {
     "problem_name": "N-Reinas (n=8)",
     "algorithm": "AC-3",
-    "time_ms": 35.29017399705481,
+    "time_ms": 38.40293000394013,
     "memory_mb": 0.02099609375,
     "nodes_explored": 11,
     "backtracks": 2,
@@ -277,7 +277,7 @@
   {
     "problem_name": "N-Reinas (n=8)",
     "algorithm": "AC-3",
-    "time_ms": 34.936752999783494,
+    "time_ms": 39.911954998387955,
     "memory_mb": 0.02094268798828125,
     "nodes_explored": 11,
     "backtracks": 2,
@@ -288,7 +288,7 @@
   {
     "problem_name": "N-Reinas (n=8)",
     "algorithm": "AC-3",
-    "time_ms": 35.163198997906875,
+    "time_ms": 35.584796001785435,
     "memory_mb": 0.02094268798828125,
     "nodes_explored": 11,
     "backtracks": 2,
@@ -299,7 +299,7 @@
   {
     "problem_name": "Sudoku 4x4 (4 givens)",
     "algorithm": "Backtracking",
-    "time_ms": 0.23913800396258011,
+    "time_ms": 0.242521011386998,
     "memory_mb": 0.00286865234375,
     "nodes_explored": 17,
     "backtracks": 0,
@@ -310,7 +310,7 @@
   {
     "problem_name": "Sudoku 4x4 (4 givens)",
     "algorithm": "Backtracking",
-    "time_ms": 0.2281889974256046,
+    "time_ms": 0.2391079906374216,
     "memory_mb": 0.00286865234375,
     "nodes_explored": 17,
     "backtracks": 0,
@@ -321,7 +321,7 @@
   {
     "problem_name": "Sudoku 4x4 (4 givens)",
     "algorithm": "Backtracking",
-    "time_ms": 0.22758799605071545,
+    "time_ms": 0.24676899192854762,
     "memory_mb": 0.00286865234375,
     "nodes_explored": 17,
     "backtracks": 0,
@@ -332,7 +332,7 @@
   {
     "problem_name": "Sudoku 4x4 (4 givens)",
     "algorithm": "Forward Checking",
-    "time_ms": 2.227053999376949,
+    "time_ms": 2.142899000318721,
     "memory_mb": 0.0375213623046875,
     "nodes_explored": 17,
     "backtracks": 0,
@@ -343,7 +343,7 @@
   {
     "problem_name": "Sudoku 4x4 (4 givens)",
     "algorithm": "Forward Checking",
-    "time_ms": 2.1778410009574145,
+    "time_ms": 2.1254300081636757,
     "memory_mb": 0.0375213623046875,
     "nodes_explored": 17,
     "backtracks": 0,
@@ -354,7 +354,7 @@
   {
     "problem_name": "Sudoku 4x4 (4 givens)",
     "algorithm": "Forward Checking",
-    "time_ms": 2.184502998716198,
+    "time_ms": 2.118718999554403,
     "memory_mb": 0.0375213623046875,
     "nodes_explored": 17,
     "backtracks": 0,
@@ -365,7 +365,7 @@
   {
     "problem_name": "Sudoku 4x4 (4 givens)",
     "algorithm": "AC-3",
-    "time_ms": 23.096764001820702,
+    "time_ms": 22.978253007750027,
     "memory_mb": 0.0407257080078125,
     "nodes_explored": 17,
     "backtracks": 0,
@@ -376,7 +376,7 @@
   {
     "problem_name": "Sudoku 4x4 (4 givens)",
     "algorithm": "AC-3",
-    "time_ms": 23.31388600578066,
+    "time_ms": 22.990465004113503,
     "memory_mb": 0.04067230224609375,
     "nodes_explored": 17,
     "backtracks": 0,
@@ -387,7 +387,7 @@
   {
     "problem_name": "Sudoku 4x4 (4 givens)",
     "algorithm": "AC-3",
-    "time_ms": 23.952622002980206,
+    "time_ms": 23.28615600708872,
     "memory_mb": 0.04067230224609375,
     "nodes_explored": 17,
     "backtracks": 0,
@@ -398,7 +398,7 @@
   {
     "problem_name": "Graph Coloring (5 nodes, 7 edges, 3 colors)",
     "algorithm": "Backtracking",
-    "time_ms": 0.053381001634988934,
+    "time_ms": 0.05392800085246563,
     "memory_mb": 0.00139617919921875,
     "nodes_explored": 6,
     "backtracks": 0,
@@ -409,7 +409,7 @@
   {
     "problem_name": "Graph Coloring (5 nodes, 7 edges, 3 colors)",
     "algorithm": "Backtracking",
-    "time_ms": 0.07855200237827376,
+    "time_ms": 0.051107999752275646,
     "memory_mb": 0.00139617919921875,
     "nodes_explored": 6,
     "backtracks": 0,
@@ -420,7 +420,7 @@
   {
     "problem_name": "Graph Coloring (5 nodes, 7 edges, 3 colors)",
     "algorithm": "Backtracking",
-    "time_ms": 0.05227499786997214,
+    "time_ms": 0.06756700167898089,
     "memory_mb": 0.00139617919921875,
     "nodes_explored": 6,
     "backtracks": 0,
@@ -431,7 +431,7 @@
   {
     "problem_name": "Graph Coloring (5 nodes, 7 edges, 3 colors)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.19242300186306238,
+    "time_ms": 0.20342000061646104,
     "memory_mb": 0.00518035888671875,
     "nodes_explored": 6,
     "backtracks": 0,
@@ -442,8 +442,8 @@
   {
     "problem_name": "Graph Coloring (5 nodes, 7 edges, 3 colors)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.1908999984152615,
-    "memory_mb": 0.00534820556640625,
+    "time_ms": 0.1880189956864342,
+    "memory_mb": 0.00518035888671875,
     "nodes_explored": 6,
     "backtracks": 0,
     "solutions_found": 1,
@@ -453,8 +453,8 @@
   {
     "problem_name": "Graph Coloring (5 nodes, 7 edges, 3 colors)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.2590279982541688,
-    "memory_mb": 0.00534820556640625,
+    "time_ms": 0.18508199718780816,
+    "memory_mb": 0.00518035888671875,
     "nodes_explored": 6,
     "backtracks": 0,
     "solutions_found": 1,
@@ -464,8 +464,8 @@
   {
     "problem_name": "Graph Coloring (5 nodes, 7 edges, 3 colors)",
     "algorithm": "AC-3",
-    "time_ms": 1.0523409946472384,
-    "memory_mb": 0.00605010986328125,
+    "time_ms": 0.9883220045594499,
+    "memory_mb": 0.0058135986328125,
     "nodes_explored": 6,
     "backtracks": 0,
     "solutions_found": 1,
@@ -475,8 +475,8 @@
   {
     "problem_name": "Graph Coloring (5 nodes, 7 edges, 3 colors)",
     "algorithm": "AC-3",
-    "time_ms": 0.98699899535859,
-    "memory_mb": 0.0059967041015625,
+    "time_ms": 0.9604500082787126,
+    "memory_mb": 0.00576019287109375,
     "nodes_explored": 6,
     "backtracks": 0,
     "solutions_found": 1,
@@ -486,8 +486,8 @@
   {
     "problem_name": "Graph Coloring (5 nodes, 7 edges, 3 colors)",
     "algorithm": "AC-3",
-    "time_ms": 0.964113998634275,
-    "memory_mb": 0.0059967041015625,
+    "time_ms": 0.9783140121726319,
+    "memory_mb": 0.00576019287109375,
     "nodes_explored": 6,
     "backtracks": 0,
     "solutions_found": 1,
@@ -497,8 +497,8 @@
   {
     "problem_name": "Map Coloring (Australia)",
     "algorithm": "Backtracking",
-    "time_ms": 0.07188000017777085,
-    "memory_mb": 0.0019378662109375,
+    "time_ms": 0.06990399560891092,
+    "memory_mb": 0.00179290771484375,
     "nodes_explored": 8,
     "backtracks": 0,
     "solutions_found": 1,
@@ -508,8 +508,8 @@
   {
     "problem_name": "Map Coloring (Australia)",
     "algorithm": "Backtracking",
-    "time_ms": 0.07046399696264416,
-    "memory_mb": 0.0019378662109375,
+    "time_ms": 0.070116002461873,
+    "memory_mb": 0.00179290771484375,
     "nodes_explored": 8,
     "backtracks": 0,
     "solutions_found": 1,
@@ -519,8 +519,8 @@
   {
     "problem_name": "Map Coloring (Australia)",
     "algorithm": "Backtracking",
-    "time_ms": 0.07009299588389695,
-    "memory_mb": 0.0019378662109375,
+    "time_ms": 0.07114799518603832,
+    "memory_mb": 0.00179290771484375,
     "nodes_explored": 8,
     "backtracks": 0,
     "solutions_found": 1,
@@ -530,7 +530,7 @@
   {
     "problem_name": "Map Coloring (Australia)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.3073799962294288,
+    "time_ms": 0.31286598823498935,
     "memory_mb": 0.0091705322265625,
     "nodes_explored": 8,
     "backtracks": 0,
@@ -541,7 +541,7 @@
   {
     "problem_name": "Map Coloring (Australia)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.32952200126601383,
+    "time_ms": 0.3414469974813983,
     "memory_mb": 0.0091705322265625,
     "nodes_explored": 8,
     "backtracks": 0,
@@ -552,7 +552,7 @@
   {
     "problem_name": "Map Coloring (Australia)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.3202340012649074,
+    "time_ms": 0.3114660066785291,
     "memory_mb": 0.0091705322265625,
     "nodes_explored": 8,
     "backtracks": 0,
@@ -563,7 +563,7 @@
   {
     "problem_name": "Map Coloring (Australia)",
     "algorithm": "AC-3",
-    "time_ms": 1.3385850033955649,
+    "time_ms": 1.37878701207228,
     "memory_mb": 0.00983428955078125,
     "nodes_explored": 8,
     "backtracks": 0,
@@ -574,7 +574,7 @@
   {
     "problem_name": "Map Coloring (Australia)",
     "algorithm": "AC-3",
-    "time_ms": 1.3431109982775524,
+    "time_ms": 1.4102349960012361,
     "memory_mb": 0.0097808837890625,
     "nodes_explored": 8,
     "backtracks": 0,
@@ -585,7 +585,7 @@
   {
     "problem_name": "Map Coloring (Australia)",
     "algorithm": "AC-3",
-    "time_ms": 1.3778599968645722,
+    "time_ms": 1.4149030030239373,
     "memory_mb": 0.0097808837890625,
     "nodes_explored": 8,
     "backtracks": 0,
@@ -596,8 +596,8 @@
   {
     "problem_name": "Scheduling (5 jobs, 3 slots)",
     "algorithm": "Backtracking",
-    "time_ms": 0.05228499503573403,
-    "memory_mb": 0.00139617919921875,
+    "time_ms": 0.05527299072127789,
+    "memory_mb": 0.0015411376953125,
     "nodes_explored": 6,
     "backtracks": 0,
     "solutions_found": 1,
@@ -607,8 +607,8 @@
   {
     "problem_name": "Scheduling (5 jobs, 3 slots)",
     "algorithm": "Backtracking",
-    "time_ms": 0.04832800186704844,
-    "memory_mb": 0.00139617919921875,
+    "time_ms": 0.05002898979000747,
+    "memory_mb": 0.0015411376953125,
     "nodes_explored": 6,
     "backtracks": 0,
     "solutions_found": 1,
@@ -618,8 +618,8 @@
   {
     "problem_name": "Scheduling (5 jobs, 3 slots)",
     "algorithm": "Backtracking",
-    "time_ms": 0.04835099389310926,
-    "memory_mb": 0.00139617919921875,
+    "time_ms": 0.05045899888500571,
+    "memory_mb": 0.0015411376953125,
     "nodes_explored": 6,
     "backtracks": 0,
     "solutions_found": 1,
@@ -629,8 +629,8 @@
   {
     "problem_name": "Scheduling (5 jobs, 3 slots)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.18669199926080182,
-    "memory_mb": 0.00518035888671875,
+    "time_ms": 0.1924279931699857,
+    "memory_mb": 0.00539398193359375,
     "nodes_explored": 6,
     "backtracks": 0,
     "solutions_found": 1,
@@ -640,8 +640,8 @@
   {
     "problem_name": "Scheduling (5 jobs, 3 slots)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.18234999879496172,
-    "memory_mb": 0.00518035888671875,
+    "time_ms": 0.2340200007893145,
+    "memory_mb": 0.00539398193359375,
     "nodes_explored": 6,
     "backtracks": 0,
     "solutions_found": 1,
@@ -651,8 +651,8 @@
   {
     "problem_name": "Scheduling (5 jobs, 3 slots)",
     "algorithm": "Forward Checking",
-    "time_ms": 0.18116700084647164,
-    "memory_mb": 0.00518035888671875,
+    "time_ms": 0.19080199126619846,
+    "memory_mb": 0.00539398193359375,
     "nodes_explored": 6,
     "backtracks": 0,
     "solutions_found": 1,
@@ -662,7 +662,7 @@
   {
     "problem_name": "Scheduling (5 jobs, 3 slots)",
     "algorithm": "AC-3",
-    "time_ms": 0.6654270036960952,
+    "time_ms": 0.6844470044597983,
     "memory_mb": 0.005828857421875,
     "nodes_explored": 6,
     "backtracks": 0,
@@ -673,7 +673,7 @@
   {
     "problem_name": "Scheduling (5 jobs, 3 slots)",
     "algorithm": "AC-3",
-    "time_ms": 0.6718020013067871,
+    "time_ms": 0.6470990047091618,
     "memory_mb": 0.00577545166015625,
     "nodes_explored": 6,
     "backtracks": 0,
@@ -684,7 +684,7 @@
   {
     "problem_name": "Scheduling (5 jobs, 3 slots)",
     "algorithm": "AC-3",
-    "time_ms": 0.6495180059573613,
+    "time_ms": 0.6397230026777834,
     "memory_mb": 0.00577545166015625,
     "nodes_explored": 6,
     "backtracks": 0,

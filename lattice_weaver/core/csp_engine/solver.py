@@ -209,9 +209,12 @@ class CSPSolver:
             self.stats.solutions.append(solution)
             if self.tracer and self.tracer.enabled:
                 pass # No hay un método generico record_event para solution_found.
-            # Si no se buscan todas las soluciones, terminar (retornar True para propagar hacia arriba)
-            # Si se buscan todas, continuar (retornar False para seguir explorando)
-            return not all_solutions
+            # Si no se buscan todas las soluciones, o si ya se alcanzó el límite de max_solutions, terminar.
+            # De lo contrario, continuar explorando para encontrar más soluciones.
+            if not all_solutions or len(self.stats.solutions) >= max_solutions:
+                return True  # Indica que se debe detener la rama actual de búsqueda
+            else:
+                return False # Indica que se debe continuar explorando en esta rama
 
         var = self._select_unassigned_variable(current_domains)
         if var is None:
@@ -232,8 +235,7 @@ class CSPSolver:
 
                 if pruned_values is not None: # Si no hay inconsistencia
                     if self._backtrack(new_domains, all_solutions, max_solutions):
-                        if not all_solutions or len(self.stats.solutions) >= max_solutions:
-                            return True
+                        return True # Propagar la señal de detención si se encontró una solución o se alcanzó el límite
                 else:
                     self.stats.backtracks += 1
                     if self.tracer and self.tracer.enabled:

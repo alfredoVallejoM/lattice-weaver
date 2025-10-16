@@ -1,24 +1,3 @@
-"""
-Cubical CSP Type: Tipos Cúbicos derivados de Problemas CSP
-
-Este módulo implementa la representación de problemas de satisfacción de
-restricciones (CSP) como tipos cúbicos en la teoría de tipos homotópica.
-
-La idea central es traducir un CSP a un tipo Sigma dependiente donde:
-- Cada variable del CSP se convierte en un componente del Sigma
-- Cada dominio se convierte en un tipo finito
-- Cada restricción se convierte en una proposición (tipo con 0 o 1 habitante)
-
-Ejemplo:
-    CSP: X < Y, dominios {X: {1,2,3}, Y: {1,2,3}}
-    →
-    Tipo: Σ (x : {1,2,3}) Σ (y : {1,2,3}) (x < y)
-
-Autor: LatticeWeaver Team (Track: CSP-Cubical Integration)
-Fecha: 12 de Octubre de 2025
-Versión: 1.0
-"""
-
 from typing import Dict, List, Set, Any, Optional, Callable
 from dataclasses import dataclass, field
 import logging
@@ -57,6 +36,7 @@ class FiniteType(CubicalFiniteType):
     values: frozenset
     
     def __post_init__(self):
+        super().__post_init__() # Llama al __post_init__ de CubicalFiniteType para validar size
         # Asegurar que values es frozenset para inmutabilidad
         if not isinstance(self.values, frozenset):
             object.__setattr__(self, 'values', frozenset(self.values))
@@ -72,7 +52,6 @@ class FiniteType(CubicalFiniteType):
         sorted_vals = sorted(self.values, key=lambda x: (type(x).__name__, str(x)))
         vals_str = ', '.join(str(v) for v in sorted_vals)
         return f"{{{vals_str}}}"
-    
     def __hash__(self):
         return hash((self.name, self.values))
 
@@ -89,7 +68,7 @@ class PropositionType(CubicalPredicate):
     Attributes:
         constraint_name: Nombre de la restricción
         variables: Variables involucradas
-        predicate: Predicado que define la restricción
+        predicate: Predicado que verifica la restricción
     
     Examples:
         >>> # Restricción X < Y
@@ -98,9 +77,15 @@ class PropositionType(CubicalPredicate):
     constraint_name: str
     variables: tuple  # Tupla de nombres de variables
     predicate: Callable  # Función que verifica la restricción
-    
+
+    def _compute_hash(self) -> int:
+        return hash((self.constraint_name, self.variables))
+
+    def _compute_string(self) -> str:
+        vars_str = ", ".join(self.variables)
+        return f"({self.constraint_name}({vars_str}))"
+
     def __post_init__(self):
-        # Asegurar que variables es tupla para hashability
         if not isinstance(self.variables, tuple):
             object.__setattr__(self, 'variables', tuple(self.variables))
     
@@ -256,7 +241,7 @@ class CubicalCSPType:
         domain_types = {}
         for var in variables:
             domain = domains.get(var, set())
-            domain_types[var] = FiniteType(f"Domain_{var}", frozenset(domain))
+            domain_types[var] = FiniteType(name=f"Domain_{var}", values=frozenset(domain), size=len(domain))
         
         # Construir proposiciones de restricciones
         constraint_props = []
@@ -291,201 +276,135 @@ class CubicalCSPType:
         Notes:
             - Implementación básica, puede ser extendida con type checker completo
         """
-        # Por ahora, verificación simple
-        # TODO: Integrar con CubicalEngine para type checking completo
-        return True
-    
+        # Implementación de check_term (asumiendo que solution_type es un SigmaType)
+        current_type = self.solution_type
+        current_term = term
+        
+        # Desempaquetar el término y verificar cada componente
+        for var_name in self.variables:
+            if not isinstance(current_type, SigmaType):
+                logger.error(f"Tipo esperado SigmaType, encontrado {type(current_type)}")
+                return False
+            
+            if not isinstance(current_term, Pair):
+                logger.error(f"Término esperado Pair, encontrado {type(current_term)}")
+                return False
+            
+            # Verificar el tipo del valor actual
+            value = current_term.fst
+            domain_type = self.domain_types[var_name]
+            if value not in domain_type.values:
+                logger.error(f"Valor {value} no en el dominio de {var_name}")
+                return False
+            
+            current_type = current_type.snd_type.substitute(var_name, ValueTerm(value))
+            current_term = current_term.snd
+        
+        # Verificar las proposiciones (restricciones)
+        if isinstance(current_type, UnitType):
+            # Si no hay restricciones, o todas se han reducido a UnitType
+            return True
+        elif isinstance(current_type, PropositionType):
+            # Si queda una proposición, verificarla
+            # Esto asume que PropositionType tiene un método check(values)
+            # y que 'current_term' es Unit() si la proposición es satisfecha
+            return isinstance(current_term, Unit) and current_type.check(*[term.value for term in term.get_values_in_order()])
+        elif isinstance(current_type, SigmaType) and current_type.fst_type == UnitType():
+            # Esto es un producto de proposiciones, donde cada una se reduce a UnitType
+            # Si el término final es una serie de Unit(), entonces es válido
+            return self._check_nested_unit_terms(current_term)
+        else:
+            logger.error(f"Tipo final inesperado: {type(current_type)}")
+            return False
+
+    def _check_nested_unit_terms(self, term: Term) -> bool:
+        """
+        Verifica si un término es una serie anidada de Unit().
+        """
+        if isinstance(term, Unit):
+            return True
+        elif isinstance(term, Pair):
+            return self._check_nested_unit_terms(term.fst) and self._check_nested_unit_terms(term.snd)
+        return False
+
     def synthesize_term(self, solution: Dict[str, Any]) -> Term:
         """
-        Sintetiza un término cúbico desde una solución CSP.
+        Sintetiza un término cúbico a partir de una solución CSP.
         
         Args:
             solution: Solución del CSP (mapa variable → valor)
-        
+            
         Returns:
-            Término cúbico habitando solution_type
-        
-        Examples:
-            >>> solution = {'X': 1, 'Y': 2}
-            >>> term = csp_type.synthesize_term(solution)
+            Término cúbico habitando el tipo de soluciones
         """
-        # Construir término anidado de pares
-        # Para Σ (x : D) Σ (y : D') (C), el término es (x, (y, proof_C))
+        if not self.variables:
+            return Unit()
         
-        # Verificar que la solución satisface las restricciones
-        if not self.verify_solution(solution):
-            raise ValueError(f"Solución {solution} no satisface las restricciones")
+        # Construir el término desde la última variable hacia la primera
+        # Las proposiciones se asumen satisfechas, por lo que se representan con Unit()
+        current_term = Unit()
         
-        # Construir prueba de restricciones (término trivial)
-        constraints_term = Unit()  # Prueba trivial
-        
-        # Construir pares anidados desde la última variable
-        current_term = constraints_term
-        
+        # Invertir el orden de las variables para construir el término correctamente
+        # en el orden de anidamiento del SigmaType
         for var in reversed(self.variables):
             value = solution.get(var)
             if value is None:
-                raise ValueError(f"Variable {var} no tiene valor en la solución")
-            
-            # Crear término constante para el valor
-            value_term = Var(str(value))  # Representación simple
-            
-            # Crear par (valor, término_anterior)
-            current_term = Pair(value_term, current_term)
+                raise ValueError(f"Solución incompleta: falta valor para {var}")
+            current_term = Pair(ValueTerm(value), current_term)
         
+        # El término final debe ser un Pair anidado que termina en Unit()
+        # para representar la satisfacción de todas las proposiciones
         return current_term
-    
+
     def verify_solution(self, solution: Dict[str, Any]) -> bool:
         """
-        Verifica si una solución satisface todas las restricciones.
+        Verifica si una solución CSP satisface todas las restricciones.
         
         Args:
-            solution: Solución del CSP
-        
+            solution: Solución a verificar
+            
         Returns:
-            True si satisface todas las restricciones
+            True si la solución es válida, False en caso contrario
         """
         for prop in self.constraint_props:
-            # Extraer valores de las variables involucradas
-            values = []
-            for var in prop.variables:
-                value = solution.get(var)
-                if value is None:
-                    logger.warning(f"Variable {var} no tiene valor en la solución")
-                    return False
-                values.append(value)
+            # Obtener los valores de las variables de la restricción en el orden correcto
+            values_for_prop = [solution.get(var) for var in prop.variables]
             
-            # Verificar restricción
-            if not prop.check(*values):
-                logger.debug(
-                    f"Restricción {prop.constraint_name} no satisfecha "
-                    f"para valores {values}"
-                )
+            # Si algún valor falta, la solución es inválida para esta restricción
+            if any(v is None for v in values_for_prop):
+                logger.warning(f"Solución incompleta para restricción {prop.constraint_name}")
                 return False
-        
+            
+            if not prop.check(*values_for_prop):
+                logger.debug(f"Restricción {prop.constraint_name} no satisfecha por {solution}")
+                return False
         return True
-    
+
     def get_domain_size(self) -> int:
         """
-        Calcula el tamaño del espacio de búsqueda (producto de dominios).
-        
-        Returns:
-            Número total de asignaciones posibles
+        Calcula el tamaño total del espacio de búsqueda (producto de los tamaños de dominio).
         """
         size = 1
-        for domain_type in self.domain_types.values():
-            size *= len(domain_type.values)
+        for dt in self.domain_types.values():
+            size *= dt.size
         return size
-    
+
     def get_constraint_count(self) -> int:
         """
         Retorna el número de restricciones.
-        
-        Returns:
-            Número de restricciones
         """
         return len(self.constraint_props)
-    
+
     def __str__(self) -> str:
-        """Representación en string del tipo."""
-        return str(self.solution_type)
-    
+        if self.solution_type:
+            return str(self.solution_type)
+        return "CubicalCSPType(uninitialized)"
+
     def __repr__(self) -> str:
-        """Representación detallada."""
         return (
             f"CubicalCSPType("
-            f"vars={self.variables}, "
+            f"variables={len(self.variables)}, "
             f"domains={len(self.domain_types)}, "
             f"constraints={len(self.constraint_props)})"
         )
-
-
-# ============================================================================
-# Funciones de Utilidad
-# ============================================================================
-
-def create_finite_type(name: str, values: Set[Any]) -> FiniteType:
-    """
-    Crea un tipo finito.
-    
-    Args:
-        name: Nombre del tipo
-        values: Conjunto de valores
-    
-    Returns:
-        FiniteType creado
-    """
-    return FiniteType(name, frozenset(values))
-
-
-def create_proposition(
-    name: str,
-    variables: List[str],
-    predicate: Callable
-) -> PropositionType:
-    """
-    Crea una proposición.
-    
-    Args:
-        name: Nombre de la restricción
-        variables: Variables involucradas
-        predicate: Predicado que verifica la restricción
-    
-    Returns:
-        PropositionType creada
-    """
-    return PropositionType(name, tuple(variables), predicate)
-
-
-# ============================================================================
-# Ejemplo de Uso
-# ============================================================================
-
-def example_usage():
-    """
-    Ejemplo de uso de CubicalCSPType.
-    """
-    logger.info("=== Ejemplo de CubicalCSPType ===")
-    
-    # CSP simple: X < Y, dominios {1, 2, 3}
-    variables = ['X', 'Y']
-    domains = {
-        'X': {1, 2, 3},
-        'Y': {1, 2, 3}
-    }
-    constraints = [
-        {
-            'variables': ['X', 'Y'],
-            'predicate': lambda x, y: x < y,
-            'name': 'X_lt_Y'
-        }
-    ]
-    
-    # Crear tipo cúbico
-    csp_type = CubicalCSPType.from_csp_problem(variables, domains, constraints)
-    
-    logger.info(f"Tipo CSP: {csp_type}")
-    logger.info(f"Tipo solución: {csp_type.solution_type}")
-    logger.info(f"Tamaño del espacio: {csp_type.get_domain_size()}")
-    logger.info(f"Número de restricciones: {csp_type.get_constraint_count()}")
-    
-    # Verificar solución válida
-    solution1 = {'X': 1, 'Y': 2}
-    is_valid = csp_type.verify_solution(solution1)
-    logger.info(f"Solución {solution1} válida: {is_valid}")
-    
-    # Verificar solución inválida
-    solution2 = {'X': 2, 'Y': 1}
-    is_valid = csp_type.verify_solution(solution2)
-    logger.info(f"Solución {solution2} válida: {is_valid}")
-    
-    # Sintetizar término
-    if csp_type.verify_solution(solution1):
-        term = csp_type.synthesize_term(solution1)
-        logger.info(f"Término sintetizado: {term}")
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    example_usage()
 

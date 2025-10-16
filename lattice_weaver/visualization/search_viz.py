@@ -337,9 +337,13 @@ def generate_report(
     
     duration = 0.0
     if len(trace_df) >= 2:
+        # Asegurar que la columna 'timestamp' sea de tipo datetime
+        trace_df["timestamp"] = pd.to_datetime(trace_df["timestamp"])
         start_time = trace_df["timestamp"].min()
         end_time = trace_df["timestamp"].max()
         duration = (end_time - start_time).total_seconds()
+    else:
+        duration = 0.0 # Asegurar que duration sea un float incluso si no hay suficientes eventos
     
     # Generar visualizaciones
     fig_tree = plot_search_tree(trace_df)

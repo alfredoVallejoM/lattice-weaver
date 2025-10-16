@@ -238,11 +238,12 @@ class PathFinder:
             if var not in cubical_type.domain_types:
                 continue
             
-            domain = cubical_type.domain_types[var]
+            # Acceder a los valores del dominio directamente desde el objeto FiniteType
+            domain_values = cubical_type.domain_types[var].values
             current_value = solution[var]
             
             # Probar cada valor del dominio
-            for new_value in domain.values:
+            for new_value in domain_values:
                 if new_value == current_value:
                     continue
                 
