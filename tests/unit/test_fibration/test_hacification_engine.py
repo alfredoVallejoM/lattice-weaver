@@ -147,3 +147,64 @@ def test_hacification_engine_get_statistics(hacification_engine):
     assert "energy_thresholds" in stats
     assert stats["energy_thresholds"]["LOCAL"] == 0.0
 
+
+
+
+# --- Tests para Retrocompatibilidad y ArcEngine Opcional --- #
+
+def test_retrocompatibility_init(simple_hierarchy, simple_landscape):
+    """Verifica que el constructor sigue funcionando sin los nuevos parámetros."""
+    engine = HacificationEngine(simple_hierarchy, simple_landscape)
+    assert not engine._use_arc_engine
+    assert engine._arc_engine is None
+
+def test_arc_engine_init_disabled(simple_hierarchy, simple_landscape):
+    """Verifica que se puede pasar ArcEngine pero no usarlo si use_arc_engine=False."""
+    mock_arc_engine = "I am a mock ArcEngine"
+    engine = HacificationEngine(simple_hierarchy, simple_landscape, arc_engine=mock_arc_engine, use_arc_engine=False)
+    assert not engine._use_arc_engine
+    assert engine._arc_engine == mock_arc_engine
+
+def test_arc_engine_init_enabled(simple_hierarchy, simple_landscape):
+    """Verifica que se puede habilitar el uso de ArcEngine."""
+    mock_arc_engine = "I am a mock ArcEngine"
+    engine = HacificationEngine(simple_hierarchy, simple_landscape, arc_engine=mock_arc_engine, use_arc_engine=True)
+    assert engine._use_arc_engine
+    assert engine._arc_engine == mock_arc_engine
+
+def test_hacify_delegates_to_original_when_arc_engine_disabled(hacification_engine, mocker):
+    """Verifica que se llama a _hacify_original cuando ArcEngine está deshabilitado."""
+    spy_original = mocker.spy(hacification_engine, "_hacify_original")
+    spy_arc_engine = mocker.spy(hacification_engine, "_hacify_with_arc_engine")
+    
+    assignment = {"Q0": 0, "Q1": 1}
+    hacification_engine.hacify(assignment)
+    
+    spy_original.assert_called_once_with(assignment, strict=True)
+    spy_arc_engine.assert_not_called()
+
+def test_hacify_delegates_to_arc_engine_when_enabled(simple_hierarchy, simple_landscape, mocker):
+    """Verifica que se llama a _hacify_with_arc_engine cuando ArcEngine está habilitado."""
+    mock_arc_engine = "I am a mock ArcEngine"
+    engine = HacificationEngine(simple_hierarchy, simple_landscape, arc_engine=mock_arc_engine, use_arc_engine=True)
+    
+    spy_original = mocker.spy(engine, "_hacify_original")
+    spy_arc_engine = mocker.spy(engine, "_hacify_with_arc_engine")
+    
+    assignment = {"Q0": 0, "Q1": 1}
+    engine.hacify(assignment)
+    
+    spy_arc_engine.assert_called_once_with(assignment, strict=True)
+    spy_original.assert_not_called()
+
+def test_get_statistics_with_arc_engine(simple_hierarchy, simple_landscape):
+    """Verifica que las estadísticas reportan el uso de ArcEngine."""
+    mock_arc_engine = "I am a mock ArcEngine"
+    engine = HacificationEngine(simple_hierarchy, simple_landscape, arc_engine=mock_arc_engine, use_arc_engine=True)
+    stats = engine.get_statistics()
+    assert stats["use_arc_engine"] is True
+
+    engine_disabled = HacificationEngine(simple_hierarchy, simple_landscape)
+    stats_disabled = engine_disabled.get_statistics()
+    assert stats_disabled["use_arc_engine"] is False
+
