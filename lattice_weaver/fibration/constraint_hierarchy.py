@@ -120,8 +120,8 @@ class ConstraintHierarchy:
                             var1: str, 
                             var2: str, 
                             predicate: Callable[[Dict[str, Any]], bool], 
-                            hardness: Hardness = Hardness.HARD,
                             weight: float = 1.0, 
+                            hardness: Hardness = Hardness.HARD,
                             metadata: Optional[Dict[str, Any]] = None):
         """
         Añade una restricción local (binaria).

@@ -4,7 +4,6 @@ import random
 from .constraint_hierarchy import ConstraintHierarchy
 from .energy_landscape_optimized import EnergyLandscapeOptimized
 from .hacification_engine import HacificationEngine
-from lattice_weaver.arc_engine.core import ArcEngine
 
 class HillClimbingFibrationSolver:
     """
@@ -20,8 +19,7 @@ class HillClimbingFibrationSolver:
         self.domains = domains
         self.hierarchy = hierarchy
         self.landscape = EnergyLandscapeOptimized(hierarchy)
-        self.arc_engine = ArcEngine(use_tms=False, parallel=False)
-        self.hacification_engine = HacificationEngine(hierarchy, self.landscape, self.arc_engine)
+        self.hacification_engine = HacificationEngine(hierarchy, self.landscape)
         self.max_iterations = max_iterations
         self.num_restarts = num_restarts
         self.neighbor_sampling_rate = neighbor_sampling_rate # Tasa de muestreo para vecinos
