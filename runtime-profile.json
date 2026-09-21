@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "project": "lattice-weaver",
+  "toolchains": {
+    "python": true
+  },
+  "hydration": [
+    {
+      "id": "python-deps",
+      "command": "{python} -m pip install -r requirements.txt && {python} -m pip install -e .",
+      "fingerprints": [
+        "requirements.txt",
+        "setup.py"
+      ],
+      "required": true
+    }
+  ],
+  "obligations": [
+    {
+      "id": "SRC-ARCH",
+      "level": "source",
+      "kind": "manual",
+      "required": true,
+      "description": "Review lattice-weaver architecture, dependency boundaries, invariants and obligation-to-implementation mapping without delegating closure to scripts."
+    },
+    {
+      "id": "ADV-REVIEW",
+      "level": "adversarial",
+      "kind": "manual",
+      "required": true,
+      "description": "Perform an obligation-by-obligation adversarial review, including negative cases and accidental-complexity inspection."
+    },
+    {
+      "id": "PERF-LEDGER",
+      "level": "performance",
+      "kind": "manual",
+      "required": true,
+      "description": "Run representative scaling/resource measurements and record time, peak memory, allocations/copies and empirical scaling; compilation alone is not performance certification."
+    },
+    {
+      "id": "REL-CLOSURE",
+      "level": "release",
+      "kind": "manual",
+      "required": true,
+      "description": "Manually reconcile planned obligations against implementation and executable evidence before declaring a campaign or release closed."
+    },
+    {
+      "id": "EXE-COMPILE",
+      "level": "execution",
+      "kind": "command",
+      "required": true,
+      "command": "{python} -m compileall -q lattice_weaver",
+      "description": "Compile the Python package."
+    },
+    {
+      "id": "REG-PY",
+      "level": "regression",
+      "kind": "command",
+      "required": true,
+      "command": "{python} -m pytest -q",
+      "description": "Run solver, paging and renormalization regressions."
+    },
+    {
+      "id": "ADV-SOLVER",
+      "level": "adversarial",
+      "kind": "manual",
+      "required": true,
+      "description": "Exercise CSP/solver traces, paging boundaries and renormalization on adversarial structural instances."
+    }
+  ]
+}
